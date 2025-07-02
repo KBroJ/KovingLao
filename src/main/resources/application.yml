@@ -1,26 +1,27 @@
 spring:
   datasource:
-    # Docker Compose ??? ?? 'db'? ????? ??
-    url: jdbc:mysql://localhost:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
-    username: root # docker-compose.yml? MYSQL_USER ?? MYSQL_ROOT_PASSWORD? ??
-    password: 1234 # docker-compose.yml? MYSQL_PASSWORD ?? MYSQL_ROOT_PASSWORD? ??
+    # Docker Compose 서비스 이름 'db'를 사용하도록 변경
+#    url: jdbc:mysql://db:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+#    username: root # docker-compose.yml의 MYSQL_USER 또는 MYSQL_ROOT_PASSWORD와 일치
+#    password: 1234 # docker-compose.yml의 MYSQL_PASSWORD 또는 MYSQL_ROOT_PASSWORD와 일치
+
+    # 윈비트 회사 서버 연결
+    url: jdbc:mysql://10.1.2.171:3306/wb_between
+    username: root
+    password: 1qaz2wsx!@
+
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      # 'update' : ?? ? ??? ???? @Entity?? ??? ?????? ??? ??(??? ?? X)
+      # 'update' : 실행 시 없으면 자동으로 @Entity붙은 도메인 클래스명으로 테이블 생성(데이터 생성 X)
       ddl-auto: update
-    show-sql: true          # ???? SQL ??? ??? ??
+    show-sql: true          # 실행되는 SQL 쿼리를 로그에 표시
     properties:
       hibernate:
-        format_sql: true   # SQL ??? ???? ?? ?? ??
+        format_sql: true   # SQL 쿼리를 포맷하여 보기 좋게 출력
         dialect: org.hibernate.dialect.MySQLDialect
-    defer-datasource-initialization: true   # ??????(JPA)? DDL(???) ??? ??? ?, data.sql? ????? ??
-
-  # src/main/resources/??? data.sql? ?? ? ?? ??? SQL ??? ???? ?? ??
-#    sql:
-#        init:
-#            mode: always
+    defer-datasource-initialization: true   # 하이버네이트(JPA)의 DDL(테이블) 생성이 완료된 후, data.sql를 실행하도록 설정
 
 logging:
   level:
@@ -28,11 +29,11 @@ logging:
       springframework:
         security: DEBUG
 
-# =============== ?? ??? ?? ===============
-# ????? ?? ???
+# =============== 서버 인코딩 설정 ===============
+# 제미나이가 강력 추천함
 server:
   servlet:
     encoding:
-      charset: UTF-8  # ?? ??? ??? ?? ?? ???? UTF-8? ??
-      enabled: true     # ? ??? ??? ???
-      force: true       # ?? ? ???? ??? ??
+      charset: UTF-8  # 모든 요청과 응답에 대한 기본 인코딩을 UTF-8로 설정
+      enabled: true     # 이 인코딩 설정을 활성화
+      force: true       # 항상 이 인코딩을 강제로 사용
