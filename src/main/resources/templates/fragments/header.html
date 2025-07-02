@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<header class="header" th:fragment="headerFragment">
+    <nav class="nav container">
+        <a href="/" class="nav__logo">Laos Moto</a>
+
+        <div class="nav__menu">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="/reserve" class="nav__link button button--primary">예약하기</a>
+                </li>
+                <li class="nav__item">
+                    <a href="/login" class="nav__link">로그인</a>
+                </li>
+                <li class="nav__item language-switcher">
+                    <a href="?lang=ko" class="nav__link">🇰🇷</a> |
+                    <a href="?lang=en" class="nav__link">🇺🇸</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+</html>
