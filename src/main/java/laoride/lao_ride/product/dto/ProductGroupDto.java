@@ -1,11 +1,11 @@
-package laoride.lao_ride.main.dto;
+package laoride.lao_ride.product.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class BikeModelDto {
+public class ProductGroupDto {
 
     private String name;
     private String imageUrl;
