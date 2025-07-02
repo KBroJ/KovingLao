@@ -41,11 +41,13 @@ ul {
 img {
     max-width: 100%;
     height: auto;
+    display: block;
 }
 
 .container {
     max-width: var(--container-width);
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0 1rem;
 }
 
@@ -68,6 +70,7 @@ img {
     font-weight: bold;
     text-align: center;
     transition: background-color 0.3s;
+    cursor: pointer;
 }
 
 .button--primary {
@@ -152,11 +155,71 @@ img {
     margin-bottom: 1rem;
 }
 
-/* Bike List */
-.bike__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+/* Date Search Form */
+.search-form__field-wrapper {
+    position: relative; /* 아이콘을 input 내부에 위치시키기 위한 기준 */
+}
+
+.search-form__icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    fill: #888; /* 아이콘 색상 */
+}
+
+/* 아이콘이 있을 때 input의 안쪽 여백(padding) 조정 */
+.search-form input#date-range {
+    padding-left: 40px;
+}
+
+.search-form__guide {
+    text-align: center;
+    margin-top: 0.75rem;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+.search-form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+}
+.search-form input {
+    width: 300px;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+}
+.search-form__duration {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    min-height: 1.2rem; /* 기간이 표시되지 않을 때 레이아웃이 흔들리지 않도록 최소 높이 설정 */
+}
+.no-results {
+    padding: 2rem;
+    background-color: var(--light-color);
+    border-radius: 8px;
+}
+
+/* Bike List & Swiper */
+.bike-swiper {
+    width: 100%;
+    padding: 10px 0;
+}
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px; /* 카드 그림자를 위해 약간의 여백 */
+
+    /* 슬라이드의 너비를 직접 지정합니다. */
+    width: 80%; /* 모바일에서는 80% 너비 */
+    max-width: 320px; /* 최대 너비는 320px로 제한 */
 }
 .bike__card {
     border: 1px solid #ddd;
@@ -164,7 +227,7 @@ img {
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: transform 0.3s;
-
+    width: 100%;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -203,15 +266,10 @@ img {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
 }
-.bike__status {
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
 .bike__status.available {
     color: #28a745;
-}
-.bike__status.rented {
-    color: #dc3545;
+    font-weight: bold;
+    margin-bottom: 1rem;
 }
 
 
@@ -274,6 +332,7 @@ img {
 .map__container iframe {
     width: 100%;
     height: 100%;
+    border: none;
 }
 
 
@@ -301,12 +360,33 @@ img {
 }
 
 /* Responsive Design */
+/* 화면 너비가 992px 미만일 때 적용 (Swiper 모바일 UI 개선) */
+@media (max-width: 992px) {
+    .bike-swiper {
+        padding-bottom: 50px;
+    }
+    .bike-swiper .swiper-pagination {
+        bottom: 10px;
+    }
+    .swiper-button-next,
+    .swiper-button-prev {
+        --swiper-navigation-size: 28px;
+    }
+}
+
+/* 화면 너비가 768px 미만일 때 적용 (전반적인 레이아웃) */
 @media (max-width: 768px) {
     .section__title {
         font-size: 1.5rem;
     }
     .banner__title {
         font-size: 2rem;
+    }
+    .search-form {
+        flex-direction: column;
+    }
+    .search-form input {
+        width: 100%;
     }
     .process__steps {
         flex-direction: column;
@@ -320,53 +400,4 @@ img {
     .nav__logo {
         font-size: 1.2rem;
     }
-
-
-    /* Bike List (Swiper) */
-    .bike-swiper {
-        width: 100%;
-        padding: 10px 0 40px 0; /* 페이지네이션 공간 확보 */
-    }
-    .swiper-slide {
-        display: flex;
-        justify-content: center;
-    }
-    .bike__card {
-        width: 300px; /* 카드의 너비를 고정하여 일관성 유지 */
-    }
-
-    /* Swiper 네비게이션 버튼 색상 변경 */
-    .swiper-button-next,
-    .swiper-button-prev {
-        color: var(--primary-color);
-    }
-    /* Swiper 페이지네이션 색상 변경 */
-    .swiper-pagination-bullet-active {
-        background: var(--primary-color);
-    }
-
-/* ==================== Swiper Mobile UI Fix ==================== */
-    /* 화면 너비가 992px 미만일 때 적용 */
-    @media (max-width: 992px) {
-        .bike-swiper {
-            /* * [핵심] 슬라이드 컨테이너 하단에 50px의 공간을 확보합니다.
-             * 이 공간으로 점(pagination)이 내려와 자리를 잡게 됩니다.
-            */
-            padding-bottom: 50px;
-        }
-
-        .bike-swiper .swiper-pagination {
-            /* 확보된 공간의 아래쪽에서 10px 띄워 점을 배치합니다. */
-            bottom: 10px;
-        }
-
-        .swiper-button-next,
-        .swiper-button-prev {
-            /* * [핵심] 화살표의 기본 크기를 줄여 콘텐츠를 덜 가리도록 합니다.
-             * Swiper.js v8+ 부터는 CSS 변수로 쉽게 조절할 수 있습니다.
-            */
-            --swiper-navigation-size: 28px;
-        }
-    }
-
 }
