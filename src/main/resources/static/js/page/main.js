@@ -131,13 +131,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 예약가능 목록 Swiper 슬라이드 동적 업데이트 함수
     function updateBikeList(models) {
+
         bikeSwiper.removeAllSlides();
+
         if (models.length === 0) {
             noResultsMessage.style.display = 'block';
             bikeSwiper.el.style.display = 'none';
         } else {
             noResultsMessage.style.display = 'none';
             bikeSwiper.el.style.display = 'block';
+
+            const selectedDates = datePicker.selectedDates;
+            const startDate = formatDate(selectedDates[0]);
+            const endDate = formatDate(selectedDates[1]);
+
             const slidesHtml = models.map(model => `
                 <div class="swiper-slide">
                     <div class="bike__card">
@@ -147,12 +154,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="bike__status available">
                                 ${model.availableCount}대 이용 가능
                             </p>
-                            <a href="/reserve?model=${model.name}" class="button button--secondary">모델 선택</a>
+                            <a href="/reserve?modelName=${encodeURIComponent(model.name)}&startDate=${startDate}&endDate=${endDate}" class="button button--secondary">모델 선택</a>
                         </div>
                     </div>
                 </div>
             `).join('');
+
             bikeSwiper.appendSlide(slidesHtml);
+
         }
         bikeSwiper.update();
     }

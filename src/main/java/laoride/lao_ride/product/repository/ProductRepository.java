@@ -4,6 +4,7 @@ import laoride.lao_ride.product.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
@@ -11,5 +12,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByStatusAndIdNotIn(String status, List<Long> ids);
 
     List<Product> findByStatus(String status);
+
+    // 상품 이름으로 상품을 조회하는 메서드
+    Optional<Product> findByName(String name);
 
 }
