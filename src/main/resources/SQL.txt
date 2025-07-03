@@ -1,0 +1,102 @@
+-- 외래 키 제약 때문에 다른 테이블을 참조하는 테이블부터 삭제해야 합니다.
+
+-- 1. product를 참조하는 reservation, product_price 테이블 먼저 삭제
+DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS product_price;
+
+-- 2. 다른 테이블을 참조하지 않는 나머지 테이블들 삭제
+DROP TABLE IF EXISTS site_content;
+DROP TABLE IF EXISTS member;
+
+-- 3. 이제 다른 곳에서 참조되지 않는 product 테이블 삭제
+DROP TABLE IF EXISTS product;
+
+-- 1. 회원 테이블
+CREATE TABLE member (
+    member_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username   VARCHAR(255) NOT NULL UNIQUE,
+    password   VARCHAR(255) NOT NULL,
+    name       VARCHAR(255) NOT NULL,
+    role       VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 2. 상품 테이블
+CREATE TABLE product (
+    product_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url   VARCHAR(255),
+    status      VARCHAR(255) NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 3. 상품 가격 테이블
+CREATE TABLE product_price (
+    price_id       BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id     BIGINT NOT NULL,
+    daily_rate     DECIMAL(10, 2) NOT NULL,
+    deposit        DECIMAL(10, 2) NOT NULL,
+    effective_date DATE NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+-- 4. 예약 테이블
+CREATE TABLE reservation (
+    reservation_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id      BIGINT NOT NULL,
+    customer_name   VARCHAR(255) NOT NULL,
+    customer_email  VARCHAR(255) NOT NULL,
+    customer_phone  VARCHAR(255) NOT NULL,
+    start_date      DATE NOT NULL,
+    end_date        DATE NOT NULL,
+    total_price     DECIMAL(10, 2) NOT NULL,
+    status          VARCHAR(255) NOT NULL,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+-- 5. 사이트 콘텐츠 테이블
+CREATE TABLE site_content (
+    content_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    content_key   VARCHAR(255) NOT NULL UNIQUE,
+    content_value TEXT NOT NULL,
+    description   VARCHAR(255),
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =====================================================================================================================
+-- 테스트 데이터
+-- 1. 관리자/직원 계정 데이터
+-- 실제로는 암호화된 비밀번호를 저장해야 합니다. 예: $2a$10$...
+INSERT INTO member (username, password, name, role) VALUES
+('admin', 'admin1234', '총괄 관리자', 'ROLE_SUPER_ADMIN'),
+('manager', 'manager1234', '김매니저', 'ROLE_MANAGER'),
+('staff', 'staff1234', '박직원', 'ROLE_STAFF');
+
+-- 2. 상품 데이터
+INSERT INTO product (name, description, image_url, status) VALUES
+('E-Bike Alpha', '가장 인기 있는 기본 모델입니다. 편안한 주행감을 제공합니다.', '/images/product/e-bike-alpha.png', 'ACTIVE'),
+('E-Bike Bravo', '장거리 주행에 특화된 고급 모델입니다. 배터리 용량이 큽니다.', '/images/product/e-bike-bravo.png', 'ACTIVE'),
+('E-Bike Charlie', '경량 모델로 여성분들이 선호하는 모델입니다.', '/images/product/e-bike-charlie.png', 'MAINTENANCE');
+
+-- 3. 상품 가격 데이터 (product_id는 위 상품 순서에 따라 1, 2, 3)
+INSERT INTO product_price (product_id, daily_rate, deposit, effective_date) VALUES
+(1, 15.00, 50.00, '2025-01-01'),
+(2, 20.00, 70.00, '2025-01-01'),
+(3, 12.00, 50.00, '2025-01-01');
+
+-- 4. 예약 데이터 (테스트용)
+INSERT INTO reservation (product_id, customer_name, customer_email, customer_phone, start_date, end_date, total_price, status) VALUES
+(1, 'John Doe', 'john.doe@example.com', '020-111-1111', '2025-07-10', '2025-07-12', 45.00, 'CONFIRMED'),
+(2, 'Jane Smith', 'jane.smith@example.com', '020-222-2222', '2025-07-11', '2025-07-15', 100.00, 'PENDING');
+
+-- 5. 사이트 콘텐츠 데이터
+INSERT INTO site_content (content_key, content_value, description) VALUES
+('MAIN_BANNER_IMG', '/images/layout/laos-banner.png', '메인 페이지 상단 배너 이미지'),
+('STORE_INTRO_IMG', '/images/layout/laos-store.png', '메인 페이지 지점 소개 이미지');
+

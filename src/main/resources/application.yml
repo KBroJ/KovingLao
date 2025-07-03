@@ -6,7 +6,7 @@ spring:
 #    password: 1234 # docker-compose.yml의 MYSQL_PASSWORD 또는 MYSQL_ROOT_PASSWORD와 일치
 
     # 윈비트 회사 서버 연결
-    url: jdbc:mysql://10.1.2.171:3306/wb_between
+    url: jdbc:mysql://10.1.2.171:3306/lao_ride
     username: root
     password: 1qaz2wsx!@
 
@@ -15,7 +15,8 @@ spring:
   jpa:
     hibernate:
       # 'update' : 실행 시 없으면 자동으로 @Entity붙은 도메인 클래스명으로 테이블 생성(데이터 생성 X)
-      ddl-auto: update
+#      ddl-auto: update
+      ddl-auto: validate  # 데이터베이스 스키마를 검증만 하고, 변경하지 않음
     show-sql: true          # 실행되는 SQL 쿼리를 로그에 표시
     properties:
       hibernate:
