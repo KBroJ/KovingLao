@@ -103,16 +103,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // API 호출 및 슬라이드 업데이트 함수
     async function fetchAvailableBikes(startDate, endDate) {
+
+        const bikeListResult = document.getElementById('bike-list-result');
+        const errorMessage = document.getElementById('error-message');
+
         try {
             const response = await fetch(`/api/products/available?startDate=${startDate}&endDate=${endDate}`);
             if (!response.ok) {
-                throw new Error('데이터를 불러오는 데 실패했습니다.');
+                // HTTP 상태 코드가 2xx가 아닌 경우
+                throw new Error('서버에서 응답을 받지 못했습니다.');
             }
             const availableModels = await response.json();
             updateBikeList(availableModels);
+
+            // 성공 시 에러 메시지 숨기기
+            errorMessage.style.display = 'none';
+
         } catch (error) {
             console.error(error);
-            alert(error.message);
+
+            bikeSwiper.el.style.display = 'none';
+            noResultsMessage.style.display = 'none';
+            errorMessage.style.display = 'block';
+
         }
     }
 
