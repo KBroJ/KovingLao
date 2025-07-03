@@ -1,0 +1,334 @@
+/* 예약 페이지 전용 스타일 */
+
+/* 예약 헤더 */
+.reservation-header {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: white;
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.reservation-title {
+    font-size: 2.5rem;
+    font-family: var(--heading-font);
+    margin-bottom: 0.5rem;
+}
+
+.reservation-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* 예약 컨텐츠 */
+.reservation-content {
+    padding: 3rem 0;
+}
+
+.reservation-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+/* 모델 선택 섹션 */
+.model-selection .section-title {
+    font-size: 1.5rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.selected-model {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.selected-model h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.selected-bike-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.selected-bike-img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.selected-bike-info h4 {
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.available-count {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.all-models h3 {
+    margin-bottom: 1rem;
+}
+
+.model-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.model-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.model-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.model-card.selected {
+    border-color: var(--primary-color);
+    background-color: #f0f8ff;
+}
+
+.model-img {
+    width: 60px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    float: left;
+    margin-right: 1rem;
+}
+
+.model-info h4 {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.model-select-btn {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* 예약 폼 섹션 */
+.reservation-form-section .section-title {
+    font-size: 1.5rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.reservation-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+/* 체크박스 스타일 */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    margin-right: 0.75rem;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* 폼 액션 */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.reservation-submit {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* 안내사항 */
+.reservation-notice {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+.reservation-notice h3 {
+    color: #856404;
+    margin-bottom: 1rem;
+}
+
+.reservation-notice ul {
+    list-style: none;
+    padding: 0;
+}
+
+.reservation-notice li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.reservation-notice li::before {
+    content: '•';
+    color: var(--primary-color);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 992px) {
+    .reservation-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .reservation-title {
+        font-size: 2rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        justify-content: stretch;
+    }
+    
+    .form-actions .button {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .reservation-header {
+        padding: 2rem 0;
+    }
+    
+    .reservation-title {
+        font-size: 1.5rem;
+    }
+    
+    .reservation-subtitle {
+        font-size: 1rem;
+    }
+    
+    .reservation-form {
+        padding: 1rem;
+    }
+    
+    .selected-bike-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .selected-bike-img {
+        width: 100px;
+        height: 75px;
+    }
+} 

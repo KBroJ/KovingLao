@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>오토바이 예약 - 라오스 전기 오토바이 렌트</title>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+        <link rel="stylesheet" th:href="@{/css/common.css}">
+        <link rel="stylesheet" th:href="@{/css/page/reservation.css}">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+
+    <div th:replace="~{fragments/header :: headerFragment}"></div>
+
+    <main class="main">
+        <!-- 예약 헤더 -->
+        <section class="reservation-header">
+            <div class="container">
+                <h1 class="reservation-title">오토바이 예약하기</h1>
+                <p class="reservation-subtitle">간편하고 빠른 예약으로 라오스 여행을 시작하세요</p>
+            </div>
+        </section>
+
+        <section class="reservation-content container">
+            <div class="reservation-grid">
+                <!-- 왼쪽: 모델 선택 -->
+                <div class="model-selection">
+                    <h2 class="section-title">모델 선택</h2>
+                    
+                    <!-- 선택된 모델 표시 -->
+                    <div th:if="${selectedModel}" class="selected-model">
+                        <h3>선택된 모델</h3>
+                        <div class="selected-bike-card">
+                            <img th:src="@{${selectedModel.imageUrl}}" th:alt="${selectedModel.name}" class="selected-bike-img">
+                            <div class="selected-bike-info">
+                                <h4 th:text="${selectedModel.name}">E-Bike Model</h4>
+                                <p class="available-count" th:text="|${selectedModel.availableCount}대 이용 가능|">N대 이용 가능</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 모든 이용 가능한 모델 목록 -->
+                    <div class="all-models">
+                        <h3>다른 모델 선택</h3>
+                        <div class="model-grid">
+                            <div class="model-card" th:each="model : ${availableModels}">
+                                <img th:src="@{${model.imageUrl}}" th:alt="${model.name}" class="model-img">
+                                <div class="model-info">
+                                    <h4 th:text="${model.name}">E-Bike Model</h4>
+                                    <p class="available-count" th:text="|${model.availableCount}대 이용 가능|">N대 이용 가능</p>
+                                    <button type="button" class="button button--secondary model-select-btn" 
+                                            th:data-model="${model.name}">선택</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 예약 폼 -->
+                <div class="reservation-form-section">
+                    <h2 class="section-title">예약 정보</h2>
+                    
+                    <form class="reservation-form" action="/submit-reservation" method="post">
+                        <!-- 선택된 모델 히든 필드 -->
+                        <input type="hidden" name="selectedModel" th:value="${selectedModel?.name}" id="hiddenModelName">
+                        
+                        <!-- 예약 날짜 및 시간 -->
+                        <div class="form-group">
+                            <label for="rentalDate">대여 날짜</label>
+                            <input type="date" id="rentalDate" name="rentalDate" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startTime">대여 시간</label>
+                                <select id="startTime" name="startTime" required>
+                                    <option value="">시간 선택</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="duration">대여 시간</label>
+                                <select id="duration" name="duration" required>
+                                    <option value="">선택</option>
+                                    <option value="2">2시간</option>
+                                    <option value="4">4시간</option>
+                                    <option value="8">8시간 (하루)</option>
+                                    <option value="24">24시간</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 개인 정보 -->
+                        <div class="form-section">
+                            <h3>예약자 정보</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">이름 (First Name)</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="lastName">성 (Last Name)</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">이메일</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">연락처</label>
+                                <input type="tel" id="phone" name="phone" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="passportNumber">여권 번호</label>
+                                <input type="text" id="passportNumber" name="passportNumber" required>
+                                <small class="form-help">대여 시 여권 원본을 보증으로 맡기셔야 합니다.</small>
+                            </div>
+                        </div>
+
+
+
+                        <!-- 예약 버튼 -->
+                        <div class="form-actions">
+                            <button type="submit" class="button button--primary reservation-submit">
+                                예약하기
+                            </button>
+                            <a href="/" class="button button--secondary">취소</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 중요 안내사항 -->
+            <div class="reservation-notice">
+                <h3>⚠️ 중요 안내사항</h3>
+                <ul>
+                    <li><strong>여권 보증:</strong> 오토바이 대여 시 여권 원본을 보증으로 맡기셔야 합니다.</li>
+                    <li><strong>예약 확정:</strong> 예약 후 직원 확인을 거쳐 이메일로 확정 통보를 받으실 수 있습니다.</li>
+                    <li><strong>결제:</strong> 현장에서 라오스 킵(LAK) 또는 달러($)로 결제 가능합니다.</li>
+                    <li><strong>운전 조건:</strong> 만 18세 이상, 유효한 여권 소지자만 대여 가능합니다.</li>
+                    <li><strong>취소 정책:</strong> 예약 당일 2시간 전까지 무료 취소 가능합니다.</li>
+                    <li><strong>헬멧 제공:</strong> 모든 대여에 무료 헬멧이 제공됩니다.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footerFragment}"></div>
+
+    <script defer th:src="@{/js/page/reservation.js}"></script>
+
+    </body>
+</html> 
