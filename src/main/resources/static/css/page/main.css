@@ -1,16 +1,15 @@
 /* Banner */
 .banner {
     position: relative;
-    height: 60vh;
+    height: 100%;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-
-    background-repeat: no-repeat; /* 이미지 반복 없음 */
-    background-position: center;  /* 이미지를 중앙에 위치 */
-    background-size: cover;       /* 이미지가 영역을 꽉 채우도록 크기 조절 */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 .banner__overlay {
     position: absolute;
@@ -28,25 +27,39 @@
     font-size: 3rem;
     margin-bottom: 1rem;
 }
+.banner-section {
+    height: 60vh;
+    background-color: #333;
+}
+.banner-swiper, .banner-swiper .swiper-wrapper, .banner-swiper .swiper-slide {
+    height: 100%;
+}
+.swiper-slide .banner-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+}
+.banner-swiper .banner-swiper-pagination .swiper-pagination-bullet-active {
+    background: #fff;
+}
 
 /* Date Search Form */
 .search-form__field-wrapper {
-    position: relative; /* 아이콘을 input 내부에 위치시키기 위한 기준 */
+    position: relative;
 }
-
 .search-form__icon {
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    fill: #888; /* 아이콘 색상 */
+    fill: #888;
 }
-
-/* 아이콘이 있을 때 input의 안쪽 여백(padding) 조정 */
 .search-form input#date-range {
     padding-left: 40px;
 }
-
 .search-form__guide {
     text-align: center;
     margin-top: 0.75rem;
@@ -73,7 +86,7 @@
     font-size: 1.1rem;
     font-weight: bold;
     color: var(--primary-color);
-    min-height: 1.2rem; /* 기간이 표시되지 않을 때 레이아웃이 흔들리지 않도록 최소 높이 설정 */
+    min-height: 1.2rem;
 }
 .no-results {
     padding: 2rem;
@@ -86,14 +99,12 @@
     width: 100%;
     padding: 10px 0;
 }
-.swiper-slide {
+.bike-swiper .swiper-slide {
     display: flex;
     justify-content: center;
-    padding-bottom: 10px; /* 카드 그림자를 위해 약간의 여백 */
-
-    /* 슬라이드의 너비를 직접 지정합니다. */
-    width: 80%; /* 모바일에서는 80% 너비 */
-    max-width: 320px; /* 최대 너비는 320px로 제한 */
+    padding-bottom: 10px;
+    width: 80%;
+    max-width: 320px;
 }
 .bike__card {
     border: 1px solid #ddd;
@@ -110,30 +121,17 @@
     transform: translateY(-5px);
 }
 .bike__card .bike__img {
-    width: 100%; /* 너비를 카드에 꽉 채움 */
-
-    /* * [핵심 2] 이미지의 비율을 4:3으로 고정합니다.
-     * 16:9, 1:1 등 원하는 비율로 조절 가능합니다.
-    */
+    width: 100%;
     aspect-ratio: 4 / 3;
-
-    /* * [핵심 3] 비율에 맞지 않는 이미지는 잘라내어 꽉 채웁니다.
-     * 이미지가 찌그러지는 것을 방지합니다.
-    */
     object-fit: cover;
 }
 .bike__card-content {
     padding: 1rem;
-
-    /* * [핵심 4] 텍스트 영역이 남은 공간을 모두 차지하도록 만듭니다.
-     * 모델 이름이 한 줄이든 두 줄이든 카드 전체 높이를 동일하게 유지시킵니다.
-    */
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
 .bike__card-content .button {
-    /* 버튼이 항상 맨 아래에 위치하도록 상단 여백을 자동으로 조절 */
     margin-top: auto;
 }
 .bike__name {
@@ -145,7 +143,6 @@
     font-weight: bold;
     margin-bottom: 1rem;
 }
-
 
 /* How to Rent */
 .process__steps {
@@ -192,8 +189,23 @@
     gap: 2rem;
     align-items: center;
 }
+.intro-swiper.intro__image {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden; /* 이미지가 둥근 모서리를 넘지 않도록 */
+}
 .intro__image img {
     border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    /*object-fit: cover*/; /* 이미지가 찌그러지지 않도록 설정 > 화면짤림 */
+    aspect-ratio: 3 / 2; /* 모든 이미지 비율을 3:2으로 통일 */
+
+    object-fit: contain; /* 이미지를 잘리지 않게 모두 보여주기 */
+    background-color: #ffffff; /* 여백 부분에 보일 배경색 : 하얀색 */
+}
+.intro-swiper .intro-swiper-pagination .swiper-pagination-bullet-active {
+    background: var(--primary-color);
 }
 
 
@@ -210,21 +222,18 @@
 }
 
 /* Responsive Design */
-/* 화면 너비가 992px 미만일 때 적용 (Swiper 모바일 UI 개선) */
 @media (max-width: 992px) {
     .bike-swiper {
         padding-bottom: 50px;
     }
-    .bike-swiper .swiper-pagination {
+    .bike-swiper .bike-swiper-pagination {
         bottom: 10px;
     }
-    .swiper-button-next,
-    .swiper-button-prev {
+    .bike-swiper-button-next,
+    .bike-swiper-button-prev {
         --swiper-navigation-size: 28px;
     }
 }
-
-/* 화면 너비가 768px 미만일 때 적용 (전반적인 레이아웃) */
 @media (max-width: 768px) {
     .section__title {
         font-size: 1.5rem;

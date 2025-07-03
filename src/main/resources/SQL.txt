@@ -5,11 +5,13 @@ DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS product_price;
 
 -- 2. 다른 테이블을 참조하지 않는 나머지 테이블들 삭제
-DROP TABLE IF EXISTS site_content;
 DROP TABLE IF EXISTS member;
 
 -- 3. 이제 다른 곳에서 참조되지 않는 product 테이블 삭제
 DROP TABLE IF EXISTS product;
+
+DROP TABLE IF EXISTS content_image;
+DROP TABLE IF EXISTS content_group;
 
 -- 1. 회원 테이블
 CREATE TABLE member (
@@ -59,14 +61,21 @@ CREATE TABLE reservation (
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
--- 5. 사이트 콘텐츠 테이블
-CREATE TABLE site_content (
-    content_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
-    content_key   VARCHAR(255) NOT NULL UNIQUE,
-    content_value TEXT NOT NULL,
-    description   VARCHAR(255),
+CREATE TABLE content_group (
+    group_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    group_key   VARCHAR(255) NOT NULL UNIQUE,
+    description VARCHAR(255)
+);
+
+CREATE TABLE content_image (
+    image_id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    group_id      BIGINT NOT NULL,
+    image_url     VARCHAR(255) NOT NULL,
+    link_url      VARCHAR(255),
+    display_order INT NOT NULL DEFAULT 0,
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_id) REFERENCES content_group(group_id)
 );
 
 -- =====================================================================================================================
@@ -95,8 +104,22 @@ INSERT INTO reservation (product_id, customer_name, customer_email, customer_pho
 (1, 'John Doe', 'john.doe@example.com', '020-111-1111', '2025-07-10', '2025-07-12', 45.00, 'CONFIRMED'),
 (2, 'Jane Smith', 'jane.smith@example.com', '020-222-2222', '2025-07-11', '2025-07-15', 100.00, 'PENDING');
 
--- 5. 사이트 콘텐츠 데이터
-INSERT INTO site_content (content_key, content_value, description) VALUES
-('MAIN_BANNER_IMG', '/images/layout/laos-banner.png', '메인 페이지 상단 배너 이미지'),
-('STORE_INTRO_IMG', '/images/layout/laos-store.png', '메인 페이지 지점 소개 이미지');
+-- 이미지 그룹 정의
+INSERT INTO content_group (group_key, description) VALUES
+('MAIN_BANNER', '메인 페이지 배너 이미지 슬라이드'),
+('STORE_INTRO', '메인 페이지 지점 소개 이미지 슬라이드');
 
+-- 이미지 데이터 삽입 (group_id는 위 순서에 따라 1, 2)
+select * from content_image;
+-- 메인 배너 이미지 (2개)
+INSERT INTO content_image (group_id, image_url, link_url, display_order) VALUES
+(1, '/images/layout/laos-banner.png', '/events/summer', 0),
+(1, '/images/layout/laos-banner.png', '/products', 1);
+update content_image set image_url = '/images/layout/laos-banner.png' where image_id = 2;
+
+-- 지점 소개 이미지 (1개)
+INSERT INTO content_image (group_id, image_url, display_order) VALUES
+(2, '/images/layout/laos-store.png', 0);
+INSERT INTO content_image (group_id, image_url, display_order) VALUES
+(2, '/images/layout/laos-store.png', 1);
+update content_image set image_url = '/images/layout/laos-store.png' where image_id = 3;
