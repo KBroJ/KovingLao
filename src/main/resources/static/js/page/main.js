@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 4. API 호출 및 슬라이드 업데이트 함수
     async function fetchAvailableBikes(startDate, endDate) {
         try {
-            const response = await fetch(`/api/bikes/available?startDate=${startDate}&endDate=${endDate}`);
+            const response = await fetch(`/api/products/available?startDate=${startDate}&endDate=${endDate}`);
             if (!response.ok) {
                 throw new Error('데이터를 불러오는 데 실패했습니다.');
             }

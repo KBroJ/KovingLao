@@ -2,12 +2,15 @@
 .banner {
     position: relative;
     height: 60vh;
-    background: url('/images/layout/laos-banner.png') no-repeat center center/cover;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+
+    background-repeat: no-repeat; /* 이미지 반복 없음 */
+    background-position: center;  /* 이미지를 중앙에 위치 */
+    background-size: cover;       /* 이미지가 영역을 꽉 채우도록 크기 조절 */
 }
 .banner__overlay {
     position: absolute;
