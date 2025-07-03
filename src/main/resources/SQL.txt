@@ -105,6 +105,7 @@ INSERT INTO reservation (product_id, customer_name, customer_email, customer_pho
 (2, 'Jane Smith', 'jane.smith@example.com', '020-222-2222', '2025-07-11', '2025-07-15', 100.00, 'PENDING');
 
 -- 이미지 그룹 정의
+select * from content_group;
 INSERT INTO content_group (group_key, description) VALUES
 ('MAIN_BANNER', '메인 페이지 배너 이미지 슬라이드'),
 ('STORE_INTRO', '메인 페이지 지점 소개 이미지 슬라이드');
@@ -112,9 +113,15 @@ INSERT INTO content_group (group_key, description) VALUES
 -- 이미지 데이터 삽입 (group_id는 위 순서에 따라 1, 2)
 select * from content_image;
 -- 메인 배너 이미지 (2개)
-INSERT INTO content_image (group_id, image_url, link_url, display_order) VALUES
-(1, '/images/layout/laos-banner.png', '/events/summer', 0),
+INSERT INTO content_image (group_id, image_url, link_url, display_order) values
+(1, '/images/layout/laos-banner.png', null, 0);
+INSERT INTO content_image (group_id, image_url, link_url, display_order) values
+(1, '/images/layout/laos-banner.png', null, 1);
+INSERT INTO content_image (group_id, image_url, link_url, display_order) values
+(1, '/images/layout/laos-banner.png', '/events/summer', 0);
+INSERT INTO content_image (group_id, image_url, link_url, display_order) values
 (1, '/images/layout/laos-banner.png', '/products', 1);
+
 update content_image set image_url = '/images/layout/laos-banner.png' where image_id = 2;
 
 -- 지점 소개 이미지 (1개)
@@ -123,3 +130,5 @@ INSERT INTO content_image (group_id, image_url, display_order) VALUES
 INSERT INTO content_image (group_id, image_url, display_order) VALUES
 (2, '/images/layout/laos-store.png', 1);
 update content_image set image_url = '/images/layout/laos-store.png' where image_id = 3;
+
+delete from content_image;

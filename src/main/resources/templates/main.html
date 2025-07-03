@@ -25,7 +25,14 @@
                 <div th:if="${!#lists.isEmpty(bannerImages)}" class="swiper banner-swiper">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide" th:each="image : ${bannerImages}">
-                            <a th:if="${image.linkUrl != null}" th:href="${image.linkUrl}" class="banner-link"></a>
+
+                            <a th:if="${image.linkUrl != null}"
+                               th:href="${image.linkUrl}"
+                               th:target="${#strings.startsWith(image.linkUrl, 'http')} ? '_blank' : '_self'"
+                               rel="noopener noreferrer"
+                               class="banner-link">
+                            </a>
+
                             <div class="banner" th:style="'background-image: url(' + ${image.imageUrl} + ');'">
                                 <div class="banner__overlay"></div>
                                 <div class="banner__content container">
