@@ -141,18 +141,50 @@
     padding: 2rem;
     background-color: #fff;
 }
-.booking-widget h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+.booking-widget h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
 .booking-options {
     background-color: #f8f9fa;
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 8px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 .booking-options p { margin: 0.5rem 0; }
 
+.price-details {
+    margin-bottom: 1rem;
+}
+.price-details .price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--secondary-color);
+}
+.price-details .price-row.total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+.price-details .price-row span:last-child {
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
 /* 폼 UI 개선 */
-.form-section { margin-top: 2rem; }
-.form-section h4 { font-size: 1.2rem; margin-bottom: 1rem; }
+.form-section { margin-top: 1.5rem; }
+.form-section h4 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+}
 .form-group { margin-bottom: 1rem; }
 .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
 .form-input {
@@ -208,6 +240,38 @@
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+/* intl-tel-input 라이브러리의 invalid 상태 스타일 */
+.iti .form-input.invalid {
+    border-color: #dc3545; /* itl-tel-input 라이브러리가 사용하는 input에도 invalid 스타일 적용 */
+}
+.iti .form-input.invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+/* 유효성 검증 관련 스타일 */
+.form-input.invalid {
+    border-color: #dc3545;
+}
+
+/* 유효성 검증 관련 스타일 */
+.form-input.invalid {
+    border-color: #dc3545; /* 에러 시 테두리 색상 */
+}
+
+.form-input.invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+.validation-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: none; /* 평소에는 숨김 */
+}
+
+.validation-message.visible {
+    display: block; /* 에러 발생 시 보임 */
 }
 
 /* 반응형 */

@@ -1,3 +1,4 @@
+// 파일 위치: static/js/page/reservation/reservation.js
 document.addEventListener('DOMContentLoaded', function() {
     // --- 요소 가져오기 ---
     const calendarInput = document.getElementById('booking-calendar');
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneInput = document.getElementById('phone');
     const reservationForm = document.getElementById('final-reservation-form');
     const reserveBtn = document.getElementById('reserve-btn');
-    const formInputsForValidation = reservationForm.querySelectorAll('#lastName, #firstName, #email, #phone, #passportNumber');
+    const formInputsForValidation = reservationForm.querySelectorAll('.form-input');
 
     // --- 초기 상태 설정 ---
     let selectedProductId = null;
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(() => callback("us"));
         },
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        separateDialCode: true,
     });
 
     // --- URL 파라미터로 초기화 ---
@@ -70,16 +72,41 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     formInputsForValidation.forEach(input => {
-        input.addEventListener('input', validateForm);
+        input.addEventListener('blur', () => {
+            input.dataset.touched = 'true';
+            validateField(input);
+            validateForm();
+        });
+        input.addEventListener('input', () => {
+            if (input.dataset.touched === 'true') {
+                validateField(input);
+            }
+            validateForm();
+        });
     });
-    phoneInput.addEventListener("countrychange", validateForm);
+    phoneInput.addEventListener("countrychange", () => {
+        if (phoneInput.dataset.touched === 'true') {
+            validateField(phoneInput);
+        }
+        validateForm();
+    });
 
     reservationForm.addEventListener('submit', function(e) {
-        if (!validateAllFields()) {
+        const isAllValid = Array.from(formInputsForValidation).every(input => validateField(input));
+        if (!isAllValid) {
             e.preventDefault();
+            const firstInvalidField = reservationForm.querySelector('.invalid');
+            if (firstInvalidField) firstInvalidField.focus();
             return;
         }
         reservationForm.querySelector('input[name="phone"]').value = iti.getNumber();
+
+        const pickupTimeEl = document.getElementById('pickupTime');
+        const returnTimeEl = document.getElementById('returnTime');
+        if (pickupTimeEl && returnTimeEl) {
+            reservationForm.querySelector('input[name="pickupTime"]').value = pickupTimeEl.value;
+            reservationForm.querySelector('input[name="returnTime"]').value = returnTimeEl.value;
+        }
     });
 
     // --- 함수들 ---
@@ -91,14 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modelListContainer.innerHTML = '';
             if (models.length > 0) {
                 models.forEach(model => {
-                    const cardHtml = `
-                        <div class="model-card" data-product-id="${model.id}" data-model-name="${model.name}">
-                            <img src="${model.imageUrl}" alt="${model.name}" class="model-img">
-                            <div class="model-info">
-                                <h4>${model.name}</h4>
-                                <p>${model.availableCount}대 가능</p>
-                            </div>
-                        </div>`;
+                    const cardHtml = `<div class="model-card" data-product-id="${model.id}" data-model-name="${model.name}"><img src="${model.imageUrl}" alt="${model.name}" class="model-img"><div class="model-info"><h4>${model.name}</h4><p>${model.availableCount}대 가능</p></div></div>`;
                     modelListContainer.insertAdjacentHTML('beforeend', cardHtml);
                 });
                 if (initialModelName) {
@@ -118,36 +138,21 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             detailPlaceholder.style.display = 'none';
             productDetailsSection.style.display = 'block';
-
             const response = await fetch(`/api/products/${productId}`);
             selectedProductData = await response.json();
-
             document.getElementById('product-title').textContent = selectedProductData.name;
-
             const imageSliderWrapper = document.querySelector('.product-image-swiper .swiper-wrapper');
             if (selectedProductData.imageUrls && selectedProductData.imageUrls.length > 0) {
-                imageSliderWrapper.innerHTML = selectedProductData.imageUrls.map(url =>
-                    `<div class="swiper-slide"><img src="${url}" alt="${selectedProductData.name}"></div>`
-                ).join('');
+                imageSliderWrapper.innerHTML = selectedProductData.imageUrls.map(url => `<div class="swiper-slide"><img src="${url}" alt="${selectedProductData.name}"></div>`).join('');
             } else {
                 imageSliderWrapper.innerHTML = `<div class="swiper-slide"><img src="/images/product/default-bike.png" alt="${selectedProductData.name}"></div>`;
             }
-
-            if (productSwiper) {
-                productSwiper.destroy(true, true);
-            }
+            if (productSwiper) { productSwiper.destroy(true, true); }
             productSwiper = new Swiper('.product-image-swiper', {
                 loop: selectedProductData.imageUrls && selectedProductData.imageUrls.length > 1,
-                navigation: {
-                    nextEl: '.product-swiper-next',
-                    prevEl: '.product-swiper-prev'
-                },
-                pagination: {
-                    el: '.product-swiper-pagination',
-                    clickable: true,
-                },
+                navigation: { nextEl: '.product-swiper-next', prevEl: '.product-swiper-prev' },
+                pagination: { el: '.product-swiper-pagination', clickable: true },
             });
-
             renderTabs(selectedProductData);
         } catch (error) {
             console.error("Failed to load product details:", error);
@@ -160,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('tab-content-included').textContent = data.includedItems + '\n\n--- 불포함 사항 ---\n' + data.notIncludedItems;
         document.getElementById('tab-content-guide').textContent = data.usageGuide;
         document.getElementById('tab-content-cancellation').textContent = data.cancellationPolicy;
-
         document.querySelectorAll('.tab-link').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
@@ -174,15 +178,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateFinalBookingForm() {
         const dates = calendar.selectedDates;
         if (dates.length < 2 || !selectedProductId) return;
-
         const startDate = formatDate(dates[0]);
         const endDate = formatDate(dates[1]);
-
-        document.getElementById('booking-options').innerHTML = `
-            <p><strong>모델:</strong> ${selectedProductData.name}</p>
-            <p><strong>기간:</strong> ${startDate} ~ ${endDate}</p>
-        `;
-
+        const rentalDays = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
+        fetch(`/api/products/${selectedProductId}/availability?date=${startDate}`)
+            .then(res => res.json())
+            .then(data => {
+                const dailyPrice = data.price;
+                const totalPrice = dailyPrice * rentalDays;
+                const bookingOptionsEl = document.getElementById('booking-options');
+                bookingOptionsEl.innerHTML = `<p><strong>모델:</strong> ${selectedProductData.name}</p><p><strong>기간:</strong> ${startDate} ~ ${endDate} (${rentalDays}일)</p><div class="price-details"><div class="price-row"><span>1일 대여료</span><span>${dailyPrice.toLocaleString()} LAK</span></div><div class="price-row"><span>대여일</span><span>x ${rentalDays}일</span></div><div class="price-row total"><span>총 예상 금액</span><span>${totalPrice.toLocaleString()} LAK</span></div></div>`;
+            });
         reservationForm.querySelector('input[name="modelName"]').value = selectedProductData.name;
         reservationForm.querySelector('input[name="startDate"]').value = startDate;
         reservationForm.querySelector('input[name="endDate"]').value = endDate;
@@ -194,48 +200,57 @@ document.addEventListener('DOMContentLoaded', function() {
         detailPlaceholder.style.display = 'flex';
     }
 
+    function validateField(input) {
+        const errorElement = document.getElementById(`${input.id}-error`);
+        let message = '';
+        const value = input.value.trim();
+        switch (input.id) {
+            case 'lastName':
+            case 'firstName':
+                if (value === '') message = '필수 입력 항목입니다.';
+                break;
+            case 'email':
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (value === '') message = '필수 입력 항목입니다.';
+                else if (!emailRegex.test(value)) message = '올바른 이메일 형식이 아닙니다.';
+                break;
+            case 'phone':
+                if (value === '') message = '필수 입력 항목입니다.';
+                else if (!iti.isValidNumber()) {
+                    const errorCode = iti.getValidationError();
+                    const errorMap = { 1: "잘못된 국가 코드", 2: "번호가 너무 짧음", 3: "번호가 너무 김", 4: "유효하지 않은 번호" };
+                    message = errorMap[errorCode] || '유효하지 않은 번호';
+                }
+                break;
+            case 'passportNumber':
+                if (value === '') message = '필수 입력 항목입니다.';
+                else if (value.length < 5) message = '여권 번호가 너무 짧습니다.';
+                break;
+            case 'pickupTime':
+            case 'returnTime':
+                if (value === '') message = '시간을 선택해주세요.';
+                break;
+        }
+        if (message) {
+            if (errorElement) { errorElement.textContent = message; errorElement.classList.add('visible'); }
+            input.classList.add('invalid');
+            return false;
+        } else {
+            if (errorElement) { errorElement.classList.remove('visible'); }
+            input.classList.remove('invalid');
+            return true;
+        }
+    }
+
     function validateAllFields() {
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const passportNumber = document.getElementById('passportNumber').value.trim();
-
-        if (!firstName || !lastName) {
-            alert("이름과 성을 모두 입력해주세요.");
-            return false;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert("올바른 이메일 주소 형식을 입력해주세요.");
-            return false;
-        }
-
-        if (passportNumber.length < 5) {
-            alert("여권 번호가 너무 짧습니다. 다시 확인해주세요.");
-            return false;
-        }
-
-        if (!iti.isValidNumber()) {
-            alert("유효하지 않은 전화번호입니다. 다시 확인해주세요.");
-            return false;
-        }
-        return true;
+        return Array.from(formInputsForValidation).every(input => validateField(input));
     }
 
     function validateForm() {
-        let isValid = true;
-        // [수정] 올바른 변수 이름 사용
-        formInputsForValidation.forEach(input => {
-            if (!input.value.trim()) {
-                isValid = false;
-            }
+        const isFormValid = Array.from(formInputsForValidation).every(input => {
+            return input.value.trim() !== '' && !input.classList.contains('invalid');
         });
-
-        if (!iti.isValidNumber()) {
-            isValid = false;
-        }
-        reserveBtn.disabled = !isValid;
+        reserveBtn.disabled = !isFormValid;
     }
 
     function formatDate(date) {

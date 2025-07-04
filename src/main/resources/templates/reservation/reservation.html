@@ -79,7 +79,10 @@
                         <div id="final-booking-section" class="booking-widget" style="display: none;">
                             <div class="booking-widget-inner">
                                 <h3>3. 예약 정보 입력</h3>
-                                <div id="booking-options" class="booking-options"></div>
+
+                                <div id="booking-options" class="booking-options">
+                                </div>
+
                                 <form id="final-reservation-form" th:action="@{/reserve}" th:object="${reservationRequest}" method="post">
                                     <input type="hidden" name="modelName">
                                     <input type="hidden" name="startDate">
@@ -88,33 +91,46 @@
                                     <input type="hidden" name="returnTime">
 
                                     <div class="form-section">
+
                                         <div class="form-row">
                                             <div class="form-group">
                                                 <label for="lastName">성 (Last Name, 영문)</label>
-                                                <input type="text" id="lastName" name="lastName" required class="form-input">
+                                                <input type="text" id="lastName" name="lastName" required class="form-input" maxlength="50">
+                                                <span class="validation-message" id="lastName-error"></span>
                                             </div>
                                             <div class="form-group">
                                                 <label for="firstName">이름 (First Name, 영문)</label>
-                                                <input type="text" id="firstName" name="firstName" required class="form-input">
+                                                <input type="text" id="firstName" name="firstName" required class="form-input" maxlength="50">
+                                                <span class="validation-message" id="firstName-error"></span>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="email">이메일</label>
-                                            <input type="email" id="email" name="email" required class="form-input">
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="email">이메일</label>
+                                                <input type="email" id="email" name="email" required class="form-input" maxlength="100">
+                                                <span class="validation-message" id="email-error"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="phone">연락처</label>
+                                                <input type="tel" id="phone" required class="form-input">
+                                                <input type="hidden" th:field="*{phone}">
+                                                <span class="validation-message" id="phone-error"></span>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="phone">연락처</label>
-                                            <!-- 라이브러리가 적용될 실제 입력 필드. name 속성을 제거하거나 임시 이름으로 둡니다. -->
-                                            <input type="tel" id="phone" required class="form-input">
-                                            <!-- 서버로 실제 국제전화번호 전체를 전송할 숨겨진 필드 -->
-                                            <input type="hidden" th:field="*{phone}">
-                                        </div>
+
                                         <div class="form-group">
                                             <label for="passportNumber">여권 번호</label>
-                                            <input type="text" id="passportNumber" name="passportNumber" required class="form-input">
+                                            <input type="text" id="passportNumber" name="passportNumber" required class="form-input" maxlength="20">
+                                            <span class="validation-message" id="passportNumber-error"></span>
                                         </div>
+
                                     </div>
-                                    <button type="submit" id="reserve-btn" class="button button--primary reserve-btn" disabled>예약하기</button>
+
+                                    <button type="submit" id="reserve-btn" class="button button--primary reserve-btn" disabled>
+                                        예약하기
+                                    </button>
+
                                 </form>
                             </div>
                         </div>
