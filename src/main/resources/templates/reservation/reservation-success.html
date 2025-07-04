@@ -1,3 +1,4 @@
+<!-- 파일 위치: templates/reservation/reservation-success.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
     <head>
@@ -6,147 +7,44 @@
         <title>예약 완료 - 라오스 전기 오토바이 렌트</title>
 
         <link rel="stylesheet" th:href="@{/css/common.css}">
+        <link rel="stylesheet" th:href="@{/css/page/reservation/reservation-success.css}">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-        
-        <style>
-            .success-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-height: 70vh;
-                text-align: center;
-                padding: 2rem;
-            }
-            
-            .success-icon {
-                width: 80px;
-                height: 80px;
-                background: linear-gradient(135deg, #28a745, #20c997);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 2rem;
-                font-size: 2.5rem;
-                color: white;
-            }
-            
-            .success-title {
-                font-size: 2.5rem;
-                font-family: var(--heading-font);
-                color: var(--dark-color);
-                margin-bottom: 1rem;
-            }
-            
-            .success-message {
-                font-size: 1.2rem;
-                color: var(--secondary-color);
-                margin-bottom: 2rem;
-                max-width: 600px;
-            }
-            
-            .reservation-details {
-                background: #f8f9fa;
-                border-radius: 8px;
-                padding: 2rem;
-                margin-bottom: 2rem;
-                max-width: 500px;
-                width: 100%;
-            }
-            
-            .reservation-details h3 {
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-            }
-            
-            .detail-item {
-                padding: 0.5rem 0;
-                border-bottom: 1px solid #ddd;
-            }
-            
-            .detail-item:last-child {
-                border-bottom: none;
-            }
-            
-            .actions {
-                display: flex;
-                gap: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .next-steps {
-                background: #e7f3ff;
-                border: 1px solid #b3d9ff;
-                border-radius: 8px;
-                padding: 2rem;
-                margin-top: 2rem;
-                max-width: 600px;
-                text-align: left;
-            }
-            
-            .next-steps h4 {
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-            }
-            
-            .next-steps ol {
-                padding-left: 1.5rem;
-            }
-            
-            .next-steps li {
-                margin-bottom: 0.5rem;
-            }
-            
-            @media (max-width: 768px) {
-                .success-title {
-                    font-size: 2rem;
-                }
-                
-                .actions {
-                    flex-direction: column;
-                    align-items: center;
-                }
-                
-                .actions .button {
-                    width: 100%;
-                    max-width: 300px;
-                }
-            }
-        </style>
     </head>
     <body>
+        <div th:replace="~{fragments/header :: headerFragment}"></div>
 
-    <div th:replace="~{fragments/header :: headerFragment}"></div>
-
-    <main class="main">
-        <div class="container">
+        <main class="main container">
             <div class="success-container">
-                <!-- 성공 아이콘 -->
-                <div class="success-icon">
-                    ✓
-                </div>
-                
-                <!-- 성공 메시지 -->
-                <h1 class="success-title">예약이 완료되었습니다!</h1>
-                
-                <p class="success-message" th:text="${successMessage}">
+                <div class="success-icon">✓</div>
+                <h1 class="success-title">예약 접수 완료!</h1>
+                <p class="success-message" th:if="${successMessage}" th:text="${successMessage}">
                     예약이 성공적으로 접수되었습니다! 곧 확인 이메일을 받으실 수 있습니다.
                 </p>
-                
-                <!-- 예약 정보 -->
-                <div class="reservation-details" th:if="${reservationInfo}">
-                    <h3>예약 정보</h3>
-                    <div class="detail-item" th:text="${reservationInfo}">
-                        E-Bike Alpha | 2025-07-03 10:00 | 4시간
+
+                <!-- 상세 예약 정보 표시 -->
+                <div class="reservation-details" th:if="${reservedModel}">
+                    <h3>예약 정보 요약</h3>
+                    <div class="detail-item">
+                        <strong>예약자</strong>
+                        <span th:text="${reservedCustomer}">홍길동</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>모델</strong>
+                        <span th:text="${reservedModel}">E-Bike Alpha</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>대여 기간</strong>
+                        <span th:text="${reservedPeriod}">2025-07-10 ~ 2025-07-12</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>픽업 예정 시간</strong>
+                        <span th:text="${reservedPickupTime}">09:00</span>
                     </div>
                 </div>
-                
-                <!-- 다음 단계 안내 -->
+
                 <div class="next-steps">
                     <h4>📝 다음 단계</h4>
                     <ol>
@@ -156,17 +54,14 @@
                         <li><strong>현장 결제:</strong> 라오스 킵(LAK) 또는 달러($)로 결제 가능합니다.</li>
                     </ol>
                 </div>
-                
-                <!-- 액션 버튼들 -->
+
                 <div class="actions">
                     <a href="/" class="button button--primary">메인 페이지로</a>
                     <a href="/reserve" class="button button--secondary">추가 예약하기</a>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <div th:replace="~{fragments/footer :: footerFragment}"></div>
-
+        <div th:replace="~{fragments/footer :: footerFragment}"></div>
     </body>
-</html> 
+</html>

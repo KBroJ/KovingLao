@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (value === '') message = '필수 입력 항목입니다.';
                 else if (!iti.isValidNumber()) {
                     const errorCode = iti.getValidationError();
-                    const errorMap = { 1: "잘못된 국가 코드", 2: "번호가 너무 짧음", 3: "번호가 너무 김", 4: "유효하지 않은 번호" };
+                    const errorMap = { 1: "잘못된 국가 코드", 2: "입력 번호가 너무 짧습니다.", 3: "입력 번호가 너무 깁니다.", 4: "유효하지 않은 번호" };
                     message = errorMap[errorCode] || '유효하지 않은 번호';
                 }
                 break;
