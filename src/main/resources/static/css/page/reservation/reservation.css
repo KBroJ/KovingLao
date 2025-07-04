@@ -1,0 +1,217 @@
+
+/* --- 전체 레이아웃 --- */
+.reservation-container {
+    max-width: 1400px; /* 기본 컨테이너(1120px)보다 훨씬 넓게 설정 */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem; /* 좌우 여백 */
+}
+
+.reservation-page-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr; /* 왼쪽 패널 너비 고정 */
+    gap: 2.5rem;
+    padding: 2rem 0;
+}
+
+/* --- 왼쪽 선택 패널 --- */
+.selection-panel {
+    position: sticky;
+    top: 6rem; /* 헤더 높이(4rem) + 여유공간(2rem) */
+    align-self: start;
+    height: calc(100vh - 8rem); /* 화면 높이에 맞춰 스크롤 가능하도록 */
+    overflow-y: auto;
+    padding-right: 1.5rem; /* 스크롤바 공간 */
+}
+.selection-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #fff;
+}
+.selection-box h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+/* 달력 UI 개선 */
+.calendar-wrapper .flatpickr-calendar {
+    width: 100%;
+    box-shadow: none;
+}
+#booking-calendar {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    border: 0;
+}
+.flatpickr-input {
+    display: none;
+}
+
+/* 모델 목록 */
+.model-list-container .placeholder {
+    color: var(--secondary-color);
+    text-align: center;
+    padding: 2rem 0;
+}
+.model-list-container .model-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 0.5rem;
+}
+.model-list-container .model-card:hover {
+    background-color: #f8f9fa;
+}
+.model-list-container .model-card.selected {
+    border-color: var(--primary-color);
+    background-color: #f0f8ff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+}
+.model-list-container .model-img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+.model-info h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+.model-info p { font-size: 0.9rem; color: var(--primary-color); font-weight: bold; }
+
+/* --- 오른쪽 상세 정보 패널 --- */
+.detail-panel {
+    min-width: 0; /* 내용이 부모 너비를 넘어가지 않도록 설정 */
+}
+.detail-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    color: var(--secondary-color);
+}
+.placeholder-content { text-align: center; }
+.placeholder-content svg { margin-bottom: 1rem; stroke: #ccc; }
+.placeholder-content h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+.product-title { font-size: 2.2rem; margin-bottom: 1.5rem; }
+.product-image-swiper {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* 사진 비율 설정 */
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+}
+.product-image-swiper .swiper-pagination-bullet-active {
+    background-color: var(--primary-color);
+}
+.product-image-swiper .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 탭 메뉴 */
+.product-info-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 1.5rem; }
+.tab-link {
+    padding: 1rem 0;
+    margin-right: 2rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    border-bottom: 3px solid transparent;
+}
+.tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.tab-content { display: none; line-height: 1.8; white-space: pre-wrap; padding-top: 1rem; }
+.tab-content.active { display: block; }
+
+/* 최종 예약 위젯 */
+.booking-widget { margin-top: 3rem; }
+.booking-widget-inner {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 2rem;
+    background-color: #fff;
+}
+.booking-widget h3 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+.booking-options {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+.booking-options p { margin: 0.5rem 0; }
+
+/* 폼 UI 개선 */
+.form-section { margin-top: 2rem; }
+.form-section h4 { font-size: 1.2rem; margin-bottom: 1rem; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.reserve-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+.reserve-btn:disabled {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* intl-tel-input 라이브러리 스타일 커스텀 */
+.iti {
+    width: 100%; /* 부모 요소의 너비를 100% 차지하도록 설정 */
+}
+
+/* 라이브러리가 생성하는 입력 필드도 기존 스타일과 통일 */
+.iti__tel-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* 왼쪽 국기 아이콘 크기만큼 왼쪽에 여백 추가 */
+    padding-left: 52px !important;
+}
+
+.iti__tel-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* 반응형 */
+@media (max-width: 992px) {
+    .reservation-page-layout { grid-template-columns: 1fr; }
+    .selection-panel { position: static; height: auto; overflow-y: visible; }
+}

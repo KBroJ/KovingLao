@@ -1,9 +1,10 @@
 package laoride.lao_ride.reservation.service;
 
 import laoride.lao_ride.product.domain.Product;
-import laoride.lao_ride.product.domain.Reservation;
+import laoride.lao_ride.reservation.domain.Reservation;
+import laoride.lao_ride.product.repository.ProductPriceRepository;
 import laoride.lao_ride.product.repository.ProductRepository;
-import laoride.lao_ride.product.repository.ReservationRepository;
+import laoride.lao_ride.reservation.repository.ReservationRepository;
 import laoride.lao_ride.reservation.dto.ReservationRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 @Service
@@ -31,16 +33,21 @@ public class ReservationService {
         long days = ChronoUnit.DAYS.between(LocalDate.parse(dto.getStartDate()), LocalDate.parse(dto.getEndDate())) + 1;
         BigDecimal price = calculatePrice(product.getId(), days);
 
+        // 성과 이름을 조합하여 전체 이름 생성
+        String fullName = dto.getLastName() + " " + dto.getFirstName();
+
         // 예약 엔티티 생성 및 저장
         Reservation reservation = Reservation.builder()
                 .product(product)
-                .customerName(dto.getCustomerName())
+                .customerName(fullName)
                 .customerEmail(dto.getEmail())
                 .customerPhone(dto.getPhone())
                 .startDate(LocalDate.parse(dto.getStartDate()))
                 .endDate(LocalDate.parse(dto.getEndDate()))
+                .pickupTime(LocalTime.parse(dto.getPickupTime()))
+                .returnTime(LocalTime.parse(dto.getReturnTime()))
                 .totalPrice(price)
-                .status("PENDING") // 초기 상태는 '확정 대기'
+                .status("PENDING")
                 .build();
 
         return reservationRepository.save(reservation);

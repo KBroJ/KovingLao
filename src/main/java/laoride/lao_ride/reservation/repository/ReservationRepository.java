@@ -1,6 +1,6 @@
-package laoride.lao_ride.product.repository;
+package laoride.lao_ride.reservation.repository;
 
-import laoride.lao_ride.product.domain.Reservation;
+import laoride.lao_ride.reservation.domain.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +15,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "WHERE r.status IN ('PENDING', 'CONFIRMED') " +
             "AND r.endDate >= :startDate AND r.startDate <= :endDate")
     List<Long> findUnavailableProductIds(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT count(r) FROM Reservation r " +
+            "WHERE r.product.id = :productId " +
+            "AND :date BETWEEN r.startDate AND r.endDate")
+    long countByProductIdAndDate(@Param("productId") Long productId, @Param("date") LocalDate date);
 
 }

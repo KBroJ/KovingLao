@@ -1,8 +1,9 @@
-package laoride.lao_ride.product.domain;
+package laoride.lao_ride.reservation.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import laoride.lao_ride.global.entity.BaseTimeEntity;
+import laoride.lao_ride.product.domain.Product;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -40,6 +42,12 @@ public class Reservation extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDate endDate;
 
+    @Column(nullable = false)
+    private LocalTime pickupTime;
+
+    @Column(nullable = false)
+    private LocalTime returnTime;
+
     @Column(nullable = false, precision = 10, scale = 2) // 금액을 다룰 때는 BigDecimal
     private BigDecimal totalPrice;
 
@@ -47,13 +55,19 @@ public class Reservation extends BaseTimeEntity {
     private String status; // 향후 Enum 타입으로 변경하는 것을 추천
 
     @Builder
-    public Reservation(Product product, String customerName, String customerEmail, String customerPhone, LocalDate startDate, LocalDate endDate, BigDecimal totalPrice, String status) {
+    public Reservation(
+            Product product, String customerName, String customerEmail, String customerPhone,
+            LocalDate startDate, LocalDate endDate, LocalTime pickupTime, LocalTime returnTime,
+            BigDecimal totalPrice, String status
+    ) {
         this.product = product;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.customerPhone = customerPhone;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.pickupTime = pickupTime;
+        this.returnTime = returnTime;
         this.totalPrice = totalPrice;
         this.status = status;
     }

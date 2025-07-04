@@ -16,4 +16,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 상품 이름으로 상품을 조회하는 메서드
     Optional<Product> findByName(String name);
 
+    long countByName(String name);
+
 }

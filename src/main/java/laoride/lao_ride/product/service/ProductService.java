@@ -1,13 +1,19 @@
 package laoride.lao_ride.product.service;
 
+import laoride.lao_ride.content.domain.ContentImage;
+import laoride.lao_ride.content.repository.ContentImageRepository;
 import laoride.lao_ride.product.domain.Product;
+import laoride.lao_ride.product.dto.ProductAvailabilityDto;
+import laoride.lao_ride.product.dto.ProductDetailDto;
 import laoride.lao_ride.product.dto.ProductGroupDto;
+import laoride.lao_ride.product.repository.ProductPriceRepository;
 import laoride.lao_ride.product.repository.ProductRepository;
-import laoride.lao_ride.product.repository.ReservationRepository;
+import laoride.lao_ride.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +25,8 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ReservationRepository reservationRepository;
+    private final ProductPriceRepository productPriceRepository;
+    private final ContentImageRepository contentImageRepository;
 
     // 특정 기간에 예약이 잡혀있지 않은 상품들을 모델별로 그룹화하여 반환
     public List<ProductGroupDto> findAvailableProducts(LocalDate startDate, LocalDate endDate) {
@@ -35,20 +43,60 @@ public class ProductService {
             availableProducts = productRepository.findByStatusAndIdNotIn("ACTIVE", unavailableProductIds);
         }
 
-        // 3. 상품들을 모델별로 그룹화하고 DTO로 변환하여 반환
+        // 상품들을 모델별로 그룹화할 때, 대표 ID도 함께 찾아서 DTO에 담아줍니다.
         return availableProducts.stream()
-                .collect(Collectors.groupingBy(Product::getName, Collectors.counting()))
+                .collect(Collectors.groupingBy(Product::getName))
                 .entrySet().stream()
                 .map(entry -> {
                     String modelName = entry.getKey();
-                    long count = entry.getValue();
-                    String imageUrl = availableProducts.stream()
-                            .filter(p -> p.getName().equals(modelName))
-                            .findFirst().map(Product::getImageUrl)
-                            .orElse("/images/product/default-bike.png");
-                    return new ProductGroupDto(modelName, imageUrl, count);
+                    List<Product> productsInGroup = entry.getValue();
+                    long count = productsInGroup.size();
+
+                    // 그룹의 대표 상품 정보 (첫 번째 상품 기준)
+                    Product representative = productsInGroup.get(0);
+
+                    return new ProductGroupDto(
+                            representative.getId(), // [수정] ID 추가
+                            modelName,
+                            representative.getImageUrl(),
+                            count
+                    );
                 })
                 .collect(Collectors.toList());
+    }
+
+    // 상품 상세 페이지용: 특정 상품의 모든 상세 정보 조회
+    public ProductDetailDto findProductDetailsById(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+
+        // 상품 이미지 그룹 키 생성 (예: PRODUCT_1_IMAGES)
+        String imageGroupKey = "PRODUCT_" + productId + "_IMAGES";
+        List<ContentImage> images = contentImageRepository.findByContentGroup_GroupKeyOrderByDisplayOrderAsc(imageGroupKey);
+
+        return ProductDetailDto.from(product, images);
+    }
+
+    // 상품 상세 페이지용: 특정 상품의 특정 날짜 재고 및 가격 조회
+    public ProductAvailabilityDto findProductAvailability(Long productId, LocalDate date) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다: " + productId));
+
+        // 1. 총 재고 수량 계산 (이름이 같은 모든 상품의 수)
+        long totalStock = productRepository.countByName(product.getName());
+
+        // 2. 해당 날짜에 예약된 수량 계산
+        long reservedCount = reservationRepository.countByProductIdAndDate(productId, date);
+
+        // 3. 이용 가능 수량 계산
+        long availableCount = totalStock - reservedCount;
+
+        // 4. 가격 조회
+        BigDecimal price = productPriceRepository.findFirstByProductIdOrderByEffectiveDateDesc(productId)
+                .map(p -> p.getDailyRate())
+                .orElse(BigDecimal.ZERO);
+
+        return new ProductAvailabilityDto(availableCount, price);
     }
 
 }

@@ -1,19 +1,16 @@
 package laoride.lao_ride.product.controller;
 
+import laoride.lao_ride.product.dto.ProductAvailabilityDto;
+import laoride.lao_ride.product.dto.ProductDetailDto;
 import laoride.lao_ride.product.dto.ProductSummaryDto;
 import laoride.lao_ride.product.dto.ProductGroupDto;
 import laoride.lao_ride.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products") // 이 컨트롤러의 모든 API는 /api/bikes 로 시작
@@ -29,5 +26,21 @@ public class ProductApiController {
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         return productService.findAvailableProducts(startDate, endDate);
+    }
+
+    // 상품 상세 정보 API
+    @GetMapping("/{productId}")
+    public ProductDetailDto getProductDetails(
+            @PathVariable("productId") Long productId
+    ) {
+        return productService.findProductDetailsById(productId);
+    }
+
+    // 특정 날짜의 재고/가격 조회 API
+    @GetMapping("/{productId}/availability")
+    public ProductAvailabilityDto getProductAvailability(
+            @PathVariable("productId") Long productId,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return productService.findProductAvailability(productId, date);
     }
 }
