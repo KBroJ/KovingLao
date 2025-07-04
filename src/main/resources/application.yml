@@ -1,14 +1,16 @@
 spring:
   datasource:
     # Docker Compose 서비스 이름 'db'를 사용하도록 변경
-#    url: jdbc:mysql://db:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
-#    username: root # docker-compose.yml의 MYSQL_USER 또는 MYSQL_ROOT_PASSWORD와 일치
-#    password: 1234 # docker-compose.yml의 MYSQL_PASSWORD 또는 MYSQL_ROOT_PASSWORD와 일치
+#    로컬에서 실행 중인 Spring Boot 애플리케이션이 Docker 컨테이너로 실행 중인 MySQL 데이터베이스에 접속하려면, 호스트 이름을 db가 아닌 localhost 또는 **127.0.0.1**로 변경해야 합니다.
+#    url: jdbc:mysql://db:3306/lao_ride?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/lao_ride?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
 
     # 윈비트 회사 서버 연결
-    url: jdbc:mysql://10.1.2.171:3306/lao_ride
-    username: root
-    password: 1qaz2wsx!@
+#    url: jdbc:mysql://10.1.2.171:3306/lao_ride
+#    username: root
+#    password: 1qaz2wsx!@
 
     driver-class-name: com.mysql.cj.jdbc.Driver
 

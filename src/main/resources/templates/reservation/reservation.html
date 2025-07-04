@@ -90,8 +90,48 @@
                                     <input type="hidden" name="pickupTime">
                                     <input type="hidden" name="returnTime">
 
+                                    <!-- 대여 및 반납 시간 선택 섹션 -->
                                     <div class="form-section">
+                                        <h4>대여 및 반납 시간</h4>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="pickupTime">대여 예정 시간</label>
+                                                <select id="pickupTime" required class="form-input">
+                                                    <option value="">선택</option>
+                                                    <option value="09:00">09:00</option>
+                                                    <option value="10:00">10:00</option>
+                                                    <option value="11:00">11:00</option>
+                                                    <option value="12:00">12:00</option>
+                                                    <option value="13:00">13:00</option>
+                                                    <option value="14:00">14:00</option>
+                                                    <option value="15:00">15:00</option>
+                                                    <option value="16:00">16:00</option>
+                                                    <option value="17:00">17:00</option>
+                                                </select>
+                                                <span class="validation-message" id="pickupTime-error"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="returnTime">반납 예정 시간</label>
+                                                <select id="returnTime" required class="form-input">
+                                                    <option value="">선택</option>
+                                                    <option value="09:00">09:00</option>
+                                                    <option value="10:00">10:00</option>
+                                                    <option value="11:00">11:00</option>
+                                                    <option value="12:00">12:00</option>
+                                                    <option value="13:00">13:00</option>
+                                                    <option value="14:00">14:00</option>
+                                                    <option value="15:00">15:00</option>
+                                                    <option value="16:00">16:00</option>
+                                                    <option value="17:00">17:00</option>
+                                                    <option value="18:00">18:00</option>
+                                                </select>
+                                                <span class="validation-message" id="returnTime-error"></span>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div class="form-section">
+                                        <h4>예약자 정보</h4>
                                         <div class="form-row">
                                             <div class="form-group">
                                                 <label for="lastName">성 (Last Name, 영문)</label>

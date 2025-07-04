@@ -48,9 +48,11 @@ public class ReservationController {
             RedirectAttributes redirectAttributes
     ) {
         try {
+
             reservationService.createReservation(reservationRequest);
             redirectAttributes.addFlashAttribute("successMessage", "예약이 성공적으로 접수되었습니다!");
             return "redirect:/reservation-success";
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "예약 처리 중 오류가 발생했습니다: " + e.getMessage());
             // 올바른 리다이렉트 경로로 변경

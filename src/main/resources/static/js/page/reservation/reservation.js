@@ -77,13 +77,25 @@ document.addEventListener('DOMContentLoaded', function() {
             validateField(input);
             validateForm();
         });
+
         input.addEventListener('input', () => {
+            // 실시간 입력값 필터링
+            if (input.id === 'lastName' || input.id === 'firstName') {
+                input.value = input.value.replace(/[^A-Za-z\s]/g, '');
+            } else if (input.id === 'passportNumber') {
+                input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            } else if (input.id === 'phone') {
+                // 숫자와 하이픈(-)만 입력되도록 허용
+                input.value = input.value.replace(/[^\d-]/g, '');
+            }
+
             if (input.dataset.touched === 'true') {
                 validateField(input);
             }
             validateForm();
         });
     });
+
     phoneInput.addEventListener("countrychange", () => {
         if (phoneInput.dataset.touched === 'true') {
             validateField(phoneInput);
@@ -110,6 +122,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // --- 함수들 ---
+
+    /**
+     * API로 특정 기간에 이용 가능한 상품 목록을 가져와 왼쪽 패널에 렌더링합니다.
+     */
     async function fetchAndRenderModels(startDate, endDate) {
         try {
             const response = await fetch(`/api/products/available?startDate=${startDate}&endDate=${endDate}`);
@@ -134,6 +150,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * API로 특정 상품의 상세 정보를 가져와 오른쪽 패널에 렌더링합니다.
+     */
     async function fetchAndRenderProductDetails(productId) {
         try {
             detailPlaceholder.style.display = 'none';
@@ -160,6 +179,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * 상품 상세 정보 탭 메뉴의 내용을 채우고 이벤트를 바인딩합니다.
+     */
     function renderTabs(data) {
         document.getElementById('tab-content-desc').textContent = data.description;
         document.getElementById('tab-content-included').textContent = data.includedItems + '\n\n--- 불포함 사항 ---\n' + data.notIncludedItems;
@@ -175,6 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * 최종 예약 위젯의 내용을 선택된 정보로 업데이트합니다.
+     */
     function updateFinalBookingForm() {
         const dates = calendar.selectedDates;
         if (dates.length < 2 || !selectedProductId) return;
@@ -194,12 +219,18 @@ document.addEventListener('DOMContentLoaded', function() {
         reservationForm.querySelector('input[name="endDate"]').value = endDate;
     }
 
+    /**
+     * 오른쪽 상세 정보 패널을 숨기고 초기 안내 메시지를 보여줍니다.
+     */
     function hideDetailsAndForm() {
         productDetailsSection.style.display = 'none';
         finalBookingSection.style.display = 'none';
         detailPlaceholder.style.display = 'flex';
     }
 
+    /**
+     * 개별 입력 필드의 유효성을 검사하고 에러 메시지를 표시/숨김 처리합니다.
+     */
     function validateField(input) {
         const errorElement = document.getElementById(`${input.id}-error`);
         let message = '';
@@ -242,17 +273,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function validateAllFields() {
-        return Array.from(formInputsForValidation).every(input => validateField(input));
-    }
-
+    /**
+     * 전체 폼의 유효성을 판단하여 예약 버튼의 활성화 상태를 결정합니다.
+     */
     function validateForm() {
         const isFormValid = Array.from(formInputsForValidation).every(input => {
+            if (input.id === 'phone') {
+                return iti.isValidNumber();
+            }
             return input.value.trim() !== '' && !input.classList.contains('invalid');
         });
         reserveBtn.disabled = !isFormValid;
     }
 
+    /**
+     * Date 객체를 'YYYY-MM-DD' 형식의 문자열로 변환합니다.
+     */
     function formatDate(date) {
         const d = new Date(date);
         const year = d.getFullYear();
