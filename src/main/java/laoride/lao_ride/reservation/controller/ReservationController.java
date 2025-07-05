@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @Controller
@@ -65,14 +66,20 @@ public class ReservationController {
             // 서비스 호출 후, 저장된 Reservation 객체를 받아옵니다.
             Reservation savedReservation = reservationService.createReservation(reservationRequest);
 
+            // 대여일수 계산
+            long rentalDays = ChronoUnit.DAYS.between(savedReservation.getStartDate(), savedReservation.getEndDate()) + 1;
+
             // 성공 메시지와 함께, 화면에 표시할 상세 정보들을 각각 담아줍니다.
             redirectAttributes.addFlashAttribute("successMessage", "예약 접수가 성공적으로 완료되었습니다. 확인 이메일을 곧 보내드리겠습니다.");
+            redirectAttributes.addFlashAttribute("reservedCode", savedReservation.getReservationCode());
+            redirectAttributes.addFlashAttribute("reservedCustomer", savedReservation.getCustomerName());
             redirectAttributes.addFlashAttribute("reservedModel", savedReservation.getProduct().getName());
             redirectAttributes.addFlashAttribute("reservedPeriod",
                     savedReservation.getStartDate().toString() + " ~ " + savedReservation.getEndDate().toString());
+            redirectAttributes.addFlashAttribute("rentalDays", rentalDays); // 계산된 대여일수
             redirectAttributes.addFlashAttribute("reservedPickupTime",
                     savedReservation.getPickupTime().format(DateTimeFormatter.ofPattern("HH:mm")));
-            redirectAttributes.addFlashAttribute("reservedCustomer", savedReservation.getCustomerName());
+            redirectAttributes.addFlashAttribute("totalPrice", savedReservation.getTotalPrice());
 
             return "redirect:/reservation-success";
 

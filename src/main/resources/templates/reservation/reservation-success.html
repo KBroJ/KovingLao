@@ -28,6 +28,10 @@
                 <div class="reservation-details" th:if="${reservedModel}">
                     <h3>예약 정보 요약</h3>
                     <div class="detail-item">
+                        <strong>예약번호</strong>
+                        <span th:text="${reservedCode}">LR-6AE86390</span>
+                    </div>
+                    <div class="detail-item">
                         <strong>예약자</strong>
                         <span th:text="${reservedCustomer}">홍길동</span>
                     </div>
@@ -37,11 +41,15 @@
                     </div>
                     <div class="detail-item">
                         <strong>대여 기간</strong>
-                        <span th:text="${reservedPeriod}">2025-07-10 ~ 2025-07-12</span>
+                        <span th:text="|${reservedPeriod} (${rentalDays}일)|">2025-07-10 ~ 2025-07-12 (3일)</span>
                     </div>
                     <div class="detail-item">
                         <strong>픽업 예정 시간</strong>
                         <span th:text="${reservedPickupTime}">09:00</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>결제 예정 금액</strong>
+                        <span th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + ' LAK'">45,000 LAK</span>
                     </div>
                 </div>
 

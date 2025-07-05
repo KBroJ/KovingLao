@@ -127,12 +127,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="status-badge status-${statusClass}">${statusKorean}</span>
                 </div>
                 <div class="result-body">
-                    <div class="detail-item"><strong>예약 번호</strong><span>${data.reservationCode}</span></div>
-                    <div class="detail-item"><strong>예약자명</strong><span>${data.customerName}</span></div>
-                    <div class="detail-item"><strong>예약 모델</strong><span>${data.productName}</span></div>
-                    <div class="detail-item"><strong>대여 기간</strong><span>${data.startDate} ~ ${data.endDate} (${rentalDays}일)</span></div>
-                    <div class="detail-item"><strong>픽업/반납 시간</strong><span>${data.pickupTime} / ${data.returnTime}</span></div>
-                    <div class="detail-item"><strong>총 금액</strong><span>${data.totalPrice.toLocaleString()} LAK</span></div>
+                    <div class="detail-item">
+                        <strong>예약 번호</strong>
+                        <span>${data.reservationCode}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>예약자명</strong>
+                        <span>${data.customerName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>예약 모델</strong>
+                        <span>${data.productName}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>대여 기간</strong>
+                        <span>${data.startDate} ~ ${data.endDate} (${rentalDays}일)</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>픽업/반납 시간</strong>
+                        <span>${data.pickupTime} / ${data.returnTime}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>금액</strong>
+                        <span>${data.totalPrice.toLocaleString()} LAK</span>
+                    </div>
                 </div>
             </div>`;
         resultDetails.style.display = 'block';
