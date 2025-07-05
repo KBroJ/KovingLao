@@ -1,9 +1,12 @@
+
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
 /* CSS Variables */
 :root {
     --primary-color: #007bff;
+    --primary-color-dark: #0056b3;
+    --primary-color-light: #e7f3ff;
     --secondary-color: #6c757d;
     --dark-color: #343a40;
     --light-color: #f8f9fa;
@@ -13,48 +16,23 @@
 }
 
 /* Basic Reset */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
     font-family: var(--body-font);
     line-height: 1.6;
     color: var(--dark-color);
 }
-
-a {
-    text-decoration: none;
-    color: var(--primary-color);
-}
-
-ul {
-    list-style: none;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
+a { text-decoration: none; color: var(--primary-color); }
+ul { list-style: none; }
+img { max-width: 100%; height: auto; display: block; }
 .container {
     max-width: var(--container-width);
     margin-left: auto;
     margin-right: auto;
     padding: 0 1rem;
 }
-
-.section {
-    padding: 4rem 0;
-}
-
+.section { padding: 4rem 0; }
 .section__title {
     font-size: 2rem;
     font-family: var(--heading-font);
@@ -62,37 +40,41 @@ img {
     margin-bottom: 2rem;
 }
 
-/* Button Styles */
+/* --- Button Styles --- */
 .button {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    border-radius: 5px;
+    border-radius: 8px;
     font-weight: bold;
     text-align: center;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease-in-out;
     cursor: pointer;
+    border: 2px solid transparent;
 }
 
+/* Primary Button (예약하기) - 기존 스타일로 복원 */
 .button--primary {
     background-color: var(--primary-color);
+    border-color: var(--primary-color);
     color: #fff;
-    border: none;
 }
 .button--primary:hover {
-    background-color: #0056b3;
+    background-color: var(--primary-color-dark);
+    border-color: var(--primary-color-dark);
 }
+
+/* Secondary Button (예약 내역 조회) - 차별화된 스타일 유지 */
 .button--secondary {
     background-color: transparent;
+    border-color: var(--primary-color);
     color: var(--primary-color);
-    border: 1px solid var(--primary-color);
 }
 .button--secondary:hover {
-    background-color: var(--primary-color);
-    color: #fff;
+    background-color: var(--primary-color-light);
+    color: var(--primary-color-dark);
 }
 
-
-/* Header & Nav */
+/* --- Header & Nav --- */
 .header {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -114,38 +96,36 @@ img {
 .nav__list {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 .nav__link {
     font-weight: bold;
     color: var(--secondary-color);
+    padding: 0.5rem;
 }
-.nav__link.button {
+/* 버튼이 아닌 일반 링크에만 hover 효과 적용 */
+.nav__link:not(.button):hover {
+    color: var(--dark-color);
+}
+/* 버튼 스타일이 nav__link 스타일을 덮어쓰도록 보장 */
+.nav .button--primary {
     color: #fff;
+}
+.nav .button--secondary {
+    color: var(--primary-color);
 }
 .language-switcher a {
     font-size: 1rem;
 }
 
-/* Footer */
+/* --- Footer --- */
 .footer {
     background-color: var(--dark-color);
     color: var(--light-color);
     padding: 2rem 0;
     text-align: center;
 }
-.footer__container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-.footer a {
-    color: #fff;
-}
-.footer__info p {
-    margin: 0.25rem 0;
-    color: #ccc;
-}
-.footer__info p strong {
-    color: #fff;
-}
+.footer__container { display: flex; flex-direction: column; gap: 1rem; }
+.footer a { color: #fff; }
+.footer__info p { margin: 0.25rem 0; color: #ccc; }
+.footer__info p strong { color: #fff; }

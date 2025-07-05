@@ -1,0 +1,157 @@
+/* 파일 위치: static/css/page/reservation/check-reservation.css */
+
+.check-reservation-container {
+    max-width: 600px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.check-reservation-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+.check-reservation-header h1 {
+    font-size: 2.2rem;
+    font-family: var(--heading-font);
+    margin-bottom: 0.5rem;
+}
+.check-reservation-header p {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+}
+
+.lookup-wrapper {
+    background-color: #fff;
+    padding: 3rem;
+    border-radius: 16px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+}
+
+#check-reservation-form .form-group {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.2rem;
+    position: relative;
+}
+#check-reservation-form .form-group label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.75rem;
+}
+
+.form-input {
+    font-size: 1.1rem;
+    padding: 1rem;
+    border: 1px solid #ced4da;
+    width: 100%;
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.validation-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    display: none;
+}
+.validation-message.visible {
+    display: block;
+}
+
+.form-input.invalid {
+    border-color: #dc3545;
+}
+.form-input.invalid:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+#check-reservation-form .button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* [수정] 결과 컨테이너에 최소 높이 지정 */
+.lookup-result-container {
+    min-height: 200px; /* 결과가 없을 때도 최소한의 높이를 유지하여 점프 방지 */
+    margin-top: 2rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.error-box {
+    background-color: #fff3f3;
+    color: #c51f1f;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    display: none;
+    animation: fade-in 0.3s;
+}
+
+#reservation-result-details {
+    animation: fade-in 0.5s ease-out;
+}
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.reservation-result-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--light-color);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+.result-header h3 { margin: 0; font-size: 1.2rem; color: var(--dark-color); }
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+}
+.status-badge.status-confirmed { background-color: #28a745; }
+.status-badge.status-pending { background-color: #ffc107; color: var(--dark-color); }
+.status-badge.status-canceled { background-color: #dc3545; }
+.status-badge.status-completed { background-color: var(--secondary-color); }
+.result-body { padding: 0.5rem 1.5rem; }
+.result-body .detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.result-body .detail-item:last-child { border-bottom: none; }
+.result-body .detail-item strong { color: var(--secondary-color); font-weight: 500; }

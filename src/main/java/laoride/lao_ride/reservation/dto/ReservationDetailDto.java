@@ -3,6 +3,7 @@ package laoride.lao_ride.reservation.dto;
 import laoride.lao_ride.reservation.domain.Reservation;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -17,6 +18,7 @@ public class ReservationDetailDto {
     private final LocalTime pickupTime;
     private final LocalTime returnTime;
     private final String status;
+    private final BigDecimal totalPrice;
 
     // Reservation 엔티티를 받아서 필요한 데이터만 뽑아 DTO를 생성하는 생성자
     public ReservationDetailDto(Reservation reservation) {
@@ -28,6 +30,7 @@ public class ReservationDetailDto {
         this.pickupTime = reservation.getPickupTime();
         this.returnTime = reservation.getReturnTime();
         this.status = reservation.getStatus();
+        this.totalPrice = reservation.getTotalPrice();
     }
 
 }

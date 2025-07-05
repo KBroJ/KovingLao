@@ -1,36 +1,59 @@
+<!-- 파일 위치: templates/reservation/check-reservation.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>예약 조회</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>예약 조회 - 라오스 전기 오토바이 렌트</title>
         <link rel="stylesheet" th:href="@{/css/common.css}">
-        <link rel="stylesheet" th:href="@{/css/page/reservation/reservation.css}">
+        <link rel="stylesheet" th:href="@{/css/page/reservation/check-reservation.css}">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     </head>
+
     <body>
         <div th:replace="~{fragments/header :: headerFragment}"></div>
 
-        <main class="main container">
-            <div class="reservation-header">
-                <h1>비회원 예약 조회</h1>
-                <p>예약 번호와 예약 시 사용한 이메일을 입력해주세요.</p>
-            </div>
+        <main class="main">
+            <div class="check-reservation-container">
+                <div class="check-reservation-header">
+                    <h1>비회원 예약 조회</h1>
+                    <p>예약 번호와 예약 시 사용한 이메일을 입력해주세요.</p>
+                </div>
 
-            <div class="check-reservation-form-container">
-                <form id="check-reservation-form">
-                    <div class="form-group">
-                        <label for="reservationCode">예약 번호</label>
-                        <input type="text" id="reservationCode" class="form-input" required>
+                <!-- 폼과 결과 영역을 감싸는 컨테이너 추가 -->
+                <div class="lookup-wrapper">
+                    <div class="check-reservation-form-container">
+                        <form id="check-reservation-form" novalidate>
+                            <div class="form-group">
+                                <label for="reservationCode">예약 번호</label>
+                                <input type="text" id="reservationCode" class="form-input" required placeholder="예: LR-A4B1C8D2">
+                                <span class="validation-message" id="reservationCode-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerEmail">이메일 주소</label>
+                                <input type="email" id="customerEmail" class="form-input" required placeholder="example@email.com">
+                                <span class="validation-message" id="customerEmail-error"></span>
+                            </div>
+                            <button type="submit" class="button button--primary">
+                                <span class="btn-text">조회하기</span>
+                                <!-- 로딩 스피너 -->
+                                <div class="spinner" style="display: none;"></div>
+                            </button>
+                        </form>
+
+                        <!-- 결과와 에러를 담을 컨테이너 -->
+                        <div id="lookup-result-container" class="lookup-result-container">
+                            <div id="error-message-box" class="error-box"></div>
+                            <div id="reservation-result-details" style="display: none;"></div>
+                        </div>
+
                     </div>
-                    <div class="form-group">
-                        <label for="customerEmail">이메일 주소</label>
-                        <input type="email" id="customerEmail" class="form-input" required>
-                    </div>
-                    <button type="submit" class="button button--primary">조회하기</button>
-                </form>
+
+                </div>
             </div>
-
-            <!-- 조회 결과가 표시될 영역 -->
-            <div id="reservation-result-details" style="display: none;"></div>
-
         </main>
 
         <div th:replace="~{fragments/footer :: footerFragment}"></div>
