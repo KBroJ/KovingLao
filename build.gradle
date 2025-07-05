@@ -51,6 +51,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	// testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // starter-test에 포함되어 있어 보통 생략 가능
+
+	implementation 'org.apache.commons:commons-lang3:3.12.0' // 랜덤코드 생성을 위한 라이브러리(예약코드 생성)
 }
 
 tasks.named('test') {

@@ -94,4 +94,15 @@ public class ReservationController {
         return "reservation/reservation-success";
     }
 
+
+    /**
+     * 예약 조회 페이지를 보여주는 메서드
+     */
+    @GetMapping("/check-reservation")
+    public String checkReservationPage() {
+        return "reservation/check-reservation";
+    }
+
+
+
 }

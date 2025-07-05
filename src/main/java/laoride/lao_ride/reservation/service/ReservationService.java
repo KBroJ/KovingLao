@@ -4,10 +4,12 @@ import laoride.lao_ride.product.domain.Product;
 import laoride.lao_ride.reservation.domain.Reservation;
 import laoride.lao_ride.product.repository.ProductPriceRepository;
 import laoride.lao_ride.product.repository.ProductRepository;
+import laoride.lao_ride.reservation.dto.ReservationLookupDto;
 import laoride.lao_ride.reservation.repository.ReservationRepository;
 import laoride.lao_ride.reservation.dto.ReservationRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -45,8 +48,18 @@ public class ReservationService {
         long rentalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         BigDecimal totalPrice = calculatePrice(product.getId(), rentalDays);
 
+        // 사용자 친화적인 예약 코드 생성
+        // 예: "LR" + 8자리 영문 대문자/숫자 조합 -> "LR-A4B1C8D2"
+        String randomChars = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+        String reservationCode = "LR-" + randomChars;
+
+        log.info("Creating reservation| startDate : {}, endDate : {}, rentalDays : {}, totalPrice : {}, reservationCode : {}, ",
+                startDate, endDate, rentalDays, totalPrice, reservationCode
+        );
+
         // 3. 전달받은 모든 정보를 사용하여 Reservation 엔티티를 생성합니다.
         Reservation reservation = Reservation.builder()
+                .reservationCode(reservationCode)
                 .product(product)
                 .customerName(dto.getLastName() + " " + dto.getFirstName())
                 .customerEmail(dto.getEmail())
@@ -68,6 +81,21 @@ public class ReservationService {
         return savedReservation;
     }
 
+    // 예약내역조회
+    public Reservation findReservationByCodeAndEmail(ReservationLookupDto dto) {
+        // 1. 예약 코드로 예약을 찾는다.
+        Reservation reservation = reservationRepository.findByReservationCode(dto.getReservationCode())
+                .orElseThrow(() -> new IllegalArgumentException("해당 예약 번호를 찾을 수 없습니다."));
+
+        // 2. 찾은 예약의 이메일과 입력된 이메일이 일치하는지 확인한다. (보안 핵심)
+        if (!reservation.getCustomerEmail().equalsIgnoreCase(dto.getCustomerEmail())) {
+            throw new IllegalArgumentException("예약자 정보가 일치하지 않습니다.");
+        }
+
+        return reservation;
+    }
+
+
     /**
      * 상품 ID와 대여일수를 바탕으로 총 가격을 계산합니다.
      * @param productId 상품 ID
@@ -80,5 +108,7 @@ public class ReservationService {
                 .map(priceInfo -> priceInfo.getDailyRate().multiply(BigDecimal.valueOf(days)))
                 .orElse(BigDecimal.ZERO); // 가격 정보가 없으면 0을 반환
     }
+
+
 
 }

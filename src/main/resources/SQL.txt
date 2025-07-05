@@ -52,6 +52,7 @@ CREATE TABLE product_price (
 -- 4. 예약 테이블
 CREATE TABLE reservation (
     reservation_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드'
     product_id      BIGINT NOT NULL,
     customer_name   VARCHAR(255) NOT NULL,
     customer_email  VARCHAR(255) NOT NULL,
@@ -70,6 +71,8 @@ CREATE TABLE reservation (
 -- ALTER TABLE reservation
 -- ADD COLUMN pickup_time TIME NOT NULL AFTER end_date,
 -- ADD COLUMN return_time TIME NOT NULL AFTER pickup_time;
+-- ALTER TABLE reservation
+-- ADD COLUMN reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드' AFTER reservation_id;
 
 CREATE TABLE content_group (
     group_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -143,9 +146,9 @@ INSERT INTO product_price (product_id, daily_rate, deposit, effective_date) VALU
 (2, 20.00, 70.00, '2025-01-01');
 
 -- 4. 예약 데이터 (테스트용)
-INSERT INTO reservation (product_id, customer_name, customer_email, customer_phone, start_date, end_date, pickup_time, return_time, total_price, status) VALUES
-(1, 'John Doe', 'john.doe@example.com', '020-111-1111', '2025-07-20', '2025-07-22', '09:00:00', '18:00:00', 45.00, 'CONFIRMED'),
-(2, 'Jane Smith', 'jane.smith@example.com', '020-222-2222', '2025-07-21', '2025-07-25', '10:00:00', '17:00:00', 100.00, 'PENDING');
+INSERT INTO reservation (reservation_code, product_id, customer_name, customer_email, customer_phone, start_date, end_date, pickup_time, return_time, total_price, status) VALUES
+(UUID(), 1, 'John Doe', 'john.doe@example.com', '+12025550181', '2025-07-20', '2025-07-22', '09:00:00', '18:00:00', 45.00, 'CONFIRMED'),
+(UUID(), 2, 'Jane Smith', 'jane.smith@example.com', '+821012345678', '2025-07-21', '2025-07-25', '10:00:00', '17:00:00', 100.00, 'PENDING');
 
 -- 5. 콘텐츠 그룹 데이터
 select * from content_group;

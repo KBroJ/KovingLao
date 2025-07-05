@@ -23,6 +23,9 @@ public class Reservation extends BaseTimeEntity {
     @Column(name = "reservation_id")
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String reservationCode; // 고유 예약 코드(내역확인용)
+
     @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩으로 성능 최적화
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -56,10 +59,11 @@ public class Reservation extends BaseTimeEntity {
 
     @Builder
     public Reservation(
-            Product product, String customerName, String customerEmail, String customerPhone,
+            String reservationCode, Product product, String customerName, String customerEmail, String customerPhone,
             LocalDate startDate, LocalDate endDate, LocalTime pickupTime, LocalTime returnTime,
             BigDecimal totalPrice, String status
     ) {
+        this.reservationCode = reservationCode;
         this.product = product;
         this.customerName = customerName;
         this.customerEmail = customerEmail;

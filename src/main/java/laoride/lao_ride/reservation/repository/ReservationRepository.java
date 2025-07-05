@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
@@ -20,5 +21,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "WHERE r.product.id = :productId " +
             "AND :date BETWEEN r.startDate AND r.endDate")
     long countByProductIdAndDate(@Param("productId") Long productId, @Param("date") LocalDate date);
+
+    // 예약 코드로 예약을 조회
+    Optional<Reservation> findByReservationCode(String reservationCode);
 
 }
