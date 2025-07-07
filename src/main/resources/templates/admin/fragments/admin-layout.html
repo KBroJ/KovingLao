@@ -3,47 +3,50 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <title layout:title-pattern="$CONTENT_TITLE | Laos Moto Admin">Laos Moto Admin</title>
 
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-    <link rel="stylesheet" th:href="@{/css/page/admin/admin-layout.css}">
+    <head>
+        <meta charset="UTF-8">
+        <title layout:title-pattern="$CONTENT_TITLE | Laos Moto Admin">Laos Moto Admin</title>
 
-    <th:block layout:fragment="pageLinks"></th:block>
-</head>
-<body>
-<div class="admin-layout">
+        <link rel="stylesheet" th:href="@{/css/common.css}">
+        <link rel="stylesheet" th:href="@{/css/page/admin/admin-layout.css}">
 
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <a th:href="@{/admin/dashboard}" class="sidebar-logo">Laos Moto Admin</a>
+        <th:block layout:fragment="pageLinks"></th:block>
+    </head>
+    <body>
+        <div class="admin-layout">
+
+            <!--왼쪽 사이드바-->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <a th:href="@{/admin/dashboard}" class="sidebar-logo">Laos Moto Admin</a>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a th:href="@{/admin/dashboard}"><span class="icon">📊</span> 대시보드</a></li>
+                        <li><a th:href="@{/admin/reservations}"><span class="icon">📅</span> 예약 관리</a></li>
+                        <li><a th:href="@{/admin/products}"><span class="icon">🛵</span> 상품 관리</a></li>
+                        <li><a th:href="@{/admin/members}"><span class="icon">👥</span> 회원 관리</a></li>
+                    </ul>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <form th:action="@{/admin/logout}" method="post" style="width: 100%;" sec:authorize="isAuthenticated()">
+                        <button type="submit" class="logout-btn">로그아웃</button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- 오른쪽 본문 -->
+            <main class="main-content">
+                <header class="main-header">
+                    <h1 layout:fragment="pageH1">Page Title</h1>
+                </header>
+                <div class="content-wrapper">
+                    <th:block layout:fragment="pageContent"></th:block>
+                </div>
+            </main>
         </div>
-
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a th:href="@{/admin/dashboard}"><span class="icon">📊</span> 대시보드</a></li>
-                <li><a th:href="@{/admin/reservations}"><span class="icon">📅</span> 예약 관리</a></li>
-                <li><a th:href="@{/admin/products}"><span class="icon">🛵</span> 상품 관리</a></li>
-                <li><a th:href="@{/admin/members}"><span class="icon">👥</span> 회원 관리</a></li>
-            </ul>
-        </nav>
-
-        <div class="sidebar-footer">
-            <form th:action="@{/admin/logout}" method="post" style="width: 100%;" sec:authorize="isAuthenticated()">
-                <button type="submit" class="logout-btn">로그아웃</button>
-            </form>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <header class="main-header">
-            <h1 layout:fragment="pageH1">Page Title</h1>
-        </header>
-        <div class="content-wrapper">
-            <th:block layout:fragment="pageContent"></th:block>
-        </div>
-    </main>
-</div>
-</body>
+    </body>
 </html>
