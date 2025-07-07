@@ -1,25 +1,47 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title th:replace="~{${page} :: pageTitle}">레이아웃 타이틀</title>
+    <title layout:title-pattern="$CONTENT_TITLE | Laos Moto Admin">Laos Moto Admin</title>
 
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/page/admin/admin-layout.css}">
 
-    <th:block th:replace="~{${page} :: pageLinks}"></th:block>
+    <th:block layout:fragment="pageLinks"></th:block>
 </head>
 <body>
 <div class="admin-layout">
+
     <aside class="sidebar">
+        <div class="sidebar-header">
+            <a th:href="@{/admin/dashboard}" class="sidebar-logo">Laos Moto Admin</a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a th:href="@{/admin/dashboard}"><span class="icon">📊</span> 대시보드</a></li>
+                <li><a th:href="@{/admin/reservations}"><span class="icon">📅</span> 예약 관리</a></li>
+                <li><a th:href="@{/admin/products}"><span class="icon">🛵</span> 상품 관리</a></li>
+                <li><a th:href="@{/admin/members}"><span class="icon">👥</span> 회원 관리</a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form th:action="@{/admin/logout}" method="post" style="width: 100%;" sec:authorize="isAuthenticated()">
+                <button type="submit" class="logout-btn">로그아웃</button>
+            </form>
+        </div>
     </aside>
 
     <main class="main-content">
         <header class="main-header">
-            <h1 th:replace="~{${page} :: pageH1}">페이지 제목</h1>
+            <h1 layout:fragment="pageH1">Page Title</h1>
         </header>
         <div class="content-wrapper">
-            <th:block th:replace="~{${page} :: pageContent}"></th:block>
+            <th:block layout:fragment="pageContent"></th:block>
         </div>
     </main>
 </div>

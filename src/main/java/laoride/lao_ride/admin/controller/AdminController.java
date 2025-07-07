@@ -33,21 +33,13 @@ public class AdminController {
      * 로그인 성공 후 보여줄 관리자 대시보드(메인) 페이지입니다.
      */
     @GetMapping("/dashboard")
-    public ModelAndView dashboard() {
-        // ModelAndView를 사용하면 view 이름과 model 객체를 한번에 관리하기 편합니다.
-        ModelAndView mav = new ModelAndView();
+    public String dashboard(Model model) {
 
-        // 1. Model 데이터 추가
         DashboardSummaryDto summary = dashboardService.getDashboardSummary();
-        mav.addObject("summary", summary);
 
-        // 2. 콘텐츠 페이지 경로를 Model에 추가
-        mav.addObject("page", "admin/dashboard-content"); // 실제 콘텐츠 파일 경로
+        model.addAttribute("summary", summary);
 
-        // 3. 뷰 이름으로 레이아웃 파일 경로 지정
-        mav.setViewName("admin/fragments/admin-layout"); // 레이아웃을 직접 렌더링
-
-        return mav;
+        return "admin/dashboard"; // 콘텐츠 뷰 이름 반환
     }
 
     /**
@@ -57,7 +49,7 @@ public class AdminController {
     public String reservationListPage(Model model) {
         List<Reservation> reservations = reservationService.findAllReservations();
         model.addAttribute("reservations", reservations);
-        return "admin/reservations"; // templates/admin/reservations.html
+        return "admin/reservations";
     }
 
 }

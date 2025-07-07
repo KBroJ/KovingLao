@@ -1,53 +1,23 @@
 <!DOCTYPE html>
-<!-- [수정] admin-layout을 사용하도록 구조 변경 -->
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/fragments/admin-layout :: admin-layout(~{::title}, ~{::link}, ~{::section})}">
-    <head>
-        <title>예약 관리</title>
-        <!-- 이 페이지 전용 CSS 링크 -->
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/admin-layout}"> <head>
+    <title>예약 관리</title>
+    <th:block layout:fragment="pageLinks">
         <link rel="stylesheet" th:href="@{/css/page/admin/admin-reservations.css}">
-    </head>
-    <body>
-        <!-- 이 section 태그의 내용이 admin-layout의 content 블록으로 들어감 -->
-        <section>
-            <div class="table-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>예약번호</th>
-                        <th>예약자</th>
-                        <th>연락처</th>
-                        <th>모델</th>
-                        <th>대여기간</th>
-                        <th>상태</th>
-                        <th>관리</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="reservation : ${reservations}">
-                        <td th:text="${reservation.reservationCode}">LR-ABCD1234</td>
-                        <td th:text="${reservation.customerName}">김형진</td>
-                        <td th:text="${reservation.customerPhone}">+8210...</td>
-                        <td th:text="${reservation.product.name}">E-Bike Alpha</td>
-                        <td th:text="|${reservation.startDate} ~ ${reservation.endDate}|"></td>
-                        <td>
-                                    <span class="status-badge"
-                                          th:classappend="|status-${reservation.status.toLowerCase()}|"
-                                          th:text="${reservation.status}">
-                                        PENDING
-                                    </span>
-                        </td>
-                        <td>
-                            <button class="button button--secondary btn-sm">상세</button>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(reservations)}">
-                        <td colspan="7" class="no-data">예약 내역이 없습니다.</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </body>
+    </th:block>
+</head>
+<body>
+
+<h1 layout:fragment="pageH1">전체 예약 목록</h1>
+
+<section layout:fragment="pageContent">
+    <div class="table-container">
+        <table>
+        </table>
+    </div>
+</section>
+
+</body>
 </html>
