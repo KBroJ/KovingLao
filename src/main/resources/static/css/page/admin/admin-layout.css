@@ -1,0 +1,107 @@
+/* 파일 위치: static/css/page/admin/admin-layout.css */
+:root {
+    --admin-bg: #f4f7fa;
+    --sidebar-bg: #2c3e50;
+    --sidebar-text: #ecf0f1;
+    --sidebar-active-bg: #34495e;
+    --sidebar-hover-bg: #3a536b;
+    --main-header-bg: #ffffff;
+}
+
+body {
+    background-color: var(--admin-bg);
+}
+
+.admin-layout {
+    display: flex;
+}
+
+/* --- 사이드바 --- */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.sidebar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #46627f;
+}
+.sidebar-logo {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+.sidebar-nav {
+    flex-grow: 1;
+    padding-top: 1rem;
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+.sidebar-nav a:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+.sidebar-nav a.active {
+    background-color: var(--sidebar-active-bg);
+    font-weight: bold;
+}
+.sidebar-nav .icon {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #46627f;
+}
+.logout-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem;
+    background-color: var(--secondary-color);
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+/* --- 메인 콘텐츠 --- */
+.main-content {
+    margin-left: 250px; /* 사이드바 너비만큼 왼쪽 여백 */
+    width: calc(100% - 250px);
+    padding: 2rem;
+}
+.main-header {
+    background-color: var(--main-header-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.main-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+.content-wrapper {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}

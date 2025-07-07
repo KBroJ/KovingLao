@@ -1,0 +1,62 @@
+/* 파일 위치: static/css/page/admin/admin-dashboard.css */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.summary-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon-today { background-color: #e7f3ff; color: #007bff; }
+.icon-pending { background-color: #fff8e1; color: #ffc107; }
+.icon-sales { background-color: #eafaf1; color: #28a745; }
+.icon-members { background-color: #f3e8fd; color: #6f42c1; }
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+.card-title {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+.card-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.chart-container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.chart-container h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}

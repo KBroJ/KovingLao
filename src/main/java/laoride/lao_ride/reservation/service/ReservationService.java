@@ -10,6 +10,7 @@ import laoride.lao_ride.reservation.dto.ReservationRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -107,6 +109,15 @@ public class ReservationService {
         return productPriceRepository.findFirstByProductIdOrderByEffectiveDateDesc(productId)
                 .map(priceInfo -> priceInfo.getDailyRate().multiply(BigDecimal.valueOf(days)))
                 .orElse(BigDecimal.ZERO); // 가격 정보가 없으면 0을 반환
+    }
+
+    /**
+     * 모든 예약 목록을 최신순으로 조회합니다.
+     * @return 모든 Reservation 엔티티 리스트
+     */
+    public List<Reservation> findAllReservations() {
+        // ID 역순으로 정렬하여 최신 예약이 위로 오도록 함
+        return reservationRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
 
