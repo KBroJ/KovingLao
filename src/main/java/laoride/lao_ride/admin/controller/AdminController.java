@@ -1,6 +1,6 @@
 package laoride.lao_ride.admin.controller;
 
-import laoride.lao_ride.admin.dto.DashboardSummaryDto;
+import laoride.lao_ride.admin.dto.AdminDashboardDto;
 import laoride.lao_ride.admin.service.DashboardService;
 import laoride.lao_ride.reservation.domain.Reservation;
 import laoride.lao_ride.reservation.service.ReservationService;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -35,9 +34,10 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
 
-        DashboardSummaryDto summary = dashboardService.getDashboardSummary();
+        AdminDashboardDto dashboardData = dashboardService.getDashboardData();
 
-        model.addAttribute("summary", summary);
+        model.addAttribute("dashboardData", dashboardData);
+        model.addAttribute("activeMenu", "dashboard");
 
         return "admin/dashboard"; // 콘텐츠 뷰 이름 반환
     }
@@ -48,7 +48,10 @@ public class AdminController {
     @GetMapping("/reservations")
     public String reservationListPage(Model model) {
         List<Reservation> reservations = reservationService.findAllReservations();
+
         model.addAttribute("reservations", reservations);
+        model.addAttribute("activeMenu", "reservations");
+
         return "admin/reservations";
     }
 

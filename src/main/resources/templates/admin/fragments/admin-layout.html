@@ -24,10 +24,30 @@
 
                 <nav class="sidebar-nav">
                     <ul>
-                        <li><a th:href="@{/admin/dashboard}"><span class="icon">📊</span> 대시보드</a></li>
-                        <li><a th:href="@{/admin/reservations}"><span class="icon">📅</span> 예약 관리</a></li>
-                        <li><a th:href="@{/admin/products}"><span class="icon">🛵</span> 상품 관리</a></li>
-                        <li><a th:href="@{/admin/members}"><span class="icon">👥</span> 회원 관리</a></li>
+                        <li>
+                            <a th:href="@{/admin/dashboard}" th:classappend="${activeMenu == 'dashboard'} ? 'active' : ''">
+                                <span class="icon">📊</span>
+                                대시보드
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/reservations}" th:classappend="${activeMenu == 'reservations'} ? 'active' : ''">
+                                <span class="icon">📅</span>
+                                예약 관리
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/products}" th:classappend="${activeMenu == 'products'} ? 'active' : ''">
+                                <span class="icon">🛵</span>
+                                상품 관리
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/members}" th:classappend="${activeMenu == 'members'} ? 'active' : ''">
+                                <span class="icon">👥</span>
+                                회원 관리
+                            </a>
+                        </li>
                     </ul>
                 </nav>
 

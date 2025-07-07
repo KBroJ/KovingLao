@@ -37,4 +37,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT SUM(r.totalPrice) FROM Reservation r WHERE r.status = 'CONFIRMED' AND r.startDate BETWEEN :start AND :end")
     Optional<BigDecimal> sumTotalPriceBetweenDates(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
+    // 오늘 날짜를 기준으로 현재 대여 중인 'CONFIRMED' 상태의 예약 건수 조회
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.status = 'CONFIRMED' AND :currentDate BETWEEN r.startDate AND r.endDate")
+    long countActiveRentals(@Param("currentDate") LocalDate currentDate);
+
+    // 'PENDING' 상태인 예약 중 최신 5건만 조회
+    List<Reservation> findTop5ByStatusOrderByIdDesc(String status);
+
 }

@@ -19,19 +19,61 @@
         <h1 layout:fragment="pageH1">대시보드</h1>
 
         <div layout:fragment="pageContent">
-            <div class="summary-grid">
+            <div class="summary-grid" th:object="${dashboardData}">
                 <div class="summary-card">
+                    <div class="card-icon icon-today">📝</div>
                     <div class="card-content">
                         <span class="card-title">오늘 신규 예약</span>
-                        <span class="card-value" th:text="${summary.todayReservations} + '건'">0건</span>
+                        <span class="card-value" th:text="*{todayNewReservations} + '건'">0건</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon icon-pending">⏳</div>
+                    <div class="card-content">
+                        <span class="card-title">처리 대기중 예약</span>
+                        <span class="card-value" th:text="*{pendingReservations} + '건'">0건</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon icon-sales">💰</div>
+                    <div class="card-content">
+                        <span class="card-title">금일 예상 매출</span>
+                        <span class="card-value" th:text="${#numbers.formatInteger(dashboardData.todayExpectedSales, 0, 'COMMA')} + ' LAK'">0 LAK</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon icon-rented">🛵</div>
+                    <div class="card-content">
+                        <span class="card-title">현재 대여 중</span>
+                        <span class="card-value" th:text="*{currentlyRentedCount} + '대'">0대</span>
                     </div>
                 </div>
             </div>
 
-            <div class="chart-container">
-                <h3>월별 예약 현황</h3>
-                <canvas id="monthlyReservationsChart"></canvas>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">처리 대기 예약</h2>
+                    <a th:href="@{/admin/reservations}" class="more-link">전체 보기 →</a>
+                </div>
+                <div class="panel-body">
+                    <ul class="item-list" th:if="${not #lists.isEmpty(dashboardData.recentPendingReservations)}">
+                        <li th:each="item : ${dashboardData.recentPendingReservations}">
+                            <div class="item-info">
+                                <strong th:text="${item.customerName}">김라오</strong>
+                                <span th:text="'(' + ${item.reservationCode} + ')'"></span>
+                            </div>
+                            <div class="item-meta">
+                                <span th:text="|${item.startDate} ~ ${item.endDate}|">2025-07-08 ~ 2025-07-10</span>
+                            </div>
+                            <a th:href="@{/admin/reservations/{id}(id=${item.id})}" class="button button--secondary button--sm">처리하기</a>
+                        </li>
+                    </ul>
+                    <div class="no-data" th:if="${#lists.isEmpty(dashboardData.recentPendingReservations)}">
+                        처리 대기 중인 예약이 없습니다.
+                    </div>
+                </div>
             </div>
         </div>
+
     </body>
 </html>
