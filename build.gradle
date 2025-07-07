@@ -32,10 +32,10 @@ dependencies {
 
 	// Template Engine
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-//	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6' // Security 사용 시 필요
 
 	// Spring Security
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6' // Security 사용 시 필요
 
 	// Database
 	runtimeOnly 'com.mysql:mysql-connector-j'
