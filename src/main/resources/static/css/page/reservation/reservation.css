@@ -156,7 +156,7 @@
 .booking-options p { margin: 0.5rem 0; }
 
 .price-details {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 .price-details .price-row {
     display: flex;
@@ -176,6 +176,14 @@
 .price-details .price-row span:last-child {
     font-weight: bold;
     color: var(--dark-color);
+}
+
+/* 보증금 안내 문구 스타일 */
+.deposit-notice {
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    text-align: right;
+    margin-top: 1rem;
 }
 
 /* 폼 UI 개선 */

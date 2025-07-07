@@ -3,6 +3,7 @@ package laoride.lao_ride.product.service;
 import laoride.lao_ride.content.domain.ContentImage;
 import laoride.lao_ride.content.repository.ContentImageRepository;
 import laoride.lao_ride.product.domain.Product;
+import laoride.lao_ride.product.domain.ProductPrice;
 import laoride.lao_ride.product.dto.ProductAvailabilityDto;
 import laoride.lao_ride.product.dto.ProductDetailDto;
 import laoride.lao_ride.product.dto.ProductGroupDto;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,12 +93,12 @@ public class ProductService {
         // 3. 이용 가능 수량 계산
         long availableCount = totalStock - reservedCount;
 
-        // 4. 가격 조회
-        BigDecimal price = productPriceRepository.findFirstByProductIdOrderByEffectiveDateDesc(productId)
-                .map(p -> p.getDailyRate())
-                .orElse(BigDecimal.ZERO);
+        // 4. 가격 및 보증금 정보 조회
+        Optional<ProductPrice> priceInfoOpt = productPriceRepository.findFirstByProductIdOrderByEffectiveDateDesc(productId);
+        BigDecimal price = priceInfoOpt.map(ProductPrice::getDailyRate).orElse(BigDecimal.ZERO);
+        BigDecimal deposit = priceInfoOpt.map(ProductPrice::getDeposit).orElse(BigDecimal.ZERO);
 
-        return new ProductAvailabilityDto(availableCount, price);
+        return new ProductAvailabilityDto(availableCount, price, deposit);
     }
 
 }

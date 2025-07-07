@@ -203,16 +203,45 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateFinalBookingForm() {
         const dates = calendar.selectedDates;
         if (dates.length < 2 || !selectedProductId) return;
+
         const startDate = formatDate(dates[0]);
         const endDate = formatDate(dates[1]);
         const rentalDays = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1;
+
+        // API를 통해 해당 날짜의 가격 및 보증금 정보를 가져옴
         fetch(`/api/products/${selectedProductId}/availability?date=${startDate}`)
             .then(res => res.json())
             .then(data => {
                 const dailyPrice = data.price;
+                const deposit = data.deposit;
                 const totalPrice = dailyPrice * rentalDays;
                 const bookingOptionsEl = document.getElementById('booking-options');
-                bookingOptionsEl.innerHTML = `<p><strong>모델:</strong> ${selectedProductData.name}</p><p><strong>기간:</strong> ${startDate} ~ ${endDate} (${rentalDays}일)</p><div class="price-details"><div class="price-row"><span>1일 대여료</span><span>${dailyPrice.toLocaleString()} LAK</span></div><div class="price-row"><span>대여일</span><span>x ${rentalDays}일</span></div><div class="price-row total"><span>총 예상 금액</span><span>${totalPrice.toLocaleString()} LAK</span></div></div>`;
+
+                // 대여료와 보증금을 구분하여 표시
+                bookingOptionsEl.innerHTML = `
+                    <p><strong>모델:</strong> ${selectedProductData.name}</p>
+                    <p><strong>기간:</strong> ${startDate} ~ ${endDate} (${rentalDays}일)</p>
+                    <div class="price-details">
+                        <div class="price-row">
+                            <span>1일 대여료</span>
+                            <span>${dailyPrice.toLocaleString()} LAK</span>
+                        </div>
+                        <div class="price-row">
+                            <span>대여일</span>
+                            <span>x ${rentalDays}일</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>총 대여 요금</span>
+                            <span>${totalPrice.toLocaleString()} LAK</span>
+                        </div>
+                        <div class="price-row">
+                            <span>보증금</span>
+                            <span>${deposit.toLocaleString()} LAK</span>
+                        </div>
+                    </div>
+                    <p class="deposit-notice">※ 결제는 현장에서 이루어집니다.</p>
+                    <p class="deposit-notice">※ 보증금은 차량 반납 시 환불됩니다.</p>
+                `;
             });
         reservationForm.querySelector('input[name="modelName"]').value = selectedProductData.name;
         reservationForm.querySelector('input[name="startDate"]').value = startDate;

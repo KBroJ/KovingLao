@@ -52,7 +52,7 @@ CREATE TABLE product_price (
 -- 4. 예약 테이블
 CREATE TABLE reservation (
     reservation_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
-    reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드'
+    reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드',
     product_id      BIGINT NOT NULL,
     customer_name   VARCHAR(255) NOT NULL,
     customer_email  VARCHAR(255) NOT NULL,
