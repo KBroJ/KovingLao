@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -19,6 +21,7 @@ public class DashboardService {
     private final MemberRepository memberRepository;
 
     public AdminDashboardDto getDashboardData() {
+
         LocalDate today = LocalDate.now();
 
         // 1. 오늘 신규 예약 건수 조회
@@ -38,13 +41,28 @@ public class DashboardService {
         List<Reservation> recentPendingEntities = reservationRepository.findTop5ByStatusOrderByIdDesc("PENDING");
         List<AdminDashboardDto.PendingReservation> recentPendingDtos = AdminDashboardDto.from(recentPendingEntities);
 
-        // 6. Builder를 사용해 최종 DTO 생성 및 반환
+        // 6. 오늘의 스케줄 목록 생성
+        // 오늘 출고 건 조회 ('확정' 또는 '대기' 상태 모두)
+        List<Reservation> pickups = reservationRepository.findByStartDateAndStatusIn(today, List.of("CONFIRMED", "PENDING"));
+        // 오늘 반납 건 조회 ('확정' 상태만)
+        List<Reservation> returns = reservationRepository.findByEndDateAndStatusIn(today, List.of("CONFIRMED"));
+
+        // DTO 리스트로 변환
+        List<AdminDashboardDto.TodayScheduleItem> scheduleItems = new ArrayList<>();
+        pickups.forEach(r -> scheduleItems.add(new AdminDashboardDto.TodayScheduleItem(r, "출고")));
+        returns.forEach(r -> scheduleItems.add(new AdminDashboardDto.TodayScheduleItem(r, "반납")));
+
+        // 시간순으로 정렬
+        scheduleItems.sort(Comparator.comparing(AdminDashboardDto.TodayScheduleItem::getTime));
+
+        // 7. 최종 DTO 생성 및 반환
         return AdminDashboardDto.builder()
                 .todayNewReservations(todayNewReservations)
                 .pendingReservations(pendingReservations)
                 .todayExpectedSales(todayExpectedSales)
                 .currentlyRentedCount(currentlyRentedCount)
                 .recentPendingReservations(recentPendingDtos)
+                .todaySchedule(scheduleItems)
                 .build();
     }
 

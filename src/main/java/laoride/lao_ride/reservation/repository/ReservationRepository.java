@@ -44,4 +44,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 'PENDING' 상태인 예약 중 최신 5건만 조회
     List<Reservation> findTop5ByStatusOrderByIdDesc(String status);
 
+    // 특정 날짜에 시작하고 상태가 주어진 목록에 포함되는 예약 조회
+    List<Reservation> findByStartDateAndStatusIn(LocalDate startDate, List<String> statuses);
+
+    // 특정 날짜에 종료하고 상태가 주어진 목록에 포함되는 예약 조회
+    List<Reservation> findByEndDateAndStatusIn(LocalDate endDate, List<String> statuses);
+
+
 }

@@ -52,7 +52,14 @@
     color: var(--dark-color);
 }
 
-/* --- 목록 패널 (신규 추가) --- */
+/* 패널 그리드 스타일 */
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+/* --- 목록 패널 --- */
 .panel {
     background-color: #fff;
     border-radius: 12px;
@@ -82,6 +89,22 @@
 
 .panel-body {
     padding: 1.5rem;
+}
+
+/* 스케줄 타입 태그 스타일 */
+.tag {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #fff;
+    margin-right: 0.75rem;
+}
+.tag-pickup {
+    background-color: var(--primary-color); /* 파란색 */
+}
+.tag-return {
+    background-color: var(--ok-color); /* 초록색 */
 }
 
 .item-list {

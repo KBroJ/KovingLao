@@ -50,29 +50,58 @@
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="panel-header">
-                    <h2 class="panel-title">처리 대기 예약</h2>
-                    <a th:href="@{/admin/reservations}" class="more-link">전체 보기 →</a>
+            <div class="panel-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">처리 대기 예약</h2>
+                        <a th:href="@{/admin/reservations}" class="more-link">전체 보기 →</a>
+                    </div>
+                    <div class="panel-body">
+
+                        <ul class="item-list" th:if="${not #lists.isEmpty(dashboardData.recentPendingReservations)}">
+                            <li th:each="item : ${dashboardData.recentPendingReservations}">
+                                <div class="item-info">
+                                    <strong th:text="${item.customerName}">김라오</strong>
+                                    <span th:text="'(' + ${item.reservationCode} + ')'"></span>
+                                </div>
+                                <div class="item-meta">
+                                    <span th:text="|${item.startDate} ~ ${item.endDate}|">2025-07-08 ~ 2025-07-10</span>
+                                </div>
+                                <a th:href="@{/admin/reservations/{id}(id=${item.id})}" class="button button--secondary button--sm">처리하기</a>
+                            </li>
+                        </ul>
+                        <div class="no-data" th:if="${#lists.isEmpty(dashboardData.recentPendingReservations)}">
+                            처리 대기 중인 예약이 없습니다.
+                        </div>
+
+                    </div>
                 </div>
-                <div class="panel-body">
-                    <ul class="item-list" th:if="${not #lists.isEmpty(dashboardData.recentPendingReservations)}">
-                        <li th:each="item : ${dashboardData.recentPendingReservations}">
-                            <div class="item-info">
-                                <strong th:text="${item.customerName}">김라오</strong>
-                                <span th:text="'(' + ${item.reservationCode} + ')'"></span>
-                            </div>
-                            <div class="item-meta">
-                                <span th:text="|${item.startDate} ~ ${item.endDate}|">2025-07-08 ~ 2025-07-10</span>
-                            </div>
-                            <a th:href="@{/admin/reservations/{id}(id=${item.id})}" class="button button--secondary button--sm">처리하기</a>
-                        </li>
-                    </ul>
-                    <div class="no-data" th:if="${#lists.isEmpty(dashboardData.recentPendingReservations)}">
-                        처리 대기 중인 예약이 없습니다.
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">오늘의 스케줄</h2>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="item-list" th:if="${not #lists.isEmpty(dashboardData.todaySchedule)}">
+                            <li th:each="item : ${dashboardData.todaySchedule}">
+                                <div class="item-info">
+                                    <span class="tag" th:classappend="${item.type == '출고'} ? 'tag-pickup' : 'tag-return'" th:text="${item.type}">출고</span>
+                                    <strong th:text="${item.time}">10:00</strong>
+                                    <span th:text="${item.customerName}">김라오</span>
+                                </div>
+                                <div class="item-meta">
+                                    <span th:text="${item.productName}">E-Bike Alpha</span>
+                                </div>
+                                <a th:href="@{/admin/reservations/{id}(id=${item.reservationId})}" class="button button--secondary button--sm">상세</a>
+                            </li>
+                        </ul>
+                        <div class="no-data" th:if="${#lists.isEmpty(dashboardData.todaySchedule)}">
+                            오늘 예정된 스케줄이 없습니다.
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
     </body>
