@@ -1,5 +1,6 @@
--- 외래 키 제약 때문에 다른 테이블을 참조하는 테이블부터 삭제해야 합니다.
--- 테이블 삭제 (순서 중요)
+-- =================================================================
+-- 테이블 삭제 (데이터 초기화 시 사용, 외래 키 제약으로 인해 순서 중요)
+-- =================================================================
 DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS product_price;
 DROP TABLE IF EXISTS content_image;
@@ -7,98 +8,92 @@ DROP TABLE IF EXISTS content_group;
 DROP TABLE IF EXISTS member;
 DROP TABLE IF EXISTS product;
 
--- 1. 회원 테이블
+-- =================================================================
+-- 테이블 생성 (DDL)
+-- =================================================================
+
+- 1. 회원(관리자) 테이블
 CREATE TABLE member (
     member_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username   VARCHAR(255) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL,
-    name       VARCHAR(255) NOT NULL,
-    role       VARCHAR(255) NOT NULL,
+    username   VARCHAR(255) NOT NULL UNIQUE COMMENT '로그인 아이디',
+    password   VARCHAR(255) NOT NULL COMMENT '암호화된 비밀번호',
+    name       VARCHAR(255) NOT NULL COMMENT '관리자 이름',
+    role       VARCHAR(255) NOT NULL COMMENT '권한 (ROLE_SUPER_ADMIN 등)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+) COMMENT '관리자 계정 정보';
 
--- 2. 상품 테이블
+-- 2. 상품(오토바이) 테이블
 CREATE TABLE product (
     product_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name                  VARCHAR(255) NOT NULL,
+    name                  VARCHAR(255) NOT NULL COMMENT '상품명',
     description           TEXT COMMENT '상품 요약 설명',
-    image_url             VARCHAR(255) COMMENT '상품 목록 대표 이미지',
-    status                VARCHAR(255) NOT NULL,
+    image_url             VARCHAR(255) COMMENT '상품 목록 대표 이미지 경로',
+    status                VARCHAR(255) NOT NULL COMMENT '상태 (ACTIVE, INACTIVE, MAINTENANCE)',
     included_items        TEXT COMMENT '포함 사항',
     not_included_items    TEXT COMMENT '불포함 사항',
     usage_guide           TEXT COMMENT '이용 안내',
     cancellation_policy   TEXT COMMENT '취소/환불 규정',
     created_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- ALTER TABLE product
--- ADD COLUMN included_items TEXT COMMENT '포함 사항',
--- ADD COLUMN not_included_items TEXT COMMENT '불포함 사항',
--- ADD COLUMN usage_guide TEXT COMMENT '이용 안내',
--- ADD COLUMN cancellation_policy TEXT COMMENT '취소/환불 규정';
+) COMMENT '대여 상품 정보';
 
 -- 3. 상품 가격 테이블
 CREATE TABLE product_price (
     price_id       BIGINT AUTO_INCREMENT PRIMARY KEY,
-    product_id     BIGINT NOT NULL,
-    daily_rate     DECIMAL(10, 2) NOT NULL,
-    deposit        DECIMAL(10, 2) NOT NULL,
-    effective_date DATE NOT NULL,
+    product_id     BIGINT NOT NULL COMMENT '상품 ID',
+    daily_rate     DECIMAL(10, 2) NOT NULL COMMENT '1일 대여료',
+    deposit        DECIMAL(10, 2) NOT NULL COMMENT '보증금',
+    effective_date DATE NOT NULL COMMENT '가격 적용 시작일',
     FOREIGN KEY (product_id) REFERENCES product(product_id)
-);
+) COMMENT '상품 가격 정보';
 
 -- 4. 예약 테이블
 CREATE TABLE reservation (
-    reservation_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    reservation_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
     reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드',
-    product_id      BIGINT NOT NULL,
-    customer_name   VARCHAR(255) NOT NULL,
-    customer_email  VARCHAR(255) NOT NULL,
-    customer_phone  VARCHAR(255) NOT NULL,
-    start_date      DATE NOT NULL,
-    end_date        DATE NOT NULL,
-    pickup_time     TIME NOT NULL,
-    return_time     TIME NOT NULL,
-    total_price     DECIMAL(10, 2) NOT NULL,
-    status          VARCHAR(255) NOT NULL,
-    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    product_id       BIGINT NOT NULL COMMENT '예약된 상품 ID',
+    customer_name    VARCHAR(255) NOT NULL COMMENT '고객 이름',
+    customer_email   VARCHAR(255) NOT NULL COMMENT '고객 이메일',
+    customer_phone   VARCHAR(255) NOT NULL COMMENT '고객 연락처',
+    start_date       DATE NOT NULL COMMENT '대여 시작일',
+    end_date         DATE NOT NULL COMMENT '반납일',
+    pickup_time      TIME NOT NULL COMMENT '픽업 시간',
+    return_time      TIME NOT NULL COMMENT '반납 시간',
+    total_price      DECIMAL(10, 2) NOT NULL COMMENT '총 대여 금액',
+    status           VARCHAR(255) NOT NULL COMMENT '예약 상태 (PENDING, CONFIRMED 등)',
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES product(product_id)
-);
+) COMMENT '고객 예약 정보';
 
--- ALTER TABLE reservation
--- ADD COLUMN pickup_time TIME NOT NULL AFTER end_date,
--- ADD COLUMN return_time TIME NOT NULL AFTER pickup_time;
--- ALTER TABLE reservation
--- ADD COLUMN reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드' AFTER reservation_id;
-
+-- 5. 콘텐츠 그룹 테이블
 CREATE TABLE content_group (
     group_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
-    group_key   VARCHAR(255) NOT NULL UNIQUE,
-    description VARCHAR(255)
-);
+    group_key   VARCHAR(255) NOT NULL UNIQUE COMMENT '콘텐츠 그룹 식별 키',
+    description VARCHAR(255) COMMENT '그룹 설명'
+) COMMENT '사이트 콘텐츠 그룹';
 
+-- 6. 콘텐츠 이미지 테이블
 CREATE TABLE content_image (
     image_id      BIGINT AUTO_INCREMENT PRIMARY KEY,
-    group_id      BIGINT NOT NULL,
-    image_url     VARCHAR(255) NOT NULL,
-    link_url      VARCHAR(255),
-    display_order INT NOT NULL DEFAULT 0,
+    group_id      BIGINT NOT NULL COMMENT '소속된 그룹 ID',
+    image_url     VARCHAR(255) NOT NULL COMMENT '이미지 파일 경로',
+    link_url      VARCHAR(255) COMMENT '이미지 클릭 시 이동할 URL',
+    display_order INT NOT NULL DEFAULT 0 COMMENT '표시 순서',
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (group_id) REFERENCES content_group(group_id)
-);
+) COMMENT '사이트 콘텐츠 이미지';
 
--- =====================================================================================================================
--- 테스트 데이터
+-- =================================================================
+-- 테스트 데이터 삽입 (DML)
+-- =================================================================
+
 -- 1. 관리자/직원 계정 데이터
--- 실제로는 암호화된 비밀번호를 저장해야 합니다. 예: $2a$10$...
 INSERT INTO member (username, password, name, role) VALUES
-('admin', 'admin1234', '총괄 관리자', 'ROLE_SUPER_ADMIN'),
-('manager', 'manager1234', '김매니저', 'ROLE_MANAGER'),
-('staff', 'staff1234', '박직원', 'ROLE_STAFF');
+('admin', '$2a$10$E.Veb9a.c2s5S.g2a9w3f.g2s5S.g2a9w3f.g2s5S.g2a9w3f.g2', '총괄 관리자', 'ROLE_SUPER_ADMIN');
+
 
 -- 2. 상품 데이터
 INSERT INTO product (name, description, image_url, status, included_items, not_included_items, usage_guide, cancellation_policy) VALUES
@@ -138,17 +133,17 @@ INSERT INTO product (name, description, image_url, status, included_items, not_i
 • 대여 시작 24시간 이내 취소 시: 환불 불가'
 );
 
--- 3. 상품 가격 데이터 (product_id는 위 상품 순서에 따라 1, 2, 3)
+-- 3. 상품 가격 데이터 (product_id 1: Alpha, 2: Bravo)
 select * from product;
 select * from product_price;
 INSERT INTO product_price (product_id, daily_rate, deposit, effective_date) VALUES
 (1, 15.00, 50.00, '2025-01-01'),
 (2, 20.00, 70.00, '2025-01-01');
 
--- 4. 예약 데이터 (테스트용)
+-- 4. 예약 데이터
 INSERT INTO reservation (reservation_code, product_id, customer_name, customer_email, customer_phone, start_date, end_date, pickup_time, return_time, total_price, status) VALUES
-(UUID(), 1, 'John Doe', 'john.doe@example.com', '+12025550181', '2025-07-20', '2025-07-22', '09:00:00', '18:00:00', 45.00, 'CONFIRMED'),
-(UUID(), 2, 'Jane Smith', 'jane.smith@example.com', '+821012345678', '2025-07-21', '2025-07-25', '10:00:00', '17:00:00', 100.00, 'PENDING');
+(CONCAT('LR-', UPPER(SUBSTRING(MD5(RAND()), 1, 8))), 1, 'John Doe', 'john.doe@example.com', '+12025550181', '2025-07-20', '2025-07-22', '09:00:00', '18:00:00', 45.00, 'CONFIRMED'),
+(CONCAT('LR-', UPPER(SUBSTRING(MD5(RAND()), 1, 8))), 2, 'Jane Smith', 'jane.smith@example.com', '+821012345678', '2025-07-21', '2025-07-25', '10:00:00', '17:00:00', 100.00, 'PENDING');
 
 -- 5. 콘텐츠 그룹 데이터
 select * from content_group;
