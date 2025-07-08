@@ -106,13 +106,13 @@ public class ProductService {
     }
 
     /**
-     * [추가] 폼으로부터 받은 DTO로 새로운 상품 모델을 생성하고 저장합니다.
+     * 폼으로부터 받은 DTO로 새로운 상품 모델을 생성하고 저장합니다.
      * @param dto 상품 모델 폼 데이터
      * @return 저장된 ProductModel 엔티티
      */
     @Transactional // 데이터를 저장하므로 @Transactional 어노테이션을 붙여줍니다.
     public ProductModel createProductModel(ProductModelFormDto dto) {
-        // 빌더 패턴을 사용하여 DTO로부터 엔티티를 생성합니다.
+        // 1. 먼저 ProductModel 엔티티를 생성하고 저장합니다.
         ProductModel newModel = ProductModel.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -127,7 +127,43 @@ public class ProductService {
                 .isActive(dto.getIsActive())
                 .build();
 
-        return productModelRepository.save(newModel);
+        productModelRepository.save(newModel);
+
+        // 2. 초기 재고(InventoryItem)를 생성하고 저장합니다.
+        if (dto.getInitialQuantity() > 0) {
+            // 관리 코드 생성을 위한 약어 (예: "K-Bike Standard" -> "KBS")
+            String prefix = createManagementCodePrefix(newModel.getName());
+
+            for (int i = 1; i <= dto.getInitialQuantity(); i++) {
+                // 3자리 숫자로 포맷팅 (예: 1 -> "001")
+                String managementCode = String.format("%s-%03d", prefix, i);
+
+                InventoryItem newItem = InventoryItem.builder()
+                        .productModel(newModel)
+                        .managementCode(managementCode)
+                        .status(InventoryItemStatus.AVAILABLE) // 초기 상태는 '대여 가능'
+                        .build();
+
+                inventoryItemRepository.save(newItem);
+            }
+        }
+
+        return newModel;
+    }
+
+    /**
+     * 모델명으로부터 관리 코드의 접두사를 생성하는 헬퍼 메서드
+     * 예: "K-Bike Standard" -> "KBS"
+     */
+    private String createManagementCodePrefix(String modelName) {
+        StringBuilder prefix = new StringBuilder();
+        String[] words = modelName.split("\\s+"); // 공백으로 단어 분리
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                prefix.append(Character.toUpperCase(word.charAt(0)));
+            }
+        }
+        return prefix.toString();
     }
 
 

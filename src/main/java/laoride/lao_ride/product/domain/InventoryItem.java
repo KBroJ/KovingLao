@@ -3,6 +3,7 @@ package laoride.lao_ride.product.domain;
 import jakarta.persistence.*;
 import laoride.lao_ride.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,5 +30,16 @@ public class InventoryItem extends BaseTimeEntity {
     private InventoryItemStatus status;
 
     private String note; // 비고
+
+    /**
+     * 빌더 패턴을 위한 생성자
+     */
+    @Builder
+    public InventoryItem(ProductModel productModel, String managementCode, InventoryItemStatus status, String note) {
+        this.productModel = productModel;
+        this.managementCode = managementCode;
+        this.status = status;
+        this.note = note;
+    }
 
 }
