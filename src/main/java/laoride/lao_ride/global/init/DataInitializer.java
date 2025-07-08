@@ -23,7 +23,7 @@ public class DataInitializer implements CommandLineRunner {
         if (memberRepository.findByUsername("admin").isEmpty()) {
             Member admin = Member.builder()
                     .username("admin")
-                    .password(passwordEncoder.encode("qwer1234")) // 비밀번호 암호화
+                    .password(passwordEncoder.encode("qwer1234!")) // 비밀번호 암호화
                     .name("총괄 관리자")
                     .role("ROLE_SUPER_ADMIN")
                     .build();

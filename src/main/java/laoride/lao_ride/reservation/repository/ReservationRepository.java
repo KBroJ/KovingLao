@@ -50,5 +50,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 특정 날짜에 종료하고 상태가 주어진 목록에 포함되는 예약 조회
     List<Reservation> findByEndDateAndStatusIn(LocalDate endDate, List<String> statuses);
 
+    // 지난 N개월간의 월별 예약 건수 통계 조회
+    @Query("SELECT FUNCTION('DATE_FORMAT', r.createdAt, '%Y-%m') as month, COUNT(r.id) as count " +
+            "FROM Reservation r " +
+            "WHERE r.createdAt >= :startDate " +
+            "GROUP BY month " +
+            "ORDER BY month ASC")
+    List<Object[]> countMonthlyReservations(@Param("startDate") LocalDateTime startDate);
+
+
 
 }

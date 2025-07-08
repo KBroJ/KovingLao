@@ -1,7 +1,6 @@
 package laoride.lao_ride.admin.controller;
 
 import laoride.lao_ride.admin.dto.AdminDashboardDto;
-import laoride.lao_ride.admin.service.DashboardService;
 import laoride.lao_ride.reservation.domain.Reservation;
 import laoride.lao_ride.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final DashboardService dashboardService;
     private final ReservationService reservationService;
 
     /**
@@ -34,9 +32,6 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
 
-        AdminDashboardDto dashboardData = dashboardService.getDashboardData();
-
-        model.addAttribute("dashboardData", dashboardData);
         model.addAttribute("activeMenu", "dashboard");
 
         return "admin/dashboard"; // 콘텐츠 뷰 이름 반환
@@ -47,9 +42,7 @@ public class AdminController {
      */
     @GetMapping("/reservations")
     public String reservationListPage(Model model) {
-        List<Reservation> reservations = reservationService.findAllReservations();
 
-        model.addAttribute("reservations", reservations);
         model.addAttribute("activeMenu", "reservations");
 
         return "admin/reservations";

@@ -10,7 +10,7 @@
         <th:block layout:fragment="pageLinks">
             <link rel="stylesheet" th:href="@{/css/page/admin/admin-dashboard.css}">
             <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-            <script th:src="@{/js/page/admin/dashboard.js}" defer></script>
+            <script th:src="@{/js/page/admin/admin-dashboard.js}" defer></script>
         </th:block>
 
     </head>
@@ -24,28 +24,28 @@
                     <div class="card-icon icon-today">📝</div>
                     <div class="card-content">
                         <span class="card-title">오늘 신규 예약</span>
-                        <span class="card-value" th:text="*{todayNewReservations} + '건'">0건</span>
+                        <span class="card-value" id="kpi-today-reservations">0건</span>
                     </div>
                 </div>
                 <div class="summary-card">
                     <div class="card-icon icon-pending">⏳</div>
                     <div class="card-content">
                         <span class="card-title">처리 대기중 예약</span>
-                        <span class="card-value" th:text="*{pendingReservations} + '건'">0건</span>
+                        <span class="card-value" id="kpi-pending-reservations">0건</span>
                     </div>
                 </div>
                 <div class="summary-card">
                     <div class="card-icon icon-sales">💰</div>
                     <div class="card-content">
                         <span class="card-title">금일 예상 매출</span>
-                        <span class="card-value" th:text="${#numbers.formatInteger(dashboardData.todayExpectedSales, 0, 'COMMA')} + ' LAK'">0 LAK</span>
+                        <span class="card-value" id="kpi-today-sales">0 LAK</span>
                     </div>
                 </div>
                 <div class="summary-card">
                     <div class="card-icon icon-rented">🛵</div>
                     <div class="card-content">
                         <span class="card-title">현재 대여 중</span>
-                        <span class="card-value" th:text="*{currentlyRentedCount} + '대'">0대</span>
+                        <span class="card-value" id="kpi-currently-rented">0대</span>
                     </div>
                 </div>
             </div>
@@ -57,23 +57,10 @@
                         <a th:href="@{/admin/reservations}" class="more-link">전체 보기 →</a>
                     </div>
                     <div class="panel-body">
-
-                        <ul class="item-list" th:if="${not #lists.isEmpty(dashboardData.recentPendingReservations)}">
-                            <li th:each="item : ${dashboardData.recentPendingReservations}">
-                                <div class="item-info">
-                                    <strong th:text="${item.customerName}">김라오</strong>
-                                    <span th:text="'(' + ${item.reservationCode} + ')'"></span>
-                                </div>
-                                <div class="item-meta">
-                                    <span th:text="|${item.startDate} ~ ${item.endDate}|">2025-07-08 ~ 2025-07-10</span>
-                                </div>
-                                <a th:href="@{/admin/reservations/{id}(id=${item.id})}" class="button button--secondary button--sm">처리하기</a>
-                            </li>
-                        </ul>
-                        <div class="no-data" th:if="${#lists.isEmpty(dashboardData.recentPendingReservations)}">
+                        <ul class="item-list" id="pending-reservations-list"></ul>
+                        <div class="no-data" id="no-pending-reservations" style="display: none;">
                             처리 대기 중인 예약이 없습니다.
                         </div>
-
                     </div>
                 </div>
 
@@ -82,23 +69,20 @@
                         <h2 class="panel-title">오늘의 스케줄</h2>
                     </div>
                     <div class="panel-body">
-                        <ul class="item-list" th:if="${not #lists.isEmpty(dashboardData.todaySchedule)}">
-                            <li th:each="item : ${dashboardData.todaySchedule}">
-                                <div class="item-info">
-                                    <span class="tag" th:classappend="${item.type == '출고'} ? 'tag-pickup' : 'tag-return'" th:text="${item.type}">출고</span>
-                                    <strong th:text="${item.time}">10:00</strong>
-                                    <span th:text="${item.customerName}">김라오</span>
-                                </div>
-                                <div class="item-meta">
-                                    <span th:text="${item.productName}">E-Bike Alpha</span>
-                                </div>
-                                <a th:href="@{/admin/reservations/{id}(id=${item.reservationId})}" class="button button--secondary button--sm">상세</a>
-                            </li>
-                        </ul>
-                        <div class="no-data" th:if="${#lists.isEmpty(dashboardData.todaySchedule)}">
+                        <ul class="item-list" id="today-schedule-list"></ul>
+                        <div class="no-data" id="no-today-schedule" style="display: none;">
                             오늘 예정된 스케줄이 없습니다.
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">월별 예약 현황</h2>
+                </div>
+                <div class="panel-body">
+                    <canvas id="monthlyReservationsChart"></canvas>
                 </div>
             </div>
 
