@@ -2,22 +2,55 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{admin/fragments/admin-layout}"> <head>
-    <title>예약 관리</title>
-    <th:block layout:fragment="pageLinks">
-        <link rel="stylesheet" th:href="@{/css/page/admin/admin-reservations.css}">
-    </th:block>
-</head>
-<body>
+      layout:decorate="~{admin/fragments/admin-layout}">
+    <head>
+        <title>예약 관리</title>
+        <th:block layout:fragment="pageLinks">
+            <link rel="stylesheet" th:href="@{/css/page/admin/admin-reservations.css}">
+            <script th:src="@{/js/page/admin/admin-reservations.js}" defer></script>
+        </th:block>
+    </head>
+    <body>
 
-<h1 layout:fragment="pageH1">전체 예약 목록</h1>
+        <h1 layout:fragment="pageH1">전체 예약 목록</h1>
 
-<section layout:fragment="pageContent">
-    <div class="table-container">
-        <table>
-        </table>
-    </div>
-</section>
+        <section layout:fragment="pageContent">
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>예약번호</th>
+                        <th>예약자</th>
+                        <th>연락처</th>
+                        <th>모델</th>
+                        <th>대여기간</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody id="reservation-list-body">
+                    </tbody>
+                </table>
+            </div>
 
-</body>
+            <!-- 반복 생성할 행의 '틀'  -->
+            <template id="reservation-row-template">
+                <tr>
+                    <td class="reservation-code"></td>
+                    <td class="customer-name"></td>
+                    <td class="customer-phone"></td>
+                    <td class="product-name"></td>
+                    <td class="period"></td>
+                    <td>
+                        <span class="status-badge"></span>
+                    </td>
+                    <td>
+                        <a href="#" class="button button--secondary button--sm detail-button">상세</a>
+                    </td>
+                </tr>
+            </template>
+
+        </section>
+
+    </body>
 </html>
