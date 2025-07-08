@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. 폼의 기본 제출 동작(페이지 새로고침)을 막습니다.
         e.preventDefault();
 
+        // HTML에 숨겨둔 CSRF 토큰과 헤더 이름을 가져옵니다.
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+
         /*
          2. 폼 데이터를 FormData 객체로 가져온 후, 일반적인 JavaScript 객체로 변환합니다.
             new FormData(form) :
@@ -45,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    // 요청 헤더에 CSRF 토큰을 추가
+                    [header]: token
                 },
                 body: JSON.stringify(data), // JavaScript 객체를 JSON 문자열로 변환
             });
