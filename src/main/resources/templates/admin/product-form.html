@@ -1,0 +1,85 @@
+<th:block layout:decorate="~{admin/fragments/admin-layout}">
+
+    <th:block layout:fragment="pageLinks">
+        <title>새 상품 모델 등록</title>
+        <link rel="stylesheet" th:href="@{/css/page/admin/admin-product-form.css}">
+        <script th:src="@{/js/page/admin/admin-product-form.js}" defer></script>
+    </th:block>
+
+    <header class="main-header" layout:fragment="pageHeader">
+        <div class="page-header">
+            <h1 th:text="${productModelForm.name != null ? '상품 모델 수정' : '새 상품 모델 등록'}">새 상품 모델 등록</h1>
+        </div>
+    </header>
+
+    <th:block layout:fragment="pageContent">
+        <form id="product-form" th:object="${productModelForm}" method="post">
+            <div class="form-grid">
+                <div class="form-section">
+                    <h3 class="section-title">기본 정보</h3>
+                    <div class="form-group">
+                        <label for="name">모델명</label>
+                        <input type="text" id="name" th:field="*{name}" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imageUrl">대표 이미지 URL</label>
+                        <input type="text" id="imageUrl" th:field="*{imageUrl}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">간단한 설명</label>
+                        <textarea id="description" th:field="*{description}" class="form-input" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="isActive">판매 상태</label>
+                        <select id="isActive" th:field="*{isActive}" class="form-input">
+                            <option th:value="true">판매중</option>
+                            <option th:value="false">판매중지</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">요금 정보</h3>
+                    <div class="form-group">
+                        <label for="dailyRate">일일 요금 ($)</label>
+                        <input type="number" id="dailyRate" th:field="*{dailyRate}" class="form-input" required step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="monthlyRate">월별 요금 ($)</label>
+                        <input type="number" id="monthlyRate" th:field="*{monthlyRate}" class="form-input" required step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="deposit">보증금 ($)</label>
+                        <input type="number" id="deposit" th:field="*{deposit}" class="form-input" required step="0.01">
+                    </div>
+                </div>
+
+                <div class="form-section full-width">
+                    <h3 class="section-title">상세 설명 (고객 예약 페이지에 표시)</h3>
+                    <div class="form-group">
+                        <label for="includedItems">포함 사항</label>
+                        <textarea id="includedItems" th:field="*{includedItems}" class="form-input" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notIncludedItems">불포함 사항</label>
+                        <textarea id="notIncludedItems" th:field="*{notIncludedItems}" class="form-input" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="usageGuide">이용 안내</label>
+                        <textarea id="usageGuide" th:field="*{usageGuide}" class="form-input" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="cancellationPolicy">취소/환불 규정</label>
+                        <textarea id="cancellationPolicy" th:field="*{cancellationPolicy}" class="form-input" rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/admin/products}" class="button button--secondary">취소</a>
+                <button type="submit" class="button button--primary">저장</button>
+            </div>
+        </form>
+    </th:block>
+
+</th:block>

@@ -1,0 +1,29 @@
+package laoride.lao_ride.product.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+
+/**
+ * 상품 모델 생성 및 수정을 위한 폼 데이터를 담는 DTO
+ */
+@Getter
+@Setter
+public class ProductModelFormDto {
+
+    private String name;
+    private String description;
+    private String imageUrl;
+    private BigDecimal dailyRate;
+    private BigDecimal monthlyRate;
+    private BigDecimal deposit;
+    private Integer maxRange;
+    private String genderType;
+    private String includedItems;
+    private String notIncludedItems;
+    private String usageGuide;
+    private String cancellationPolicy;
+    private Boolean isActive = true; // 기본값을 '판매중'으로 설정
+
+}

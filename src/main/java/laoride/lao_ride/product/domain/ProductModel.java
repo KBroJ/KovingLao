@@ -1,9 +1,9 @@
 package laoride.lao_ride.product.domain;
 
 import jakarta.persistence.*;
-import jakarta.persistence.*;
 import laoride.lao_ride.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -61,5 +61,34 @@ public class ProductModel extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean isActive; // 모델 판매 여부
+
+
+    @Builder
+    public ProductModel(
+            String name, String description, String imageUrl,
+            BigDecimal dailyRate, BigDecimal monthlyRate, BigDecimal deposit,
+            Integer maxRange, String genderType,
+            String includedItems, String notIncludedItems, String usageGuide, String cancellationPolicy,
+            boolean isActive
+    ) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.dailyRate = dailyRate;
+        this.monthlyRate = monthlyRate;
+        this.deposit = deposit;
+
+        this.maxRange = maxRange;
+        this.genderType = genderType;
+
+        this.includedItems = includedItems;
+        this.notIncludedItems = notIncludedItems;
+        this.usageGuide = usageGuide;
+        this.cancellationPolicy = cancellationPolicy;
+        this.isActive = isActive;
+
+
+    }
+
 
 }

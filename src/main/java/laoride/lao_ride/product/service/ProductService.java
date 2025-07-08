@@ -5,10 +5,7 @@ import laoride.lao_ride.content.repository.ContentImageRepository;
 import laoride.lao_ride.product.domain.InventoryItem;
 import laoride.lao_ride.product.domain.InventoryItemStatus;
 import laoride.lao_ride.product.domain.ProductModel;
-import laoride.lao_ride.product.dto.AdminProductListDto;
-import laoride.lao_ride.product.dto.ProductAvailabilityDto;
-import laoride.lao_ride.product.dto.ProductDetailDto;
-import laoride.lao_ride.product.dto.ProductGroupDto;
+import laoride.lao_ride.product.dto.*;
 import laoride.lao_ride.product.repository.InventoryItemRepository;
 import laoride.lao_ride.product.repository.ProductModelRepository;
 import laoride.lao_ride.reservation.repository.ReservationRepository;
@@ -106,6 +103,31 @@ public class ProductService {
     // 관리자 페이지용: 모든 상품 목록 조회
     public List<ProductModel> findAllProducts() {
         return productModelRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    }
+
+    /**
+     * [추가] 폼으로부터 받은 DTO로 새로운 상품 모델을 생성하고 저장합니다.
+     * @param dto 상품 모델 폼 데이터
+     * @return 저장된 ProductModel 엔티티
+     */
+    @Transactional // 데이터를 저장하므로 @Transactional 어노테이션을 붙여줍니다.
+    public ProductModel createProductModel(ProductModelFormDto dto) {
+        // 빌더 패턴을 사용하여 DTO로부터 엔티티를 생성합니다.
+        ProductModel newModel = ProductModel.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .imageUrl(dto.getImageUrl())
+                .dailyRate(dto.getDailyRate())
+                .monthlyRate(dto.getMonthlyRate())
+                .deposit(dto.getDeposit())
+                .includedItems(dto.getIncludedItems())
+                .notIncludedItems(dto.getNotIncludedItems())
+                .usageGuide(dto.getUsageGuide())
+                .cancellationPolicy(dto.getCancellationPolicy())
+                .isActive(dto.getIsActive())
+                .build();
+
+        return productModelRepository.save(newModel);
     }
 
 
