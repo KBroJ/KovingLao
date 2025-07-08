@@ -73,6 +73,16 @@
                         <textarea id="cancellationPolicy" th:field="*{cancellationPolicy}" class="form-input" rows="4"></textarea>
                     </div>
                 </div>
+
+                <div class="form-section full-width">
+                    <h3 class="section-title">초기 재고 등록</h3>
+                    <div class="form-group">
+                        <label for="initialQuantity">등록할 대수</label>
+                        <input type="number" id="initialQuantity" th:field="*{initialQuantity}" class="form-input" value="1" min="0">
+                        <small>새로운 모델을 등록하면서 동시에 생성할 개별 재고(오토바이)의 수량을 입력하세요. (기본값: 1)</small>
+                    </div>
+                </div>
+                
             </div>
 
             <div class="form-actions">

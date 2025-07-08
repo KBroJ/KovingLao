@@ -24,6 +24,7 @@ public class ProductModelFormDto {
     private String notIncludedItems;
     private String usageGuide;
     private String cancellationPolicy;
-    private Boolean isActive = true; // 기본값을 '판매중'으로 설정
+    private Boolean isActive = true;    // 기본값을 '판매중'으로 설정
+    private int initialQuantity;        // 모델 신규 등록 시 함께 생성할 초기 재고 수량
 
 }
