@@ -1,92 +1,88 @@
-<!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{admin/fragments/admin-layout}">
+<th:block layout:decorate="~{admin/fragments/admin-layout}">
 
-    <head>
+
+    <th:block layout:fragment="pageLinks">
         <title>대시보드</title>
+        <link rel="stylesheet" th:href="@{/css/page/admin/admin-dashboard.css}">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+        <script th:src="@{/js/page/admin/admin-dashboard.js}" defer></script>
+    </th:block>
 
-        <th:block layout:fragment="pageLinks">
-            <link rel="stylesheet" th:href="@{/css/page/admin/admin-dashboard.css}">
-            <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-            <script th:src="@{/js/page/admin/admin-dashboard.js}" defer></script>
-        </th:block>
 
-    </head>
+    <header class="main-header" layout:fragment="pageHeader">
+        <div class="page-header">
+            <h1>대시보드</h1>
+        </div>
+    </header>
 
-    <body>
-        <h1 layout:fragment="pageH1">대시보드</h1>
-
-        <div layout:fragment="pageContent">
-            <div class="summary-grid" th:object="${dashboardData}">
-                <div class="summary-card">
-                    <div class="card-icon icon-today">📝</div>
-                    <div class="card-content">
-                        <span class="card-title">오늘 신규 예약</span>
-                        <span class="card-value" id="kpi-today-reservations">0건</span>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="card-icon icon-pending">⏳</div>
-                    <div class="card-content">
-                        <span class="card-title">처리 대기중 예약</span>
-                        <span class="card-value" id="kpi-pending-reservations">0건</span>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="card-icon icon-sales">💰</div>
-                    <div class="card-content">
-                        <span class="card-title">금일 예상 매출</span>
-                        <span class="card-value" id="kpi-today-sales">0 LAK</span>
-                    </div>
-                </div>
-                <div class="summary-card">
-                    <div class="card-icon icon-rented">🛵</div>
-                    <div class="card-content">
-                        <span class="card-title">현재 대여 중</span>
-                        <span class="card-value" id="kpi-currently-rented">0대</span>
-                    </div>
+    <th:block layout:fragment="pageContent">
+        <div class="summary-grid" th:object="${dashboardData}">
+            <div class="summary-card">
+                <div class="card-icon icon-today">📝</div>
+                <div class="card-content">
+                    <span class="card-title">오늘 신규 예약</span>
+                    <span class="card-value" id="kpi-today-reservations">0건</span>
                 </div>
             </div>
-
-            <div class="panel-grid">
-                <div class="panel">
-                    <div class="panel-header">
-                        <h2 class="panel-title">처리 대기 예약</h2>
-                        <a th:href="@{/admin/reservations}" class="more-link">전체 보기 →</a>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="item-list" id="pending-reservations-list"></ul>
-                        <div class="no-data" id="no-pending-reservations" style="display: none;">
-                            처리 대기 중인 예약이 없습니다.
-                        </div>
-                    </div>
+            <div class="summary-card">
+                <div class="card-icon icon-pending">⏳</div>
+                <div class="card-content">
+                    <span class="card-title">처리 대기중 예약</span>
+                    <span class="card-value" id="kpi-pending-reservations">0건</span>
                 </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon icon-sales">💰</div>
+                <div class="card-content">
+                    <span class="card-title">금일 예상 매출</span>
+                    <span class="card-value" id="kpi-today-sales">0 LAK</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-icon icon-rented">🛵</div>
+                <div class="card-content">
+                    <span class="card-title">현재 대여 중</span>
+                    <span class="card-value" id="kpi-currently-rented">0대</span>
+                </div>
+            </div>
+        </div>
 
-                <div class="panel">
-                    <div class="panel-header">
-                        <h2 class="panel-title">오늘의 스케줄</h2>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="item-list" id="today-schedule-list"></ul>
-                        <div class="no-data" id="no-today-schedule" style="display: none;">
-                            오늘 예정된 스케줄이 없습니다.
-                        </div>
+        <div class="panel-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">처리 대기 예약</h2>
+                    <a th:href="@{/admin/reservations}" class="more-link">전체 보기 →</a>
+                </div>
+                <div class="panel-body">
+                    <ul class="item-list" id="pending-reservations-list"></ul>
+                    <div class="no-data" id="no-pending-reservations" style="display: none;">
+                        처리 대기 중인 예약이 없습니다.
                     </div>
                 </div>
             </div>
 
             <div class="panel">
                 <div class="panel-header">
-                    <h2 class="panel-title">월별 예약 현황</h2>
+                    <h2 class="panel-title">오늘의 스케줄</h2>
                 </div>
                 <div class="panel-body">
-                    <canvas id="monthlyReservationsChart"></canvas>
+                    <ul class="item-list" id="today-schedule-list"></ul>
+                    <div class="no-data" id="no-today-schedule" style="display: none;">
+                        오늘 예정된 스케줄이 없습니다.
+                    </div>
                 </div>
             </div>
-
         </div>
 
-    </body>
-</html>
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">월별 예약 현황</h2>
+            </div>
+            <div class="panel-body">
+                <canvas id="monthlyReservationsChart"></canvas>
+            </div>
+        </div>
+
+    </th:block>
+
+</th:block>>

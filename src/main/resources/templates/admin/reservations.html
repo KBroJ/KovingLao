@@ -1,56 +1,53 @@
-<!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{admin/fragments/admin-layout}">
-    <head>
+<th:block layout:decorate="~{admin/fragments/admin-layout}">
+
+    <th:block layout:fragment="pageLinks">
         <title>예약 관리</title>
-        <th:block layout:fragment="pageLinks">
-            <link rel="stylesheet" th:href="@{/css/page/admin/admin-reservations.css}">
-            <script th:src="@{/js/page/admin/admin-reservations.js}" defer></script>
-        </th:block>
-    </head>
-    <body>
+        <link rel="stylesheet" th:href="@{/css/page/admin/admin-reservations.css}">
+        <script th:src="@{/js/page/admin/admin-reservations.js}" defer></script>
+    </th:block>
 
-        <h1 layout:fragment="pageH1">전체 예약 목록</h1>
+    <header class="main-header" layout:fragment="pageHeader">
+        <div class="page-header">
+            <h1>전체 예약 목록</h1>
+            <a th:href="@{/admin/reservations/new}" class="button button--primary">예약 등록</a>
+        </div>
+    </header>
 
-        <section layout:fragment="pageContent">
-            <div class="table-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>예약번호</th>
-                        <th>예약자</th>
-                        <th>연락처</th>
-                        <th>모델</th>
-                        <th>대여기간</th>
-                        <th>상태</th>
-                        <th>관리</th>
-                    </tr>
-                    </thead>
-                    <tbody id="reservation-list-body">
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 반복 생성할 행의 '틀'  -->
-            <template id="reservation-row-template">
+    <th:block layout:fragment="pageContent">
+        <div class="table-container">
+            <table>
+                <thead>
                 <tr>
-                    <td class="reservation-code"></td>
-                    <td class="customer-name"></td>
-                    <td class="customer-phone"></td>
-                    <td class="product-name"></td>
-                    <td class="period"></td>
-                    <td>
-                        <span class="status-badge"></span>
-                    </td>
-                    <td>
-                        <a href="#" class="button button--secondary button--sm detail-button">상세</a>
-                    </td>
+                    <th>예약번호</th>
+                    <th>예약자</th>
+                    <th>연락처</th>
+                    <th>모델</th>
+                    <th>대여기간</th>
+                    <th>상태</th>
+                    <th>관리</th>
                 </tr>
-            </template>
+                </thead>
+                <tbody id="reservation-list-body">
+                </tbody>
+            </table>
+        </div>
 
-        </section>
+        <template id="reservation-row-template">
+            <tr>
+                <td class="reservation-code" data-label="예약번호"></td>
+                <td class="customer-name" data-label="예약자"></td>
+                <td class="customer-phone" data-label="연락처"></td>
+                <td class="productModel-name" data-label="모델"></td>
+                <td class="period" data-label="대여기간"></td>
+                <td data-label="상태">
+                    <span class="status-badge"></span>
+                </td>
+                <td data-label="관리">
+                    <a href="#" class="button button--secondary button--sm detail-button">상세</a>
+                </td>
+            </tr>
+        </template>
 
-    </body>
-</html>
+    </th:block>
+
+</th:block>

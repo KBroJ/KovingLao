@@ -49,3 +49,44 @@ tbody tr:hover {
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
 }
+
+
+/* 화면 너비가 768px 이하일 때 테이블 스타일 변경 */
+@media (max-width: 768px) {
+    table thead {
+        display: none; /* 데스크탑용 aothem 머리글 숨김 */
+    }
+
+    table tr {
+        display: block;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+
+    table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right; /* 값은 오른쪽 정렬 */
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    table td:last-child {
+        border-bottom: none;
+    }
+
+    /* data-label의 텍스트를 가상요소로 왼쪽에 제목처럼 추가 */
+    table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left;
+        padding-right: 1rem;
+    }
+
+    .product-image { /* 상품 이미지 크기 조정 */
+        width: 40px;
+        height: 40px;
+    }
+}
