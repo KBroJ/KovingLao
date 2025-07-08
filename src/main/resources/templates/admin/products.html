@@ -1,0 +1,52 @@
+<th:block layout:decorate="~{admin/fragments/admin-layout}">
+
+    <th:block layout:fragment="pageLinks">
+        <title>상품 관리</title>
+        <link rel="stylesheet" th:href="@{/css/page/admin/admin-products.css}">
+        <script th:src="@{/js/page/admin/admin-products.js}" defer></script>
+    </th:block>
+
+    <header class="main-header" layout:fragment="pageHeader">
+        <div class="page-header">
+            <h1>상품 목록</h1>
+            <a th:href="@{/admin/products/new}" class="button button--primary">새 상품 등록</a>
+        </div>
+    </header>
+
+    <th:block layout:fragment="pageContent">
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>상품 이미지</th>
+                    <th>상품명</th>
+                    <th>상태</th>
+                    <th>등록일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody id="productModel-list-body">
+                </tbody>
+            </table>
+        </div>
+
+        <template id="productModel-row-template">
+            <tr>
+                <td class="productModel-id" data-label="ID"></td>
+                <td data-label="상품 이미지">
+                    <img src="#" alt="상품 이미지" class="productModel-image">
+                </td>
+                <td class="productModel-name" data-label="상품명"></td>
+                <td data-label="상태">
+                    <span class="status-badge"></span>
+                </td>
+                <td class="created-at" data-label="등록일"></td>
+                <td data-label="관리">
+                    <a href="#" class="button button--secondary button--sm edit-button">수정</a>
+                </td>
+            </tr>
+        </template>
+    </th:block>
+
+</th:block>

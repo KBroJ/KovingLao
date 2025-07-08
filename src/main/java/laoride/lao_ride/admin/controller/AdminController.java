@@ -31,9 +31,7 @@ public class AdminController {
      */
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-
         model.addAttribute("activeMenu", "dashboard");
-
         return "admin/dashboard"; // 콘텐츠 뷰 이름 반환
     }
 
@@ -42,10 +40,15 @@ public class AdminController {
      */
     @GetMapping("/reservations")
     public String reservationListPage(Model model) {
-
         model.addAttribute("activeMenu", "reservations");
-
         return "admin/reservations";
+    }
+
+    // 상품 관리 페이지를 보여주는 메서드
+    @GetMapping("/products")
+    public String productListPage(Model model) {
+        model.addAttribute("activeMenu", "products");
+        return "admin/products";
     }
 
 }
