@@ -19,9 +19,7 @@ public class AdminProductApiController {
 
     @GetMapping
     public List<AdminProductListDto> getAllProducts() {
-        return productService.findAllProducts().stream()
-                .map(AdminProductListDto::new)
-                .collect(Collectors.toList());
+        return productService.getProductModelSummaries();
     }
 
 }

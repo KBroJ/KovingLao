@@ -24,7 +24,7 @@ public class ReservationDetailDto {
     public ReservationDetailDto(Reservation reservation) {
         this.reservationCode = reservation.getReservationCode();
         this.customerName = reservation.getCustomerName();
-        this.productName = reservation.getProduct().getName(); // 연관된 상품의 이름
+        this.productName = reservation.getInventoryItem().getProductModel().getName(); // 연관된 상품의 이름
         this.startDate = reservation.getStartDate();
         this.endDate = reservation.getEndDate();
         this.pickupTime = reservation.getPickupTime();

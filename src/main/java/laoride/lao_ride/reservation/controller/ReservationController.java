@@ -73,7 +73,10 @@ public class ReservationController {
             redirectAttributes.addFlashAttribute("successMessage", "예약 접수가 성공적으로 완료되었습니다. 확인 이메일을 곧 보내드리겠습니다.");
             redirectAttributes.addFlashAttribute("reservedCode", savedReservation.getReservationCode());
             redirectAttributes.addFlashAttribute("reservedCustomer", savedReservation.getCustomerName());
-            redirectAttributes.addFlashAttribute("reservedModel", savedReservation.getProduct().getName());
+
+            // 예약된 재고(inventoryItem)를 통해 모델(productModel)의 이름을 가져옵니다.
+            redirectAttributes.addFlashAttribute("reservedModel", savedReservation.getInventoryItem().getProductModel().getName());
+
             redirectAttributes.addFlashAttribute("reservedPeriod",
                     savedReservation.getStartDate().toString() + " ~ " + savedReservation.getEndDate().toString());
             redirectAttributes.addFlashAttribute("rentalDays", rentalDays); // 계산된 대여일수

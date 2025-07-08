@@ -1,15 +1,15 @@
 <th:block layout:decorate="~{admin/fragments/admin-layout}">
 
     <th:block layout:fragment="pageLinks">
-        <title>상품 관리</title>
+        <title>상품 모델 관리</title>
         <link rel="stylesheet" th:href="@{/css/page/admin/admin-products.css}">
         <script th:src="@{/js/page/admin/admin-products.js}" defer></script>
     </th:block>
 
     <header class="main-header" layout:fragment="pageHeader">
         <div class="page-header">
-            <h1>상품 목록</h1>
-            <a th:href="@{/admin/products/new}" class="button button--primary">새 상품 등록</a>
+            <h1>상품 모델 목록</h1>
+            <a th:href="@{/admin/products/new}" class="button button--primary">새 모델 등록</a>
         </div>
     </header>
 
@@ -18,32 +18,26 @@
             <table>
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>상품 이미지</th>
-                    <th>상품명</th>
+                    <th>모델명</th>
+                    <th>일일/월별 요금</th>
+                    <th>보유/대여가능</th>
                     <th>상태</th>
-                    <th>등록일</th>
                     <th>관리</th>
                 </tr>
                 </thead>
-                <tbody id="productModel-list-body">
-                </tbody>
+                <tbody id="product-list-body"></tbody>
             </table>
         </div>
 
-        <template id="productModel-row-template">
+        <template id="product-row-template">
             <tr>
-                <td class="productModel-id" data-label="ID"></td>
-                <td data-label="상품 이미지">
-                    <img src="#" alt="상품 이미지" class="productModel-image">
-                </td>
-                <td class="productModel-name" data-label="상품명"></td>
-                <td data-label="상태">
-                    <span class="status-badge"></span>
-                </td>
-                <td class="created-at" data-label="등록일"></td>
-                <td data-label="관리">
-                    <a href="#" class="button button--secondary button--sm edit-button">수정</a>
+                <td class="product-name" data-label="모델명"></td>
+                <td class="product-rate" data-label="요금"></td>
+                <td class="product-quantity" data-label="보유/대여가능"></td>
+                <td data-label="상태"><span class="status-badge"></span></td>
+                <td>
+                    <a href="#" class="button button--secondary button--sm inventory-button">재고 보기</a>
+                    <a href="#" class="button button--secondary button--sm edit-button">모델 수정</a>
                 </td>
             </tr>
         </template>

@@ -3,6 +3,7 @@ package laoride.lao_ride.product.dto;
 import laoride.lao_ride.product.domain.ProductModel;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -10,16 +11,21 @@ public class AdminProductListDto {
 
     private final Long id;
     private final String name;
-    private final String status;
-    private final String imageUrl;
-    private final LocalDateTime createdAt;
+    private final BigDecimal dailyRate;
+    private final BigDecimal monthlyRate;
+    private final long totalQuantity;       // 보유 대수
+    private final long availableQuantity;   // 대여 가능 대수
+    private final boolean isActive;         // 모델 판매 여부
 
-    public AdminProductListDto(ProductModel productModel) {
-        this.id = productModel.getId();
-        this.name = productModel.getName();
-        this.status = productModel.getStatus();
-        this.imageUrl = productModel.getImageUrl();
-        this.createdAt = productModel.getCreatedAt();
+    // 서비스 레이어에서 계산된 값을 받아 DTO를 생성
+    public AdminProductListDto(ProductModel model, long totalQuantity, long availableQuantity) {
+        this.id = model.getId();
+        this.name = model.getName();
+        this.dailyRate = model.getDailyRate();
+        this.monthlyRate = model.getMonthlyRate();
+        this.isActive = model.isActive();
+        this.totalQuantity = totalQuantity;
+        this.availableQuantity = availableQuantity;
     }
 
 }

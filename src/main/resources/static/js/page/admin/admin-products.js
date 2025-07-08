@@ -13,25 +13,24 @@ async function loadProducts() {
         tableBody.innerHTML = '';
 
         if (products.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" class="no-data">등록된 상품이 없습니다.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="5" class="no-data">등록된 상품 모델이 없습니다.</td></tr>';
             return;
         }
 
-        products.forEach(product => {
+        products.forEach(model => {
             const row = document.importNode(template.content, true);
 
-            row.querySelector('.product-id').textContent = product.id;
-            row.querySelector('.product-image').src = product.imageUrl || '/images/layout/default-product.png';
-            row.querySelector('.product-name').textContent = product.name;
+            row.querySelector('.product-name').textContent = model.name;
+            row.querySelector('.product-rate').textContent = `$${model.dailyRate} / $${model.monthlyRate}`;
+            row.querySelector('.product-quantity').textContent = `${model.availableQuantity} / ${model.totalQuantity}`;
 
             const statusBadge = row.querySelector('.status-badge');
-            statusBadge.textContent = product.status;
-            statusBadge.classList.add(`status-${product.status.toLowerCase()}`);
+            statusBadge.textContent = model.active ? '판매중' : '판매중지';
+            statusBadge.classList.add(model.active ? 'status-active' : 'status-inactive');
 
             // 날짜/시간 데이터에서 날짜 부분만 잘라서 표시
-            row.querySelector('.created-at').textContent = product.createdAt.split('T')[0];
-
-            row.querySelector('.edit-button').href = `/admin/products/${product.id}/edit`;
+            row.querySelector('.inventory-button').href = `/admin/products/${model.id}/inventory`;
+            row.querySelector('.edit-button').href = `/admin/products/${model.id}/edit`;
 
             tableBody.appendChild(row);
         });

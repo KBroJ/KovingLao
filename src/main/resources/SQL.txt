@@ -2,17 +2,21 @@
 -- 테이블 삭제 (데이터 초기화 시 사용, 외래 키 제약으로 인해 순서 중요)
 -- =================================================================
 DROP TABLE IF EXISTS reservation;
-DROP TABLE IF EXISTS product_price;
+DROP TABLE IF EXISTS inventory_item;
+DROP TABLE IF EXISTS product_price; -- 이 테이블은 이제 사용하지 않습니다.
+DROP TABLE IF EXISTS product_model;
+DROP TABLE IF EXISTS product; -- 예전 이름의 테이블도 삭제
+
 DROP TABLE IF EXISTS content_image;
 DROP TABLE IF EXISTS content_group;
 DROP TABLE IF EXISTS member;
-DROP TABLE IF EXISTS product;
+
 
 -- =================================================================
 -- 테이블 생성 (DDL)
 -- =================================================================
 
-- 1. 회원(관리자) 테이블
+-- 1. 회원(관리자) 테이블
 CREATE TABLE member (
     member_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
     username   VARCHAR(255) NOT NULL UNIQUE COMMENT '로그인 아이디',
@@ -23,36 +27,44 @@ CREATE TABLE member (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) COMMENT '관리자 계정 정보';
 
--- 2. 상품(오토바이) 테이블
-CREATE TABLE product (
-    product_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name                  VARCHAR(255) NOT NULL COMMENT '상품명',
-    description           TEXT COMMENT '상품 요약 설명',
-    image_url             VARCHAR(255) COMMENT '상품 목록 대표 이미지 경로',
-    status                VARCHAR(255) NOT NULL COMMENT '상태 (ACTIVE, INACTIVE, MAINTENANCE)',
-    included_items        TEXT COMMENT '포함 사항',
-    not_included_items    TEXT COMMENT '불포함 사항',
-    usage_guide           TEXT COMMENT '이용 안내',
-    cancellation_policy   TEXT COMMENT '취소/환불 규정',
-    created_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) COMMENT '대여 상품 정보';
+-- 2. 상품 모델 테이블
+CREATE TABLE product_model (
+    model_id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(255) NOT NULL,
+    description   TEXT,
+    image_url     VARCHAR(255),
+    daily_rate    DECIMAL(10, 2) NOT NULL COMMENT '일일 요금',
+    monthly_rate  DECIMAL(10, 2) NOT NULL COMMENT '월별 요금',
+    deposit       DECIMAL(10, 2) NOT NULL COMMENT '보증금',
+    max_range     INT COMMENT '최대 운행 거리(km)',
+    gender_type   VARCHAR(50) COMMENT '성별 구분',
+    included_items      TEXT COMMENT '포함 사항',
+    not_included_items  TEXT COMMENT '불포함 사항',
+    usage_guide         TEXT COMMENT '이용 안내',
+    cancellation_policy TEXT COMMENT '취소/환불 규정',
+    is_active     BOOLEAN NOT NULL DEFAULT TRUE COMMENT '모델 판매 여부',
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT '오토바이 모델 정보';
 
--- 3. 상품 가격 테이블
-CREATE TABLE product_price (
-    price_id       BIGINT AUTO_INCREMENT PRIMARY KEY,
-    product_id     BIGINT NOT NULL COMMENT '상품 ID',
-    daily_rate     DECIMAL(10, 2) NOT NULL COMMENT '1일 대여료',
-    deposit        DECIMAL(10, 2) NOT NULL COMMENT '보증금',
-    effective_date DATE NOT NULL COMMENT '가격 적용 시작일',
-    FOREIGN KEY (product_id) REFERENCES product(product_id)
-) COMMENT '상품 가격 정보';
+-- 3. 개별 재고 테이블 (실제 개별 오토바이)
+CREATE TABLE inventory_item (
+    item_id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    model_id        BIGINT NOT NULL,
+    management_code VARCHAR(255) NOT NULL UNIQUE COMMENT '관리 번호 (예: KBA-001)',
+    status          VARCHAR(50) NOT NULL COMMENT '재고 상태 (AVAILABLE, RENTED 등)',
+    note            TEXT COMMENT '비고',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (model_id) REFERENCES product_model(model_id)
+);
+
 
 -- 4. 예약 테이블
 CREATE TABLE reservation (
     reservation_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    item_id          BIGINT NOT NULL COMMENT '예약된 개별 재고 ID',
     reservation_code VARCHAR(255) NOT NULL UNIQUE COMMENT '고유 예약 조회 코드',
-    product_id       BIGINT NOT NULL COMMENT '예약된 상품 ID',
     customer_name    VARCHAR(255) NOT NULL COMMENT '고객 이름',
     customer_email   VARCHAR(255) NOT NULL COMMENT '고객 이메일',
     customer_phone   VARCHAR(255) NOT NULL COMMENT '고객 연락처',
@@ -64,7 +76,7 @@ CREATE TABLE reservation (
     status           VARCHAR(255) NOT NULL COMMENT '예약 상태 (PENDING, CONFIRMED 등)',
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    FOREIGN KEY (item_id) REFERENCES inventory_item(item_id)
 ) COMMENT '고객 예약 정보';
 
 -- 5. 콘텐츠 그룹 테이블
@@ -96,12 +108,15 @@ INSERT INTO member (username, password, name, role) VALUES
 
 
 -- 2. 상품 데이터
-INSERT INTO product (name, description, image_url, status, included_items, not_included_items, usage_guide, cancellation_policy) VALUES
+INSERT INTO product_model (
+    name, description, image_url,
+    daily_rate, monthly_rate, deposit,
+    included_items, not_included_items, usage_guide, cancellation_policy, is_active) VALUES
 (
     'E-Bike Alpha',
     '가장 인기 있는 기본 모델입니다. 편안한 주행감과 안정적인 배터리 성능을 자랑하여, 비엔티안 시내를 여유롭게 둘러보기에 최적화되어 있습니다.',
     '/images/product/e-bike-alpha.png',
-    'ACTIVE',
+    15.00, 150.00, 50.00,
     '✅ 안전 헬멧 1개
 ✅ 오토바이 자물쇠
 ✅ 휴대용 충전기',
@@ -112,13 +127,14 @@ INSERT INTO product (name, description, image_url, status, included_items, not_i
 3. 지정된 충전소에서만 충전하는 것을 권장합니다.',
     '• 대여 시작 24시간 전까지 취소 시: 100% 환불
 • 대여 시작 24시간 이내 취소 시: 환불 불가
-• No-show (사전 연락 없이 나타나지 않는 경우): 환불 불가'
+• No-show (사전 연락 없이 나타나지 않는 경우): 환불 불가',
+TRUE
 ),
 (
     'E-Bike Bravo',
     '장거리 주행에 특화된 고급 모델입니다. 더 큰 배터리 용량으로 비엔티안 외곽의 숨겨진 명소까지 탐험할 수 있습니다.',
     '/images/product/e-bike-bravo.png',
-    'ACTIVE',
+    15.00, 150.00, 50.00,
     '✅ 안전 헬멧 2개
 ✅ 오토바이 자물쇠
 ✅ 휴대폰 거치대
@@ -130,18 +146,18 @@ INSERT INTO product (name, description, image_url, status, included_items, not_i
 3. 반납 시에는 배터리를 20% 이상 남겨주세요.',
     '• 대여 시작 48시간 전까지 취소 시: 100% 환불
 • 대여 시작 24-48시간 전 취소 시: 50% 환불
-• 대여 시작 24시간 이내 취소 시: 환불 불가'
+• 대여 시작 24시간 이내 취소 시: 환불 불가',
+TRUE
 );
 
--- 3. 상품 가격 데이터 (product_id 1: Alpha, 2: Bravo)
-select * from product;
-select * from product_price;
-INSERT INTO product_price (product_id, daily_rate, deposit, effective_date) VALUES
-(1, 15.00, 50.00, '2025-01-01'),
-(2, 20.00, 70.00, '2025-01-01');
+-- 3. 개별 재고 데이터 추가 (Standard 모델 3대)
+INSERT INTO inventory_item (model_id, management_code, status) VALUES
+(1, 'KBS-001', 'AVAILABLE'),
+(1, 'KBS-002', 'AVAILABLE'),
+(1, 'KBS-003', 'UNDER_MAINTENANCE');
 
 -- 4. 예약 데이터
-INSERT INTO reservation (reservation_code, product_id, customer_name, customer_email, customer_phone, start_date, end_date, pickup_time, return_time, total_price, status) VALUES
+INSERT INTO reservation (reservation_code, item_id, customer_name, customer_email, customer_phone, start_date, end_date, pickup_time, return_time, total_price, status) VALUES
 (CONCAT('LR-', UPPER(SUBSTRING(MD5(RAND()), 1, 8))), 1, 'John Doe', 'john.doe@example.com', '+12025550181', '2025-07-20', '2025-07-22', '09:00:00', '18:00:00', 45.00, 'CONFIRMED'),
 (CONCAT('LR-', UPPER(SUBSTRING(MD5(RAND()), 1, 8))), 2, 'Jane Smith', 'jane.smith@example.com', '+821012345678', '2025-07-21', '2025-07-25', '10:00:00', '17:00:00', 100.00, 'PENDING');
 

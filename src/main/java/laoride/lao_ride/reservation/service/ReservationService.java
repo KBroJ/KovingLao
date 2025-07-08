@@ -1,9 +1,11 @@
 package laoride.lao_ride.reservation.service;
 
-import laoride.lao_ride.product.domain.Product;
+import laoride.lao_ride.product.domain.InventoryItem;
+import laoride.lao_ride.product.domain.InventoryItemStatus;
+import laoride.lao_ride.product.domain.ProductModel;
+import laoride.lao_ride.product.repository.InventoryItemRepository;
 import laoride.lao_ride.reservation.domain.Reservation;
-import laoride.lao_ride.product.repository.ProductPriceRepository;
-import laoride.lao_ride.product.repository.ProductRepository;
+import laoride.lao_ride.product.repository.ProductModelRepository;
 import laoride.lao_ride.reservation.dto.ReservationLookupDto;
 import laoride.lao_ride.reservation.repository.ReservationRepository;
 import laoride.lao_ride.reservation.dto.ReservationRequestDto;
@@ -19,7 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,8 +29,9 @@ import java.util.UUID;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final ProductRepository productRepository;
-    private final ProductPriceRepository productPriceRepository;
+    private final ProductModelRepository productModelRepository;
+    private final InventoryItemRepository inventoryItemRepository;
+
 
     /**
      * 예약 요청 DTO를 받아 예약을 생성하고 데이터베이스에 저장합니다.
@@ -38,19 +41,39 @@ public class ReservationService {
     @Transactional // 데이터 변경이 일어나므로 @Transactional 어노테이션을 붙입니다.
     public Reservation createReservation(ReservationRequestDto dto) {
 
+        LocalDate startDate = LocalDate.parse(dto.getStartDate());
+        LocalDate endDate = LocalDate.parse(dto.getEndDate());
+
         log.info("Creating reservation for model: {}", dto.getModelName());
 
         // 1. 상품 이름으로 Product 엔티티를 조회합니다.
-        Product product = productRepository.findByName(dto.getModelName())
+        ProductModel productModel = productModelRepository.findByName(dto.getModelName())
                 .orElseThrow(() -> new IllegalArgumentException("해당 모델을 찾을 수 없습니다: " + dto.getModelName()));
 
-        // 2. 대여 기간(일)을 계산하고, 이를 바탕으로 총 가격을 계산합니다.
-        LocalDate startDate = LocalDate.parse(dto.getStartDate());
-        LocalDate endDate = LocalDate.parse(dto.getEndDate());
-        long rentalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        BigDecimal totalPrice = calculatePrice(product.getId(), rentalDays);
+        // 2. [신규] 해당 기간에 대여 가능한 '개별 재고(InventoryItem)'를 찾습니다.
+        // 2-1. 먼저 해당 기간에 이미 예약된 재고들의 ID 목록을 가져옵니다.
+        List<Long> unavailableItemIds = reservationRepository.findUnavailableItemIds(startDate, endDate);
 
-        // 사용자 친화적인 예약 코드 생성
+        // 2-2. 예약된 재고들을 제외하고, 'AVAILABLE' 상태인 재고를 하나 찾아옵니다.
+        Optional<InventoryItem> availableItemOpt;
+        if (unavailableItemIds.isEmpty()) {
+            availableItemOpt = inventoryItemRepository.findFirstByProductModelAndStatus(
+                    productModel, InventoryItemStatus.AVAILABLE);
+        } else {
+            availableItemOpt = inventoryItemRepository.findFirstByProductModelAndIdNotInAndStatus(
+                    productModel, unavailableItemIds, InventoryItemStatus.AVAILABLE);
+        }
+
+        // 2-3. 만약 가능한 재고가 없다면 에러를 발생시킵니다.
+        InventoryItem itemToReserve = availableItemOpt
+                .orElseThrow(() -> new IllegalStateException("선택하신 날짜에 이용 가능한 재고가 없습니다."));
+
+
+        // 3. 요금을 계산합니다. (일수 * 모델의 일일 요금)
+        long rentalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        BigDecimal totalPrice = productModel.getDailyRate().multiply(BigDecimal.valueOf(rentalDays));
+
+        // 4. 예약 코드 생성
         // 예: "LR" + 8자리 영문 대문자/숫자 조합 -> "LR-A4B1C8D2"
         String randomChars = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
         String reservationCode = "LR-" + randomChars;
@@ -59,10 +82,10 @@ public class ReservationService {
                 startDate, endDate, rentalDays, totalPrice, reservationCode
         );
 
-        // 3. 전달받은 모든 정보를 사용하여 Reservation 엔티티를 생성합니다.
+        // 5. 전달받은 모든 정보를 사용하여 Reservation 엔티티를 생성합니다.
         Reservation reservation = Reservation.builder()
                 .reservationCode(reservationCode)
-                .product(product)
+                .inventoryItem(itemToReserve)
                 .customerName(dto.getLastName() + " " + dto.getFirstName())
                 .customerEmail(dto.getEmail())
                 .customerPhone(dto.getPhone())
@@ -74,7 +97,7 @@ public class ReservationService {
                 .status("PENDING") // 초기 상태는 '확정 대기'
                 .build();
 
-        // 4. 생성된 예약 엔티티를 DB에 저장하고 반환합니다.
+        // 6. 생성된 예약 엔티티를 DB에 저장하고 반환합니다.
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("Reservation created successfully with ID: {}", savedReservation.getId());
 
@@ -97,20 +120,6 @@ public class ReservationService {
         return reservation;
     }
 
-
-    /**
-     * 상품 ID와 대여일수를 바탕으로 총 가격을 계산합니다.
-     * @param productId 상품 ID
-     * @param days 대여일수
-     * @return 계산된 총 가격
-     */
-    private BigDecimal calculatePrice(Long productId, long days) {
-        // 가장 최근에 적용된 가격 정보를 찾아, (1일 대여료 * 대여일수)를 계산합니다.
-        return productPriceRepository.findFirstByProductIdOrderByEffectiveDateDesc(productId)
-                .map(priceInfo -> priceInfo.getDailyRate().multiply(BigDecimal.valueOf(days)))
-                .orElse(BigDecimal.ZERO); // 가격 정보가 없으면 0을 반환
-    }
-
     /**
      * 모든 예약 목록을 최신순으로 조회합니다.
      * @return 모든 Reservation 엔티티 리스트
@@ -119,7 +128,5 @@ public class ReservationService {
         // ID 역순으로 정렬하여 최신 예약이 위로 오도록 함
         return reservationRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
-
-
 
 }

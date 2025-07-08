@@ -3,7 +3,8 @@ package laoride.lao_ride.reservation.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import laoride.lao_ride.global.entity.BaseTimeEntity;
-import laoride.lao_ride.product.domain.Product;
+import laoride.lao_ride.product.domain.InventoryItem;
+import laoride.lao_ride.product.domain.ProductModel;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,8 +28,8 @@ public class Reservation extends BaseTimeEntity {
     private String reservationCode; // 고유 예약 코드(내역확인용)
 
     @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩으로 성능 최적화
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "item_id", nullable = false)
+    private InventoryItem inventoryItem;
 
     @Column(nullable = false)
     private String customerName;
@@ -59,12 +60,12 @@ public class Reservation extends BaseTimeEntity {
 
     @Builder
     public Reservation(
-            String reservationCode, Product product, String customerName, String customerEmail, String customerPhone,
+            String reservationCode, InventoryItem inventoryItem, String customerName, String customerEmail, String customerPhone,
             LocalDate startDate, LocalDate endDate, LocalTime pickupTime, LocalTime returnTime,
             BigDecimal totalPrice, String status
     ) {
         this.reservationCode = reservationCode;
-        this.product = product;
+        this.inventoryItem = inventoryItem;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.customerPhone = customerPhone;

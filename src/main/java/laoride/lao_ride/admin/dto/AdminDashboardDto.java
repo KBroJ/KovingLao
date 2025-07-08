@@ -57,7 +57,7 @@ public class AdminDashboardDto {
             this.type = type;
             this.time = "출고".equals(type) ? reservation.getPickupTime() : reservation.getReturnTime();
             this.customerName = reservation.getCustomerName();
-            this.productName = reservation.getProduct().getName();
+            this.productName = reservation.getInventoryItem().getProductModel().getName();
             this.reservationId = reservation.getId();
         }
     }

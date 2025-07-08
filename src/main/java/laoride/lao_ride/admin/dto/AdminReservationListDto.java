@@ -22,7 +22,7 @@ public class AdminReservationListDto {
         this.reservationCode = reservation.getReservationCode();
         this.customerName = reservation.getCustomerName();
         this.customerPhone = reservation.getCustomerPhone();
-        this.productName = reservation.getProduct().getName(); // LAZY 로딩 주의
+        this.productName = reservation.getInventoryItem().getProductModel().getName(); // LAZY 로딩 주의
         this.startDate = reservation.getStartDate();
         this.endDate = reservation.getEndDate();
         this.status = reservation.getStatus();
