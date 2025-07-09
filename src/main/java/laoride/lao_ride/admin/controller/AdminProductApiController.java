@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/products")
 @RequiredArgsConstructor
 public class AdminProductApiController {
 
@@ -24,7 +24,7 @@ public class AdminProductApiController {
     /**
      *
      */
-    @GetMapping("/products")
+    @GetMapping
     public List<AdminProductListDto> getAllProducts() {
         return productService.getProductModelSummaries();
     }
@@ -34,7 +34,7 @@ public class AdminProductApiController {
      * @param formDto 폼에서 전송된 JSON 데이터와 이미지 파일을 받음
      * @return 생성된 모델의 ID와 성공 메시지를 담은 ResponseEntity
      */
-    @PostMapping("/products")
+    @PostMapping
     public ResponseEntity<Map<String, Object>> createProduct(
             @RequestPart("formDto") ProductModelFormDto formDto,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
@@ -48,6 +48,23 @@ public class AdminProductApiController {
 
         // RESTful API에서는 리소스가 성공적으로 생성되었을 때 '201 Created' 상태 코드를 반환하는 것이 표준입니다.
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * 기존 상품 모델을 수정하는 API
+     * @param id 수정할 모델의 ID
+     * @param formDto 폼에서 전송된 JSON 데이터
+     * @return 성공 메시지를 담은 ResponseEntity
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateProduct(
+            @PathVariable("id") Long id,
+            @RequestPart("formDto") ProductModelFormDto formDto
+            // 이미지 파일은 다음 단계에서 추가 예정
+    ) {
+        productService.updateProductModel(id, formDto);
+        Map<String, Object> response = Map.of("message", "상품 모델이 성공적으로 수정되었습니다.");
+        return ResponseEntity.ok(response);
     }
 
 }

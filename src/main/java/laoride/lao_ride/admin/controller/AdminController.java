@@ -3,6 +3,7 @@ package laoride.lao_ride.admin.controller;
 import laoride.lao_ride.admin.dto.AdminDashboardDto;
 import laoride.lao_ride.product.domain.ProductModel;
 import laoride.lao_ride.product.dto.ProductModelFormDto;
+import laoride.lao_ride.product.repository.InventoryItemRepository;
 import laoride.lao_ride.product.service.ProductService;
 import laoride.lao_ride.reservation.domain.Reservation;
 import laoride.lao_ride.reservation.service.ReservationService;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final ReservationService reservationService;
     private final ProductService productService;
+    private final InventoryItemRepository inventoryItemRepository;
 
     /**
      * 관리자 로그인 페이지를 보여줍니다.
@@ -82,6 +83,7 @@ public class AdminController {
         // 2. 조회한 엔티티의 데이터를 폼 DTO로 옮겨 담습니다.
         ProductModelFormDto formDto = new ProductModelFormDto();
 
+        formDto.setId(productModel.getId());
         formDto.setName(productModel.getName());
         formDto.setDescription(productModel.getDescription());
         formDto.setDailyRate(productModel.getDailyRate());
@@ -91,11 +93,13 @@ public class AdminController {
         formDto.setNotIncludedItems(productModel.getNotIncludedItems());
         formDto.setUsageGuide(productModel.getUsageGuide());
         formDto.setCancellationPolicy(productModel.getCancellationPolicy());
-
         formDto.setIsActive(productModel.isActive());
-        // 초기 재고 수량은 수정 시에는 입력받지 않으므로 설정하지 않습니다.
 
-        // 3. DTO를 모델에 담아 뷰에 전달합니다.
+        // 3. 현재 모델에 속한 재고의 총 수량을 조회해서 DTO에 설정합니다.
+        long currentQuantity = inventoryItemRepository.countByProductModel(productModel);
+        formDto.setInitialQuantity((int) currentQuantity);
+
+        // 4. DTO를 모델에 담아 뷰에 전달합니다.
         model.addAttribute("productModelForm", formDto);
         model.addAttribute("activeMenu", "products");
         return "admin/product-form";

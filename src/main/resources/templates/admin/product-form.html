@@ -15,6 +15,8 @@
 
     <th:block layout:fragment="pageContent">
         <form id="product-form" th:object="${productModelForm}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="modelId" th:field="*{id}">
+
             <div class="form-container">
 
                 <div class="main-content-form">

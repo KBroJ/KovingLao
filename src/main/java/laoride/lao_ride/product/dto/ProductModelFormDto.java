@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Setter
 public class ProductModelFormDto {
 
+    private Long id;
     private String name;
     private String description;
     private BigDecimal dailyRate;

@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,6 +63,7 @@ public class ProductService {
      * @return 예약 가능한 상품 그룹 정보 DTO 리스트
      */
     public List<ProductGroupDto> findAvailableProducts(LocalDate startDate, LocalDate endDate) {
+
         // 1. 해당 기간에 예약되어 이용 불가능한 개별 재고(item) ID 목록을 가져옴
         List<Long> unavailableItemIds = reservationRepository.findUnavailableItemIds(startDate, endDate);
 
@@ -74,20 +77,18 @@ public class ProductService {
 
         // 3. 이용 가능한 재고들을 ProductModel 별로 그룹화하고, 각 모델의 수량을 계산
         return availableItems.stream()
-                .collect(Collectors.groupingBy(InventoryItem::getProductModel, Collectors.counting()))
+                .sorted(Comparator.comparing(item -> item.getProductModel().getId()))
+                .collect(Collectors.groupingBy(
+                        InventoryItem::getProductModel,
+                        LinkedHashMap::new, // 순서를 보장하는 LinkedHashMap 사용을 명시합니다.
+                        Collectors.counting()
+                ))
                 .entrySet().stream()
                 .map(entry -> {
                     ProductModel model = entry.getKey();
                     long count = entry.getValue();
 
-                    // 모델의 대표 이미지(displayOrder=0) URL을 Content 시스템을 통해 조회
-                    String representativeImageUrl = contentImageRepository
-                            .findFirstByContentGroup_GroupKeyAndDisplayOrder("MODEL_" + model.getId() + "_IMAGES", 0)
-                            .map(ContentImage::getImageUrl)
-                            .orElse("/images/product/default-bike.png"); // 이미지가 없으면 기본 이미지
-
-
-                    return new ProductGroupDto(model.getId(), model.getName(), representativeImageUrl, count);
+                    return new ProductGroupDto(model.getId(), model.getName(), model.getThumbnailUrl(), count);
                 })
                 .collect(Collectors.toList());
     }
@@ -165,6 +166,7 @@ public class ProductService {
 
         // 3. 업로드된 이미지 파일들을 저장하고 ContentImage 엔티티 생성
         if (imageFiles != null && !imageFiles.isEmpty()) {
+
             for (int i = 0; i < imageFiles.size(); i++) {
                 MultipartFile file = imageFiles.get(i);
 
@@ -183,6 +185,11 @@ public class ProductService {
                             .displayOrder(i) // 0번째가 대표, 1번째가 추가이미지1, ...
                             .build();
                     contentImageRepository.save(contentImage);
+
+                    // 첫 번째 이미지의 URL을 thumbnailUrl 필드에 업데이트
+                    if (i == 0) {
+                        newModel.updateThumbnailUrl(storedFilePath);
+                    }
                 }
             }
         }
@@ -238,6 +245,38 @@ public class ProductService {
     public ProductModel findModelById(Long modelId) {
         return productModelRepository.findById(modelId)
                 .orElseThrow(() -> new IllegalArgumentException("상품 모델을 찾을 수 없습니다: " + modelId));
+    }
+
+    /**
+     * 기존 상품 모델의 정보를 수정합니다.
+     * @param modelId 수정할 모델의 ID
+     * @param dto 폼에서 받은 새로운 데이터
+     * @return 수정된 ProductModel 엔티티
+     */
+    @Transactional
+    public ProductModel updateProductModel(Long modelId, ProductModelFormDto dto) {
+        // 1. ID로 기존 모델을 조회합니다.
+        ProductModel modelToUpdate = productModelRepository.findById(modelId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 모델을 찾을 수 없습니다: " + modelId));
+
+        // 2. DTO의 내용으로 엔티티의 필드를 업데이트합니다.
+        // (주의: @Transactional 덕분에, 엔티티의 필드를 변경하는 것만으로 DB에 update 쿼리가 실행됩니다.)
+        modelToUpdate.updateDetails(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getDailyRate(),
+                dto.getMonthlyRate(),
+                dto.getDeposit(),
+                dto.getIncludedItems(),
+                dto.getNotIncludedItems(),
+                dto.getUsageGuide(),
+                dto.getCancellationPolicy(),
+                dto.getIsActive()
+        );
+
+        // 이미지 수정 로직은 여기에 추가될 예정입니다.
+
+        return modelToUpdate;
     }
 
 }

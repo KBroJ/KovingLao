@@ -27,6 +27,9 @@ public class ProductModel extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT") // DB 타입을 TEXT로 명시
     private String description;
 
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal dailyRate; // 일일 요금
 
@@ -62,7 +65,7 @@ public class ProductModel extends BaseTimeEntity {
 
     @Builder
     public ProductModel(
-            String name, String description,
+            String name, String description, String thumbnailUrl,
             BigDecimal dailyRate, BigDecimal monthlyRate, BigDecimal deposit,
             Integer maxRange, String genderType,
             String includedItems, String notIncludedItems, String usageGuide, String cancellationPolicy,
@@ -70,6 +73,8 @@ public class ProductModel extends BaseTimeEntity {
     ) {
         this.name = name;
         this.description = description;
+        this.thumbnailUrl = thumbnailUrl;
+
         this.dailyRate = dailyRate;
         this.monthlyRate = monthlyRate;
         this.deposit = deposit;
@@ -83,6 +88,32 @@ public class ProductModel extends BaseTimeEntity {
         this.cancellationPolicy = cancellationPolicy;
         this.isActive = isActive;
 
+    }
+
+    /**
+     * 상품의 상세 정보를 업데이트하는 비즈니스 메서드
+     */
+    public void updateDetails(
+            String name, String description,
+            BigDecimal dailyRate, BigDecimal monthlyRate, BigDecimal deposit,
+            String includedItems, String notIncludedItems,
+            String usageGuide, String cancellationPolicy, boolean isActive
+    ) {
+        this.name = name;
+        this.description = description;
+        this.dailyRate = dailyRate;
+        this.monthlyRate = monthlyRate;
+        this.deposit = deposit;
+        this.includedItems = includedItems;
+        this.notIncludedItems = notIncludedItems;
+        this.usageGuide = usageGuide;
+        this.cancellationPolicy = cancellationPolicy;
+        this.isActive = isActive;
+    }
+
+    // 대표이미지 설정
+    public void updateThumbnailUrl(String imageUrl) {
+        this.thumbnailUrl = imageUrl;
     }
 
 }
