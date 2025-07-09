@@ -230,4 +230,14 @@ public class ProductService {
         return prefix.toString();
     }
 
+    /**
+     * ID로 상품 모델 엔티티를 조회합니다.(관리자>상품관리>수정)
+     * @param modelId 상품 모델 ID
+     * @return 찾은 ProductModel 엔티티
+     */
+    public ProductModel findModelById(Long modelId) {
+        return productModelRepository.findById(modelId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 모델을 찾을 수 없습니다: " + modelId));
+    }
+
 }
