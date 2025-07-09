@@ -17,7 +17,7 @@
     </header>
 
     <th:block layout:fragment="pageContent">
-        <form id="product-form" th:object="${productModelForm}" method="post">
+        <form id="product-form" th:object="${productModelForm}" method="post" enctype="multipart/form-data">
             <div class="form-container">
 
                 <div class="main-content-form">
@@ -66,16 +66,13 @@
                     </div>
 
                     <div class="form-section">
-                        <h3 class="section-title">대표 이미지</h3>
+                        <h3 class="section-title">상품 이미지</h3>
                         <div class="form-group">
-                            <div class="image-preview-box">
-                                <img id="image-preview" src="/images/product/default-bike.png" alt="이미지 미리보기">
+                            <label>이미지 등록 (첫 번째가 대표)</label>
+                            <div id="image-preview-container" class="image-preview-container">
                             </div>
-                            <div class="image-actions">
-                                <label for="imageFile" class="button button--secondary">파일 선택</label>
-                                <input type="file" id="imageFile" name="imageFile" accept="image/*" style="display: none;">
-                                <span class="file-name" id="file-name">선택된 파일 없음</span>
-                            </div>
+                            <label for="imageFiles" class="button button--secondary">파일 선택</label>
+                            <input type="file" id="imageFiles" name="imageFiles" accept="image/*" multiple style="display: none;">
                         </div>
                     </div>
 

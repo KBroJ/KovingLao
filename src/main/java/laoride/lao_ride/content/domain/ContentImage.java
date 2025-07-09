@@ -3,6 +3,7 @@ package laoride.lao_ride.content.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,13 @@ public class ContentImage {
     private String linkUrl;
 
     private int displayOrder;
+
+    @Builder
+    public ContentImage(ContentGroup contentGroup, String imageUrl, String linkUrl, int displayOrder ) {
+        this.contentGroup = contentGroup;
+        this.imageUrl = imageUrl;
+        this.linkUrl = linkUrl;
+        this.displayOrder = displayOrder;
+    }
 
 }

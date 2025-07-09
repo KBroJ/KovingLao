@@ -8,32 +8,38 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/admin/products")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminProductApiController {
 
     private final ProductService productService;
 
-    @GetMapping
+    /**
+     *
+     */
+    @GetMapping("/products")
     public List<AdminProductListDto> getAllProducts() {
         return productService.getProductModelSummaries();
     }
 
     /**
-     * [추가] 새로운 상품 모델을 생성하는 API
-     * @param formDto 폼에서 전송된 JSON 데이터
+     * 새로운 상품 모델을 생성하는 API
+     * @param formDto 폼에서 전송된 JSON 데이터와 이미지 파일을 받음
      * @return 생성된 모델의 ID와 성공 메시지를 담은 ResponseEntity
      */
-    @PostMapping
+    @PostMapping("/products")
     public ResponseEntity<Map<String, Object>> createProduct(
-            @RequestBody ProductModelFormDto formDto) {
-        ProductModel savedModel = productService.createProductModel(formDto);
+            @RequestPart("formDto") ProductModelFormDto formDto,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
+    ) {
+        ProductModel savedModel = productService.createProductModel(formDto, imageFiles);
 
         Map<String, Object> response = Map.of(
                 "message", "상품 모델이 성공적으로 등록되었습니다.",

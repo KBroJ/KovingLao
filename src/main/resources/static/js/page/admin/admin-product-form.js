@@ -1,69 +1,100 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('product-form');
-    if (!form) return;
+    const imageFilesInput = document.getElementById('imageFiles');
+    const previewContainer = document.getElementById('image-preview-container');
 
+    // 업로드할 파일들을 관리하는 배열
+    let filesToUpload = [];
+
+    if (!form || !imageFilesInput || !previewContainer) return;
+
+    // '파일 선택' 라벨을 클릭하면 숨겨진 input[type=file]이 클릭되도록 함
+    document.querySelector('label[for="imageFiles"]').addEventListener('click', (e) => {
+        e.preventDefault();
+        imageFilesInput.click();
+    });
+
+    // 파일 입력이 변경되었을 때의 이벤트 처리
+    imageFilesInput.addEventListener('change', () => {
+        const selectedFiles = Array.from(imageFilesInput.files);
+        filesToUpload.push(...selectedFiles);
+        renderImagePreviews();
+        // input의 값을 비워줘서 같은 파일을 다시 선택할 수 있게 함
+        imageFilesInput.value = "";
+    });
+
+    // 이미지 미리보기 렌더링 함수
+    function renderImagePreviews() {
+        previewContainer.innerHTML = ''; // 미리보기 영역 초기화
+        filesToUpload.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const item = document.createElement('div');
+                item.className = 'image-preview-item';
+                item.innerHTML = `
+                    <img src="${e.target.result}" alt="${file.name}">
+                    <button type="button" class="remove-btn" data-index="${index}">&times;</button>
+                `;
+                previewContainer.appendChild(item);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 미리보기에서 이미지 제거
+    previewContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-btn')) {
+            const indexToRemove = parseInt(e.target.dataset.index, 10);
+            filesToUpload.splice(indexToRemove, 1); // 배열에서 파일 제거
+            renderImagePreviews(); // 미리보기 다시 렌더링
+        }
+    });
+
+    // 폼 제출 이벤트 처리
     form.addEventListener('submit', async (e) => {
-        // 1. 폼의 기본 제출 동작(페이지 새로고침)을 막습니다.
         e.preventDefault();
 
-        // HTML에 숨겨둔 CSRF 토큰과 헤더 이름을 가져옵니다.
-        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        // 1. FormData 객체 생성
+        const formData = new FormData();
 
+        // 2. DTO에 해당하는 폼 데이터(텍스트 등)를 JSON으로 만들어 'formDto' 파트에 추가
+        const formElements = form.elements;
+        const dto = {
+            name: formElements.name.value,
+            description: formElements.description.value,
+            dailyRate: parseFloat(formElements.dailyRate.value),
+            monthlyRate: parseFloat(formElements.monthlyRate.value),
+            deposit: parseFloat(formElements.deposit.value),
+            isActive: formElements.isActive.value === 'true',
+            includedItems: formElements.includedItems.value,
+            notIncludedItems: formElements.notIncludedItems.value,
+            usageGuide: formElements.usageGuide.value,
+            cancellationPolicy: formElements.cancellationPolicy.value,
+            initialQuantity: parseInt(formElements.initialQuantity.value, 10) || 0
+        };
+        formData.append('formDto', new Blob([JSON.stringify(dto)], { type: "application/json" }));
 
-        /*
-         2. 폼 데이터를 FormData 객체로 가져온 후, 일반적인 JavaScript 객체로 변환합니다.
-            new FormData(form) :
-                form 요소 안을 자동으로 스캔해서,
-                name 속성을 가진 모든 입력 필드들(<input>, <textarea>, <select> 등)의
-                name과 value를 Key-Value 쌍으로 수집
-            formData.entries(): formData 객체 안에 정리된 데이터들을 [Key, Value] 형태의 배열 묶음으로 만듬
-                ex) [ ['name', 'K-Bike'], ['dailyRate', '15'] ]
-            Object.fromEntries(...):
-                이 메서드는 [Key, Value] 배열들의 묶음을 받아서,
-                우리가 흔히 사용하는 일반적인 JavaScript 객체 {} 로 최종 변환
-                ex)
-                    {
-                        name: "K-Bike",
-                        dailyRate: "15"
-                    }
-        */
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+        // 3. 이미지 파일들을 'imageFiles' 파트에 추가
+        filesToUpload.forEach(file => {
+            formData.append('imageFiles', file);
+        });
 
-        // 'isActive' 필드는 체크박스가 아니므로, 값을 boolean으로 변환해줍니다.
-        data.isActive = (data.isActive === 'true');
-
-        // 숫자 필드들도 숫자로 변환해줍니다.(소수점 허용)
-        data.dailyRate = parseFloat(data.dailyRate);
-        data.monthlyRate = parseFloat(data.monthlyRate);
-        data.deposit = parseFloat(data.deposit);
-
-        // initialQuantity도 정수로 변환합니다.(소수점 불허용)
-        // 사용자가 숫자를 입력하면 그 숫자를, 아무것도 입력하지 않거나 잘못된 값을 넣으면 0 세팅
-        data.initialQuantity = parseInt(data.initialQuantity, 10) || 0;
-
+        // 4. fetch로 FormData 전송
         try {
-            // 3. fetch API를 사용해 백엔드에 POST 요청을 보냅니다.
             const response = await fetch('/api/admin/products', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    // 요청 헤더에 CSRF 토큰을 추가
-                    [header]: token
+                    // 'Content-Type': 'multipart/form-data'는 브라우저가 자동으로 설정하므로 생략
+                    // CSRF 토큰은 추가해야 함
+                    [document.querySelector('meta[name="_csrf_header"]').getAttribute('content')]: document.querySelector('meta[name="_csrf"]').getAttribute('content')
                 },
-                body: JSON.stringify(data), // JavaScript 객체를 JSON 문자열로 변환
+                body: formData,
             });
 
             const result = await response.json();
+            if (!response.ok) throw new Error(result.message || '저장에 실패했습니다.');
 
-            if (!response.ok) {
-                // 서버에서 보낸 에러 메시지가 있다면 사용하고, 없다면 일반적인 메시지를 사용합니다.
-                throw new Error(result.message || '저장에 실패했습니다.');
-            }
-
-            // 4. 저장이 성공하면, 알림을 띄우고 상품 목록 페이지로 이동합니다.
             alert(result.message);
             window.location.href = '/admin/products';
 

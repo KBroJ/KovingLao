@@ -1,42 +1,53 @@
 spring:
-  datasource:
-    # Docker Compose 서비스 이름 'db'를 사용하도록 변경
-#    로컬에서 실행 중인 Spring Boot 애플리케이션이 Docker 컨테이너로 실행 중인 MySQL 데이터베이스에 접속하려면, 호스트 이름을 db가 아닌 localhost 또는 **127.0.0.1**로 변경해야 합니다.
-#    url: jdbc:mysql://db:3306/lao_ride?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
-    url: jdbc:mysql://localhost:3306/lao_ride?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
-    username: root
-    password: 1234
+    datasource:
+        # Docker Compose 서비스 이름 'db'를 사용하도록 변경
+        #    로컬에서 실행 중인 Spring Boot 애플리케이션이 Docker 컨테이너로 실행 중인 MySQL 데이터베이스에 접속하려면, 호스트 이름을 db가 아닌 localhost 또는 **127.0.0.1**로 변경해야 합니다.
+        #    url: jdbc:mysql://db:3306/lao_ride?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+        #    url: jdbc:mysql://localhost:3306/lao_ride?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul
+        #    username: root
+        #    password: 1234
 
-    # 윈비트 회사 서버 연결
-#    url: jdbc:mysql://10.1.2.171:3306/lao_ride
-#    username: root
-#    password: 1qaz2wsx!@
+        # 윈비트 회사 서버 연결
+        url: jdbc:mysql://10.1.2.171:3306/lao_ride
+        username: root
+        password: 1qaz2wsx!@
 
-    driver-class-name: com.mysql.cj.jdbc.Driver
+        driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
-    hibernate:
-      # 'update' : 실행 시 없으면 자동으로 @Entity붙은 도메인 클래스명으로 테이블 생성(데이터 생성 X)
-#      ddl-auto: update
-      ddl-auto: validate  # 데이터베이스 스키마를 검증만 하고, 변경하지 않음
-    show-sql: true          # 실행되는 SQL 쿼리를 로그에 표시
-    properties:
-      hibernate:
-        format_sql: true   # SQL 쿼리를 포맷하여 보기 좋게 출력
-        dialect: org.hibernate.dialect.MySQLDialect
-    defer-datasource-initialization: true   # 하이버네이트(JPA)의 DDL(테이블) 생성이 완료된 후, data.sql를 실행하도록 설정
+    jpa:
+        hibernate:
+            # 'update' : 실행 시 없으면 자동으로 @Entity붙은 도메인 클래스명으로 테이블 생성(데이터 생성 X)
+            #      ddl-auto: update
+            ddl-auto: validate  # 데이터베이스 스키마를 검증만 하고, 변경하지 않음
+        properties:
+            hibernate:
+                format_sql: true   # SQL 쿼리를 포맷하여 보기 좋게 출력
+                dialect: org.hibernate.dialect.MySQLDialect
+        defer-datasource-initialization: true   # 하이버네이트(JPA)의 DDL(테이블) 생성이 완료된 후, data.sql를 실행하도록 설정
 
+    servlet:
+        multipart:
+            max-file-size: 10MB      # 개별 파일의 최대 크기 (10메가바이트)
+            max-request-size: 50MB   # 한 번의 요청에 포함된 모든 파일의 총 크기 (50메가바이트)
+
+# =============== 이미지 업로드 경로 설정 ===============
+file:
+    upload-dir: ./uploads/images # 프로젝트 루트 폴더 아래에 생성됩니다.
+
+# =============== 로그 설정 ===============
 logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
+    level:
+        org.springframework.security: DEBUG
+        # Hibernate가 실행하는 SQL을 DEBUG 레벨로 로깅 (show-sql: true와 동일 효과)
+        org.hibernate.SQL: DEBUG
+        # SQL 파라미터에 바인딩되는 값을 TRACE 레벨로 로깅
+        org.hibernate.orm.jdbc.bind: TRACE
 
 # =============== 서버 인코딩 설정 ===============
 # 제미나이가 강력 추천함
 server:
-  servlet:
-    encoding:
-      charset: UTF-8  # 모든 요청과 응답에 대한 기본 인코딩을 UTF-8로 설정
-      enabled: true     # 이 인코딩 설정을 활성화
-      force: true       # 항상 이 인코딩을 강제로 사용
+    servlet:
+        encoding:
+            charset: UTF-8  # 모든 요청과 응답에 대한 기본 인코딩을 UTF-8로 설정
+            enabled: true     # 이 인코딩 설정을 활성화
+            force: true       # 항상 이 인코딩을 강제로 사용

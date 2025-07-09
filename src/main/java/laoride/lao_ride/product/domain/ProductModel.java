@@ -27,8 +27,6 @@ public class ProductModel extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT") // DB 타입을 TEXT로 명시
     private String description;
 
-    private String imageUrl;
-
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal dailyRate; // 일일 요금
 
@@ -41,7 +39,6 @@ public class ProductModel extends BaseTimeEntity {
     // --- 향후 확장을 위한 필드 ---
     private Integer maxRange; // 최대 운행 거리 (km)
     private String genderType; // 'MALE', 'FEMALE', 'UNISEX'
-
 
     @Lob
     @Column(columnDefinition = "TEXT", name = "included_items")
@@ -65,7 +62,7 @@ public class ProductModel extends BaseTimeEntity {
 
     @Builder
     public ProductModel(
-            String name, String description, String imageUrl,
+            String name, String description,
             BigDecimal dailyRate, BigDecimal monthlyRate, BigDecimal deposit,
             Integer maxRange, String genderType,
             String includedItems, String notIncludedItems, String usageGuide, String cancellationPolicy,
@@ -73,7 +70,6 @@ public class ProductModel extends BaseTimeEntity {
     ) {
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
         this.dailyRate = dailyRate;
         this.monthlyRate = monthlyRate;
         this.deposit = deposit;
@@ -87,8 +83,6 @@ public class ProductModel extends BaseTimeEntity {
         this.cancellationPolicy = cancellationPolicy;
         this.isActive = isActive;
 
-
     }
-
 
 }
