@@ -14,8 +14,14 @@
 }
 
 .form-actions {
+    max-width: 1400px;
+    margin: 2rem auto 0 auto; /* 위쪽 여백, 좌우 중앙 정렬, 아래쪽 여백 없음 */
+
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
     display: flex;
-    gap: 0.75rem;
+    justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+    gap: 1rem;
 }
 
 /* --- 폼 레이아웃 --- */
@@ -147,6 +153,26 @@ textarea.form-input {
     text-align: center;
 }
 
+/* 대표 이미지 설정(별) 버튼 스타일 */
+.image-preview-item .star-btn {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.image-preview-item .star-btn:hover {
+    color: #ffeb3b;
+}
+.image-preview-item .star-btn.active {
+    color: #fdd835;
+    text-shadow: 0 0 3px black;
+}
+
 .image-actions {
     display: flex;
     align-items: center;
@@ -160,6 +186,13 @@ textarea.form-input {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* 업로드 현황 텍스트 스타일 */
+.upload-status {
+    font-size: 0.9rem;
+    color: #6c757d;
+    line-height: 1.5;
 }
 
 /* --- 반응형 --- */

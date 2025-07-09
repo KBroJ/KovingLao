@@ -30,7 +30,7 @@ public class AdminProductApiController {
     }
 
     /**
-     * 새로운 상품 모델을 생성하는 API
+     * 새로운 상품 모델을 생성하는 API(관리자>상품관리>새 상품 모델 등록)
      * @param formDto 폼에서 전송된 JSON 데이터와 이미지 파일을 받음
      * @return 생성된 모델의 ID와 성공 메시지를 담은 ResponseEntity
      */

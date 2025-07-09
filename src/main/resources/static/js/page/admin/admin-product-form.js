@@ -1,11 +1,19 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 업로드 설정값 ---
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 파일당 10MB
+    const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 전체 50MB
+
+    // --- 요소 가져오기 ---
     const form = document.getElementById('product-form');
     const imageFilesInput = document.getElementById('imageFiles');
     const previewContainer = document.getElementById('image-preview-container');
+    const uploadStatus = document.getElementById('upload-status');
 
     // 업로드할 파일들을 관리하는 배열
     let filesToUpload = [];
+    let representativeImageIndex = 0; // 대표 이미지 인덱스 (기본값 0)
 
     if (!form || !imageFilesInput || !previewContainer) return;
 
@@ -18,15 +26,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // 파일 입력이 변경되었을 때의 이벤트 처리
     imageFilesInput.addEventListener('change', () => {
         const selectedFiles = Array.from(imageFilesInput.files);
-        filesToUpload.push(...selectedFiles);
-        renderImagePreviews();
+
+        // 용량 검사
+        for (const file of selectedFiles) {
+            if (file.size > MAX_FILE_SIZE) {
+                alert(`'${file.name}' 파일의 용량이 너무 큽니다. (최대 10MB)`);
+                continue; // 이 파일은 건너뛰기
+            }
+
+            const currentTotalSize = filesToUpload.reduce((total, f) => total + f.size, 0);
+            if (currentTotalSize + file.size > MAX_TOTAL_SIZE) {
+                alert('전체 업로드 용량을 초과했습니다. (최대 50MB)');
+                break;
+            }
+            filesToUpload.push(file);
+        }
+
+        // 첫 번째 이미지를 기본 대표 이미지로 설정
+        if (filesToUpload.length > 0 && representativeImageIndex >= filesToUpload.length) {
+            representativeImageIndex = 0;
+        }
+
+        renderPreviewsAndStatus();
         // input의 값을 비워줘서 같은 파일을 다시 선택할 수 있게 함
         imageFilesInput.value = "";
     });
 
-    // 이미지 미리보기 렌더링 함수
-    function renderImagePreviews() {
-        previewContainer.innerHTML = ''; // 미리보기 영역 초기화
+    // 미리보기에서 이미지 제거
+    previewContainer.addEventListener('click', (e) => {
+        const target = e.target;
+
+        // '제거' 버튼 클릭 시
+        if (target.classList.contains('remove-btn')) {
+            const indexToRemove = parseInt(target.dataset.index, 10);
+            filesToUpload.splice(indexToRemove, 1); // 배열에서 파일 제거
+
+            if (representativeImageIndex === indexToRemove) {
+                representativeImageIndex = 0; // 대표 이미지가 삭제되면 0번을 기본값으로
+            } else if (representativeImageIndex > indexToRemove) {
+              representativeImageIndex--;
+            }
+            renderPreviewsAndStatus(); // 미리보기 다시 렌더링
+        }
+
+        // '대표 설정' 버튼 클릭 시
+        if (target.classList.contains('star-btn')) {
+            representativeImageIndex = parseInt(target.dataset.index, 10);
+            renderPreviewsAndStatus(); // active 클래스를 다시 렌더링하기 위해 호출
+        }
+    });
+
+    // 미리보기와 업로드 상태를 업데이트하는 통합 함수
+    function renderPreviewsAndStatus() {
+        previewContainer.innerHTML = '';
+
         filesToUpload.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -35,21 +88,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.innerHTML = `
                     <img src="${e.target.result}" alt="${file.name}">
                     <button type="button" class="remove-btn" data-index="${index}">&times;</button>
+                    <button type="button" class="star-btn ${index === representativeImageIndex ? 'active' : ''}" data-index="${index}">★</button>
                 `;
                 previewContainer.appendChild(item);
             };
             reader.readAsDataURL(file);
         });
+
+        updateUploadStatus();
     }
 
-    // 미리보기에서 이미지 제거
-    previewContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-btn')) {
-            const indexToRemove = parseInt(e.target.dataset.index, 10);
-            filesToUpload.splice(indexToRemove, 1); // 배열에서 파일 제거
-            renderImagePreviews(); // 미리보기 다시 렌더링
-        }
-    });
+    // 업로드 상태 텍스트를 업데이트하는 함수
+    function updateUploadStatus() {
+        const totalSize = filesToUpload.reduce((total, f) => total + f.size, 0);
+        const totalSizeMB = (totalSize / 1024 / 1024).toFixed(2);
+        uploadStatus.textContent = `선택된 파일: ${filesToUpload.length}개 (${totalSizeMB}MB)`;
+    }
 
     // 폼 제출 이벤트 처리
     form.addEventListener('submit', async (e) => {
@@ -71,11 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
             notIncludedItems: formElements.notIncludedItems.value,
             usageGuide: formElements.usageGuide.value,
             cancellationPolicy: formElements.cancellationPolicy.value,
-            initialQuantity: parseInt(formElements.initialQuantity.value, 10) || 0
+            initialQuantity: parseInt(formElements.initialQuantity.value, 10) || 0,
+            representativeImageName: filesToUpload.length > 0 ? filesToUpload[representativeImageIndex].name : null
         };
         formData.append('formDto', new Blob([JSON.stringify(dto)], { type: "application/json" }));
 
-        // 3. 이미지 파일들을 'imageFiles' 파트에 추가
+        // 3. 이미지 파일들을 'imageFiles' 파트에 추가(순서 보장)
         filesToUpload.forEach(file => {
             formData.append('imageFiles', file);
         });

@@ -14,7 +14,6 @@ public class ProductModelFormDto {
 
     private String name;
     private String description;
-    private String imageUrl;
     private BigDecimal dailyRate;
     private BigDecimal monthlyRate;
     private BigDecimal deposit;
@@ -26,5 +25,6 @@ public class ProductModelFormDto {
     private String cancellationPolicy;
     private Boolean isActive = true;    // 기본값을 '판매중'으로 설정
     private int initialQuantity;        // 모델 신규 등록 시 함께 생성할 초기 재고 수량
+    private String representativeImageName; // 사용자가 선택한 대표 이미지의 원본 파일명
 
 }

@@ -9,10 +9,6 @@
     <header class="main-header" layout:fragment="pageHeader">
         <div class="page-header">
             <h1 th:text="${productModelForm.name != null ? '상품 모델 수정' : '새 상품 모델 등록'}">새 상품 모델 등록</h1>
-            <div class="form-actions">
-                <a th:href="@{/admin/products}" class="button button--secondary">취소</a>
-                <button type="submit" form="product-form" class="button button--primary">저장</button>
-            </div>
         </div>
     </header>
 
@@ -68,11 +64,14 @@
                     <div class="form-section">
                         <h3 class="section-title">상품 이미지</h3>
                         <div class="form-group">
-                            <label>이미지 등록 (첫 번째가 대표)</label>
-                            <div id="image-preview-container" class="image-preview-container">
+                            <label>이미지 등록 (별을 클릭하여 대표 설정)</label>
+                            <div id="image-preview-container" class="image-preview-container"></div>
+                            <div class="image-actions">
+                                <label for="imageFiles" class="button button--secondary">파일 선택</label>
+                                <input type="file" id="imageFiles" name="imageFiles" accept="image/*" multiple style="display: none;">
+                                <div id="upload-status" class="upload-status"></div>
                             </div>
-                            <label for="imageFiles" class="button button--secondary">파일 선택</label>
-                            <input type="file" id="imageFiles" name="imageFiles" accept="image/*" multiple style="display: none;">
+                            <small>파일당 최대 10MB, 총 50MB까지 업로드 가능합니다.</small>
                         </div>
                     </div>
 
@@ -100,7 +99,14 @@
                         </div>
                     </div>
                 </div>
+
             </div>
+
+            <div class="form-actions">
+                <a th:href="@{/admin/products}" class="button button--secondary">취소</a>
+                <button type="submit" class="button button--primary">저장</button>
+            </div>
+
         </form>
     </th:block>
 

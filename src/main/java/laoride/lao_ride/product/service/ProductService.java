@@ -13,6 +13,7 @@ import laoride.lao_ride.product.repository.InventoryItemRepository;
 import laoride.lao_ride.product.repository.ProductModelRepository;
 import laoride.lao_ride.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor        // 생성자 주입을 위한 어노테이션
 @Transactional(readOnly = true) // 기본적으로 읽기 전용으로 설정
@@ -154,11 +156,11 @@ public class ProductService {
                 .cancellationPolicy(dto.getCancellationPolicy())
                 .isActive(dto.getIsActive())
                 .build();
-
         productModelRepository.save(newModel);
 
         // 2. 이 모델에 대한 ContentGroup 생성
         ContentGroup imageGroup = new ContentGroup("MODEL_" + newModel.getId() + "_IMAGES", newModel.getName() + " 상세 이미지");
+        log.info("ProductService|createProductModel|ContentGroup 생성 : Id : {}, GroupKey : {}, Description : {} ", imageGroup.getId(), imageGroup.getGroupKey(), imageGroup.getDescription());
         contentGroupRepository.save(imageGroup);
 
         // 3. 업로드된 이미지 파일들을 저장하고 ContentImage 엔티티 생성
@@ -166,7 +168,7 @@ public class ProductService {
             for (int i = 0; i < imageFiles.size(); i++) {
                 MultipartFile file = imageFiles.get(i);
 
-                // [수정] 새로운 storeFile 메서드 호출
+                // 새로운 storeFile 메서드 호출
                 String storedFilePath = fileStorageService.storeFile(
                         file,
                         "product", // 도메인은 "product"
@@ -174,24 +176,31 @@ public class ProductService {
                 );
 
                 if (storedFilePath != null) {
+                    // 대표 이미지로 지정된 파일은 displayOrder를 0으로, 나머지는 1, 2, ... 순으로 저장
+                    int displayOrder = (file.getOriginalFilename().equals(dto.getRepresentativeImageName())) ? 0 : i + 1;
+
                     ContentImage contentImage = ContentImage.builder()
                             .contentGroup(imageGroup)
                             .imageUrl(storedFilePath)
-                            .displayOrder(i)
+                            .displayOrder(displayOrder)
                             .build();
                     contentImageRepository.save(contentImage);
                 }
             }
         }
 
+
         // 4. 초기 재고(InventoryItem)를 생성하고 저장합니다.
+        log.info("ProductService|createProductModel|InventoryItem 생성 여부|dto.getInitialQuantity() > 0 : {}", dto.getInitialQuantity());
         if (dto.getInitialQuantity() > 0) {
             // 관리 코드 생성을 위한 약어 (예: "K-Bike Standard" -> "KBS")
-            String prefix = createManagementCodePrefix(newModel.getName());
+            String prefix = createManagementCodePrefix(newModel);
+            log.info("ProductService|createProductModel|InventoryItem 생성|prefix : {}", prefix);
 
             for (int i = 1; i <= dto.getInitialQuantity(); i++) {
                 // 3자리 숫자로 포맷팅 (예: 1 -> "001")
                 String managementCode = String.format("%s-%03d", prefix, i);
+                log.info("ProductService|createProductModel|managementCode : {}", managementCode); // ex) KBS_1-001
 
                 InventoryItem newItem = InventoryItem.builder()
                         .productModel(newModel)
@@ -210,17 +219,17 @@ public class ProductService {
      * 모델명으로부터 관리 코드의 접두사를 생성하는 헬퍼 메서드
      * 예: "K-Bike Standard" -> "KBS"
      */
-    private String createManagementCodePrefix(String modelName) {
+    private String createManagementCodePrefix(ProductModel model) {
         StringBuilder prefix = new StringBuilder();
-        String[] words = modelName.split("\\s+"); // 공백으로 단어 분리
+        String[] words = model.getName().split("\\s+"); // 공백으로 단어 분리
         for (String word : words) {
             if (!word.isEmpty()) {
                 prefix.append(Character.toUpperCase(word.charAt(0)));
             }
         }
+        prefix.append("_").append(model.getId());
+
         return prefix.toString();
     }
-
-
 
 }
