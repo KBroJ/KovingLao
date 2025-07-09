@@ -1,48 +1,59 @@
+/* static/css/page/admin/admin-product-form.css */
 
-/* 2단 레이아웃을 위한 컨테이너 */
+/* --- 페이지 헤더 (상단 액션 바) --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* --- 폼 레이아웃 --- */
 .form-container {
-    /* 폼의 최대 너비를 1200px로 제한 */
-    max-width: 1200px;
-    /* 컨테이너를 페이지 중앙에 배치 */
-    margin: 0 auto;
-
     display: grid;
-    /* 2:1 비율의 2열 그리드, 너비가 좁아지면 1열로 변경 */
     grid-template-columns: 2fr 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
+    max-width: 1400px; /* 최대 너비 제한 */
+    margin: 0 auto; /* 중앙 정렬 */
 }
 
-/* 왼쪽 메인 영역과 오른쪽 사이드 영역 */
-.main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-.side-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.form-section {
-    background-color: #fff; /* 배경색을 흰색으로 변경 */
-    border: 1px solid #e9ecef; /* 테두리 색상 변경 */
-    border-radius: 8px; /* 통일된 border-radius */
-    padding: 1.5rem;
+.main-content-form, .side-content {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
+/* --- 카드형 섹션 --- */
+.form-section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    /* [개선] 부드러운 그림자 효과로 입체감 부여 */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
 .section-title {
     font-size: 1.1rem;
+    font-weight: 600;
     color: var(--dark-color);
     padding-bottom: 1rem;
     border-bottom: 1px solid #f1f3f5;
-    margin: 0;
-    margin-bottom: 0.5rem;
+    margin: -1.5rem -1.5rem 1rem -1.5rem; /* 위, 좌, 우 여백을 제거하여 제목을 카드 상단에 붙임 */
+    padding-left: 1.5rem;
 }
 
+/* --- 폼 요소 --- */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -51,57 +62,39 @@
 .form-group label {
     margin-bottom: 0.5rem;
     font-weight: 500;
-    font-size: 0.9rem; /* 라벨 폰트 크기 조정 */
+    font-size: 0.9rem;
     color: var(--secondary-color);
 }
 
-/* 모든 입력 필드의 공통 스타일 */
 .form-input {
     padding: 0.75rem;
     border: 1px solid #dee2e6;
-    border-radius: 6px; /* 약간 각지게 */
+    border-radius: 6px;
     font-size: 1rem;
-    font-family: inherit; /* body에 설정된 폰트 상속 */
-    transition: border-color 0.2s, box-shadow 0.2s; /* 부드러운 전환 효과 */
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* 입력 필드에 마우스를 올렸을 때 */
-.form-input:hover {
-    border-color: #adb5bd;
-}
-
-/* 입력 필드를 클릭(포커스)했을 때 */
 .form-input:focus {
-    outline: none; /* 기본 아웃라인 제거 */
-    border-color: var(--primary-color); /* 파란색 테두리 */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* 파란색 그림자 효과 */
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
 textarea.form-input {
-    resize: vertical; /* 세로로만 크기 조절 가능 */
-    min-height: 80px;
+    resize: vertical;
+    min-height: 90px;
 }
 
-/* 입력 필드 아래의 작은 설명 텍스트 */
-.form-group small {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-/* 저장, 취소 버튼이 있는 영역 */
-.form-actions {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #eee;
-    display: flex;
-    justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
-    gap: 1rem;
-}
-
-/* 화면이 1024px 이하로 좁아지면 1열 레이아웃으로 변경 (태블릿/모바일) */
+/* --- 반응형 --- */
 @media (max-width: 1024px) {
     .form-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* 화면이 좁아지면 1열로 변경 */
+    }
+    .page-header {
+        gap: 1rem;
+    }
+    .page-header h1 {
+        font-size: 1.25rem;
     }
 }

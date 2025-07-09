@@ -9,6 +9,10 @@
     <header class="main-header" layout:fragment="pageHeader">
         <div class="page-header">
             <h1 th:text="${productModelForm.name != null ? '상품 모델 수정' : '새 상품 모델 등록'}">새 상품 모델 등록</h1>
+            <div class="form-actions">
+                <a th:href="@{/admin/products}" class="button button--secondary">취소</a>
+                <button type="submit" form="product-form" class="button button--primary">저장</button>
+            </div>
         </div>
     </header>
 
@@ -16,7 +20,7 @@
         <form id="product-form" th:object="${productModelForm}" method="post">
             <div class="form-container">
 
-                <div class="main-content">
+                <div class="main-content-form">
                     <div class="form-section">
                         <div class="form-group">
                             <label for="name">모델명</label>
@@ -93,11 +97,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-actions">
-                <a th:href="@{/admin/products}" class="button button--secondary">취소</a>
-                <button type="submit" class="button button--primary">저장</button>
             </div>
         </form>
     </th:block>
