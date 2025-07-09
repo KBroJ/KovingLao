@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 업로드할 파일들을 관리하는 배열
     let filesToUpload = [];
-    let representativeImageIndex = 0; // 대표 이미지 인덱스 (기본값 0)
 
     if (!form || !imageFilesInput || !previewContainer) return;
 
@@ -39,40 +38,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('전체 업로드 용량을 초과했습니다. (최대 50MB)');
                 break;
             }
+
             filesToUpload.push(file);
         }
 
-        // 첫 번째 이미지를 기본 대표 이미지로 설정
-        if (filesToUpload.length > 0 && representativeImageIndex >= filesToUpload.length) {
-            representativeImageIndex = 0;
-        }
-
         renderPreviewsAndStatus();
-        // input의 값을 비워줘서 같은 파일을 다시 선택할 수 있게 함
-        imageFilesInput.value = "";
+        imageFilesInput.value = ""; // input의 값을 비워줘서 같은 파일을 다시 선택할 수 있게 함
     });
 
-    // 미리보기에서 이미지 제거
+    // 미리보기 이미지 제거
     previewContainer.addEventListener('click', (e) => {
-        const target = e.target;
 
         // '제거' 버튼 클릭 시
-        if (target.classList.contains('remove-btn')) {
-            const indexToRemove = parseInt(target.dataset.index, 10);
+        if (e.target.classList.contains('remove-btn')) {
+            const indexToRemove = parseInt(e.target.dataset.index, 10);
             filesToUpload.splice(indexToRemove, 1); // 배열에서 파일 제거
 
-            if (representativeImageIndex === indexToRemove) {
-                representativeImageIndex = 0; // 대표 이미지가 삭제되면 0번을 기본값으로
-            } else if (representativeImageIndex > indexToRemove) {
-              representativeImageIndex--;
-            }
             renderPreviewsAndStatus(); // 미리보기 다시 렌더링
         }
 
-        // '대표 설정' 버튼 클릭 시
-        if (target.classList.contains('star-btn')) {
-            representativeImageIndex = parseInt(target.dataset.index, 10);
-            renderPreviewsAndStatus(); // active 클래스를 다시 렌더링하기 위해 호출
+    });
+
+    /**
+     * SortableJS 초기화
+     * 미리보기 컨테이너에 드래그 앤 드롭 기능을 적용합니다.
+     */
+    new Sortable(previewContainer, {
+        animation: 150, // 애니메이션 속도
+        ghostClass: 'sortable-ghost', // 드래그 시 나타날 placeholder의 CSS 클래스
+        // 드래그가 끝났을 때 실행될 함수
+        onEnd: (evt) => {
+            // 1. filesToUpload 배열에서 이동한 파일을 잘라내서 가져옵니다.
+            const movedItem = filesToUpload.splice(evt.oldIndex, 1)[0];
+            // 2. 새로운 위치에 잘라냈던 파일을 다시 삽입합니다.
+            filesToUpload.splice(evt.newIndex, 0, movedItem);
+
+            // 3. 순서가 변경되었으므로, 미리보기를 다시 렌더링하여 번호 배지를 업데이트합니다.
+            renderPreviewsAndStatus();
         }
     });
 
@@ -80,17 +82,39 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPreviewsAndStatus() {
         previewContainer.innerHTML = '';
 
+        // 1. 먼저 순서대로 미리보기 아이템의 '틀'을 만듭니다.
+        const fragment = document.createDocumentFragment();
+        filesToUpload.forEach((file, index) => {
+            const item = document.createElement('div');
+            item.className = 'image-preview-item';
+
+            // 데이터셋에 인덱스를 저장해두어 나중에 이미지 소스를 채울 때 사용합니다.
+            item.dataset.index = index;
+
+            // 순서 배지 로직
+            const isRepresentative = index === 0;
+            const badgeText = isRepresentative ? '대표' : index + 1;
+            const badgeClass = isRepresentative ? 'order-badge is-rep' : 'order-badge';
+
+            // 아직 src가 비어있는 img 태그와 나머지 UI를 먼저 구성합니다.
+            item.innerHTML = `
+                <img src="" alt="${file.name}">
+                <div class="${badgeClass}">${badgeText}</div>
+                <button type="button" class="remove-btn" data-index="${index}">×</button>
+            `;
+            fragment.appendChild(item);
+        });
+        previewContainer.appendChild(fragment);
+
+
         filesToUpload.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const item = document.createElement('div');
-                item.className = 'image-preview-item';
-                item.innerHTML = `
-                    <img src="${e.target.result}" alt="${file.name}">
-                    <button type="button" class="remove-btn" data-index="${index}">&times;</button>
-                    <button type="button" class="star-btn ${index === representativeImageIndex ? 'active' : ''}" data-index="${index}">★</button>
-                `;
-                previewContainer.appendChild(item);
+                // 위에서 만들어 둔 아이템을 찾아서 이미지 소스를 설정합니다.
+                const previewItem = previewContainer.querySelector(`.image-preview-item[data-index='${index}']`);
+                if (previewItem) {
+                    previewItem.querySelector('img').src = e.target.result;
+                }
             };
             reader.readAsDataURL(file);
         });
@@ -114,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. DTO에 해당하는 폼 데이터(텍스트 등)를 JSON으로 만들어 'formDto' 파트에 추가
         const formElements = form.elements;
+
         const dto = {
             name: formElements.name.value,
             description: formElements.description.value,
@@ -126,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
             usageGuide: formElements.usageGuide.value,
             cancellationPolicy: formElements.cancellationPolicy.value,
             initialQuantity: parseInt(formElements.initialQuantity.value, 10) || 0,
-            representativeImageName: filesToUpload.length > 0 ? filesToUpload[representativeImageIndex].name : null
         };
+
         formData.append('formDto', new Blob([JSON.stringify(dto)], { type: "application/json" }));
 
         // 3. 이미지 파일들을 'imageFiles' 파트에 추가(순서 보장)

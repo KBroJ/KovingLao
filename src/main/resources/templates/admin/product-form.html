@@ -3,6 +3,7 @@
     <th:block layout:fragment="pageLinks">
         <title>새 상품 모델 등록</title>
         <link rel="stylesheet" th:href="@{/css/page/admin/admin-product-form.css}">
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
         <script th:src="@{/js/page/admin/admin-product-form.js}" defer></script>
     </th:block>
 
@@ -64,7 +65,7 @@
                     <div class="form-section">
                         <h3 class="section-title">상품 이미지</h3>
                         <div class="form-group">
-                            <label>이미지 등록 (별을 클릭하여 대표 설정)</label>
+                            <label>이미지 등록 (처음 업로드 이미지가 대표이미지가 됩니다.)</label>
                             <div id="image-preview-container" class="image-preview-container"></div>
                             <div class="image-actions">
                                 <label for="imageFiles" class="button button--secondary">파일 선택</label>

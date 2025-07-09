@@ -176,13 +176,11 @@ public class ProductService {
                 );
 
                 if (storedFilePath != null) {
-                    // 대표 이미지로 지정된 파일은 displayOrder를 0으로, 나머지는 1, 2, ... 순으로 저장
-                    int displayOrder = (file.getOriginalFilename().equals(dto.getRepresentativeImageName())) ? 0 : i + 1;
-
+                    // 업로드 순서(i)를 그대로 displayOrder로 사용
                     ContentImage contentImage = ContentImage.builder()
                             .contentGroup(imageGroup)
                             .imageUrl(storedFilePath)
-                            .displayOrder(displayOrder)
+                            .displayOrder(i) // 0번째가 대표, 1번째가 추가이미지1, ...
                             .build();
                     contentImageRepository.save(contentImage);
                 }
