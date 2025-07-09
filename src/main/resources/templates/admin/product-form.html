@@ -68,8 +68,14 @@
                     <div class="form-section">
                         <h3 class="section-title">대표 이미지</h3>
                         <div class="form-group">
-                            <label for="imageUrl">이미지 URL</label>
-                            <input type="text" id="imageUrl" th:field="*{imageUrl}" class="form-input">
+                            <div class="image-preview-box">
+                                <img id="image-preview" src="/images/product/default-bike.png" alt="이미지 미리보기">
+                            </div>
+                            <div class="image-actions">
+                                <label for="imageFile" class="button button--secondary">파일 선택</label>
+                                <input type="file" id="imageFile" name="imageFile" accept="image/*" style="display: none;">
+                                <span class="file-name" id="file-name">선택된 파일 없음</span>
+                            </div>
                         </div>
                     </div>
 

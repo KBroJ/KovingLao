@@ -157,21 +157,26 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             detailPlaceholder.style.display = 'none';
             productDetailsSection.style.display = 'block';
+
             const response = await fetch(`/api/products/${productId}`);
             selectedProductData = await response.json();
+
             document.getElementById('product-title').textContent = selectedProductData.name;
             const imageSliderWrapper = document.querySelector('.product-image-swiper .swiper-wrapper');
+
             if (selectedProductData.imageUrls && selectedProductData.imageUrls.length > 0) {
                 imageSliderWrapper.innerHTML = selectedProductData.imageUrls.map(url => `<div class="swiper-slide"><img src="${url}" alt="${selectedProductData.name}"></div>`).join('');
             } else {
                 imageSliderWrapper.innerHTML = `<div class="swiper-slide"><img src="/images/product/default-bike.png" alt="${selectedProductData.name}"></div>`;
             }
+
             if (productSwiper) { productSwiper.destroy(true, true); }
             productSwiper = new Swiper('.product-image-swiper', {
                 loop: selectedProductData.imageUrls && selectedProductData.imageUrls.length > 1,
                 navigation: { nextEl: '.product-swiper-next', prevEl: '.product-swiper-prev' },
                 pagination: { el: '.product-swiper-pagination', clickable: true },
             });
+
             renderTabs(selectedProductData);
         } catch (error) {
             console.error("Failed to load product details:", error);
