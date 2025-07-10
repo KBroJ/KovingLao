@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InventoryItem extends BaseTimeEntity {
 
-    @Id
+    @Id // 이 필드가 대표 식별자인 기본 키(Primary Key)라고 설정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
