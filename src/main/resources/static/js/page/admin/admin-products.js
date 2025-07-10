@@ -81,12 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/admin/products');
             if (!response.ok) throw new Error('상품 목록을 불러오는 데 실패했습니다.');
             const products = await response.json();
+            console.table(products);
 
             const template = document.getElementById('product-row-template');
             tableBody.innerHTML = '';
 
             if (products.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="no-data">등록된 상품 모델이 없습니다.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" class="no-data">등록된 상품 모델이 없습니다.</td></tr>';
                 return;
             }
 
@@ -94,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = document.importNode(template.content, true);
                 const tr = row.querySelector('tr');
                 tr.dataset.modelId = model.id;
+
+                // 썸네일 이미지 경로를 설정합니다. 이미지가 없으면 기본 이미지로 대체합니다.
+                const thumbnail = row.querySelector('.product-thumbnail');
+                thumbnail.src = model.thumbnailUrl || '/images/product/default-bike.png';
+                thumbnail.alt = model.name;
 
                 row.querySelector('.product-name').textContent = model.name;
                 row.querySelector('.product-rate').textContent = `$${model.dailyRate} / $${model.monthlyRate}`;
@@ -111,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error('상품 목록 로딩 중 오류:', error);
-            tableBody.innerHTML = '<tr><td colspan="5" class="no-data">목록을 불러오는 중 오류가 발생했습니다.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="6" class="no-data">목록을 불러오는 중 오류가 발생했습니다.</td></tr>';
         }
     }
 

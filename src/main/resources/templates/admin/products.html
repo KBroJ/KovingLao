@@ -21,6 +21,7 @@
                 <table>
                     <thead>
                     <tr>
+                        <th>이미지</th>
                         <th class="is-left">모델명</th>
                         <th class="is-center">일일/월별 요금</th>
                         <th class="is-center">보유/대여가능</th>
@@ -35,6 +36,9 @@
 
         <template id="product-row-template">
             <tr data-model-id="">
+                <td data-label="이미지">
+                    <img src="" alt="상품 썸네일" class="product-thumbnail">
+                </td>
                 <td class="product-name" data-label="모델명"></td>
                 <td class="product-rate is-center" data-label="요금"></td>
                 <td class="product-quantity is-center" data-label="보유/대여가능"></td>

@@ -26,7 +26,9 @@ public class AdminProductApiController {
      */
     @GetMapping
     public List<AdminProductListDto> getAllProducts() {
+
         return productService.getProductModelSummaries();
+
     }
 
     /**

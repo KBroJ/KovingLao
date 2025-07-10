@@ -11,6 +11,7 @@ public class AdminProductListDto {
 
     private final Long id;
     private final String name;
+    private final String thumbnailUrl;
     private final BigDecimal dailyRate;
     private final BigDecimal monthlyRate;
     private final long totalQuantity;       // 보유 대수
@@ -21,6 +22,7 @@ public class AdminProductListDto {
     public AdminProductListDto(ProductModel model, long totalQuantity, long availableQuantity) {
         this.id = model.getId();
         this.name = model.getName();
+        this.thumbnailUrl = model.getThumbnailUrl();
         this.dailyRate = model.getDailyRate();
         this.monthlyRate = model.getMonthlyRate();
         this.isActive = model.isActive();

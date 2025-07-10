@@ -35,7 +35,7 @@ th, td {
     vertical-align: middle;
 }
 
-/* [신규] 정렬을 위한 클래스 */
+/* 정렬을 위한 클래스 */
 .is-left { text-align: left; }
 .is-center { text-align: center; }
 .is-right { text-align: right; }
@@ -57,6 +57,17 @@ tbody tr:hover {
     padding: 4rem;
     color: var(--secondary-color);
 }
+
+/* 테이블 안의 썸네일 이미지 스타일 */
+.product-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
 .status-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -69,7 +80,7 @@ tbody tr:hover {
 .status-badge.status-active { background-color: #28a745; }
 .status-badge.status-inactive { background-color: #6c757d; }
 
-/* [신규] 아이콘 버튼 스타일 */
+/* 아이콘 버튼 스타일 */
 .action-buttons-desktop {
     display: flex;
     justify-content: center;
@@ -108,7 +119,20 @@ tbody tr:hover {
     table td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.75rem 1rem; border-bottom: 1px solid #eee; }
     table td:last-child { border-bottom: none; }
     table td::before { content: attr(data-label); font-weight: 600; text-align: left; padding-right: 1rem; }
-    
+
+    /* 모바일에서 이미지 라벨 옆에 잘 보이도록 수정 */
+    table td[data-label="이미지"] {
+        padding-left: 0;
+    }
+    table td[data-label="이미지"]::before {
+        width: 100px;
+    }
+
+    .product-thumbnail {
+        width: 40px;
+        height: 40px;
+    }
+
     /* 모바일에서는 아이콘 버튼들을 가운데 정렬합니다. */
     table td[data-label="관리"] .action-buttons-desktop {
         width: 100%;

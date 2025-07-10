@@ -44,6 +44,7 @@ public class ProductService {
      * @return 각 상품 모델의 요약 정보 리스트
      */
     public List<AdminProductListDto> getProductModelSummaries() {
+
         // 1. 모든 상품 모델을 조회합니다.
         List<ProductModel> models = productModelRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
