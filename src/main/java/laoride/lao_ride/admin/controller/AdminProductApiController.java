@@ -59,10 +59,12 @@ public class AdminProductApiController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateProduct(
             @PathVariable("id") Long id,
-            @RequestPart("formDto") ProductModelFormDto formDto
-            // 이미지 파일은 다음 단계에서 추가 예정
+            @RequestPart("formDto") ProductModelFormDto formDto,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
     ) {
-        productService.updateProductModel(id, formDto);
+
+        productService.updateProductModel(id, formDto, imageFiles);
+
         Map<String, Object> response = Map.of("message", "상품 모델이 성공적으로 수정되었습니다.");
         return ResponseEntity.ok(response);
     }

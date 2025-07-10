@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -254,7 +255,7 @@ public class ProductService {
      * @return 수정된 ProductModel 엔티티
      */
     @Transactional
-    public ProductModel updateProductModel(Long modelId, ProductModelFormDto dto) {
+    public ProductModel updateProductModel(Long modelId, ProductModelFormDto dto, List<MultipartFile> newImageFiles) {
         // 1. ID로 기존 모델을 조회합니다.
         ProductModel modelToUpdate = productModelRepository.findById(modelId)
                 .orElseThrow(() -> new IllegalArgumentException("상품 모델을 찾을 수 없습니다: " + modelId));
@@ -262,19 +263,80 @@ public class ProductService {
         // 2. DTO의 내용으로 엔티티의 필드를 업데이트합니다.
         // (주의: @Transactional 덕분에, 엔티티의 필드를 변경하는 것만으로 DB에 update 쿼리가 실행됩니다.)
         modelToUpdate.updateDetails(
-                dto.getName(),
-                dto.getDescription(),
-                dto.getDailyRate(),
-                dto.getMonthlyRate(),
-                dto.getDeposit(),
-                dto.getIncludedItems(),
-                dto.getNotIncludedItems(),
-                dto.getUsageGuide(),
-                dto.getCancellationPolicy(),
+                dto.getName(), dto.getDescription(),
+                dto.getDailyRate(), dto.getMonthlyRate(), dto.getDeposit(),
+                dto.getIncludedItems(), dto.getNotIncludedItems(),
+                dto.getUsageGuide(), dto.getCancellationPolicy(),
                 dto.getIsActive()
         );
 
-        // 이미지 수정 로직은 여기에 추가될 예정입니다.
+        // 3. 이미지 그룹 찾기
+        ContentGroup imageGroup = contentGroupRepository.findByGroupKey("MODEL_" + modelId + "_IMAGES")
+                .orElseThrow(() -> new IllegalStateException("이미지 그룹을 찾을 수 없습니다."));
+
+        // 4. 기존에 DB에 저장된 이미지 목록 조회
+        List<ContentImage> existingImages = contentImageRepository.findByContentGroupOrderByDisplayOrderAsc(imageGroup);
+
+        // 4. 삭제해야 할 이미지 처리
+        List<String> finalImageUrls = new ArrayList<>();        // 최종 이미지 URL 목록을 담을 변수
+        if(dto.getExistingImageUrls() != null) {
+            finalImageUrls.addAll(dto.getExistingImageUrls());
+        }
+
+        List<ContentImage> imagesToDelete = new ArrayList<>();
+        for (ContentImage existingImage : existingImages) {
+
+            // 기존 이미지 URL이 최종 이미지 목록에 없다면 삭제 대상에 추가
+            if (!finalImageUrls.contains(existingImage.getImageUrl())) {
+                imagesToDelete.add(existingImage);
+                // 실제 파일도 삭제 (FileStorageService에 삭제 로직 추가 필요)
+                // fileStorageService.deleteFile(existingImage.getImageUrl());
+            }
+
+        }
+
+        // 5. 삭제 대상 이미지들을 DB에서 삭제합니다.
+        contentImageRepository.deleteAll(imagesToDelete);
+
+        // TODO: 실제 서버의 파일도 함께 삭제하는 로직을 FileStorageService에 추가하면 더 좋습니다.
+
+        // 6. 남아있는 기존 이미지들의 순서를 업데이트 (for-each -> indexed for loop)
+        for (int i = 0; i < finalImageUrls.size(); i++) {
+
+            final int displayOrder = i;
+            String imageUrl = finalImageUrls.get(i); // 최종 이미지 URL 목록을 담은 변수에서 i순번의 이미지 URL을 가져옵니다.
+
+            // imageUrl로 DB에서 ContentImage 엔티티를 찾고, 있다면(ifPresent) 아래 로직을 실행합니다.
+            // contentImageRepository.findByImageUrl의 반환객체는 Optional<ContentImage>이므로 람다식에서 image는 ContentImage 타입입니다.
+            contentImageRepository.findByImageUrl(imageUrl).ifPresent(image -> {
+                image.updateDisplayOrder(displayOrder); // @Transactional이 자동으로 UPDATE 쿼리를 실행 ★★★
+            });
+        }
+
+        // 7. 새로 제출된 이미지 파일들을 저장합니다.
+        int nextDisplayOrder = finalImageUrls.size();
+        if (newImageFiles != null && !newImageFiles.isEmpty()) {
+            for (MultipartFile file : newImageFiles) {
+                String storedFilePath = fileStorageService.storeFile(file, "product", modelId.toString());
+                if (storedFilePath != null) {
+                    ContentImage contentImage = ContentImage.builder()
+                            .contentGroup(imageGroup)
+                            .imageUrl(storedFilePath)
+                            .displayOrder(nextDisplayOrder)
+                            .build();
+                    contentImageRepository.save(contentImage);
+                    nextDisplayOrder++;
+                }
+            }
+        }
+
+        // 8. 대표 이미지 URL 업데이트
+        contentImageRepository.findFirstByContentGroupAndDisplayOrder(imageGroup, 0)
+                .ifPresentOrElse(
+                        image -> modelToUpdate.updateThumbnailUrl(image.getImageUrl()),
+                        () -> modelToUpdate.updateThumbnailUrl(null)
+                );
+
 
         return modelToUpdate;
     }

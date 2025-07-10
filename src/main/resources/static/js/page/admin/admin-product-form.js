@@ -156,7 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 폼 제출 이벤트 처리
     form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // 기본 submit 제출 동작 방지 > fetch로 FormData 전송
+
+        const modelId = form.elements.id.value; // <input type="hidden" id="modelId" th:field="*{id}">의 value 값 가져옴
+        const isEditMode = !!modelId;           // !!modelId : modelId가 존재하면 true, 아니면 false
+
+        // 수정 모드일때와 등록 모드일때 요청 URL과 방식을 다르게 설정
+        const url = isEditMode ? `/api/admin/products/${modelId}` : '/api/admin/products'; // is
+        const method = isEditMode ? 'PUT' : 'POST'; // PUT : 수정, POST :  등록
 
         // 1. FormData 객체 생성
         const formData = new FormData();
@@ -164,7 +171,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. DTO에 해당하는 폼 데이터(텍스트 등)를 JSON으로 만들어 'formDto' 파트에 추가
         const formElements = form.elements;
 
+        // 미리보기에 '남아있는 기존 이미지 URL 목록'을 추가
+        const existingImageUrls = imageList     // imageList 배열에서
+            .filter(item => item.isExisting)    // 기존 이미지인 경우만 필터링
+            .map(item => item.url);             // URL만 추출
+
         const dto = {
+            id: isEditMode ? modelId : null, // 수정 모드일 때만 ID 포함
             name: formElements.name.value,
             description: formElements.description.value,
             dailyRate: parseFloat(formElements.dailyRate.value),
@@ -175,20 +188,27 @@ document.addEventListener('DOMContentLoaded', () => {
             notIncludedItems: formElements.notIncludedItems.value,
             usageGuide: formElements.usageGuide.value,
             cancellationPolicy: formElements.cancellationPolicy.value,
-            initialQuantity: parseInt(formElements.initialQuantity.value, 10) || 0,
+            initialQuantity: isEditMode ? 0 : (parseInt(formElements.initialQuantity.value, 10) || 0), // 초기 재고 수량
+            existingImageUrls: existingImageUrls
         };
+
+        // '수정'(isEditMode:true)시에는 초기 재고를 변경하지 않으므로 DTO에서 제외
+        if (isEditMode) {
+            delete dto.initialQuantity;
+        }
 
         formData.append('formDto', new Blob([JSON.stringify(dto)], { type: "application/json" }));
 
-        // 3. 이미지 파일들을 'imageFiles' 파트에 추가(순서 보장)
-        imageList.forEach(file => {
+        // 3. 새로 추가된 파일들만 골라서 formData에 추가
+        const newFiles = imageList.filter(item => !item.isExisting);
+        newFiles.forEach(file => {
             formData.append('imageFiles', file);
         });
 
         // 4. fetch로 FormData 전송
         try {
-            const response = await fetch('/api/admin/products', {
-                method: 'POST',
+            const response = await fetch( url, {    // url : 등록('/api/admin/products') / 수정('/api/admin/products/{id}')
+                method: method,                     // POST :  등록, PUT : 수정
                 headers: {
                     // 'Content-Type': 'multipart/form-data'는 브라우저가 자동으로 설정하므로 생략
                     // CSRF 토큰은 추가해야 함
