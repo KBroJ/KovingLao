@@ -1,72 +1,64 @@
 
+.content-view {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
 }
-
 .page-header h1 {
     margin: 0;
-}
-
-/* 페이지 전체 콘텐츠의 최대 너비 및 중앙 정렬을 제어 */
-.content-view {
-    max-width: 1400px;
-    margin: 0 auto;
 }
 
 .table-container {
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    overflow: hidden; /* 둥근 모서리 밖으로 테이블이 튀어나가지 않도록 */
+    overflow-x: auto;
 }
-
 table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
+    min-width: 800px;
 }
-
 th, td {
-    padding: 1rem 1.5rem; /* 좌우 여백 추가 */
-    text-align: left;
-    border-bottom: 1px solid #f1f3f5; /* 더 옅은 색으로 변경 */
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f3f5;
     vertical-align: middle;
 }
 
-tbody tr:last-child td {
-    border-bottom: none; /* 마지막 행의 하단 테두리 제거 */
-}
+/* [신규] 정렬을 위한 클래스 */
+.is-left { text-align: left; }
+.is-center { text-align: center; }
+.is-right { text-align: right; }
 
-/* 테이블 헤더 스타일 개선 */
 thead th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #495057;
     border-bottom: 2px solid #e9ecef;
 }
-
+tbody tr:last-child td {
+    border-bottom: none;
+}
 tbody tr:hover {
     background-color: #f8f9fa;
 }
-
 .no-data {
     text-align: center;
     padding: 4rem;
     color: var(--secondary-color);
 }
-
-.product-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
 .status-badge {
+    display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -74,46 +66,52 @@ tbody tr:hover {
     color: #fff;
     text-transform: uppercase;
 }
-
 .status-badge.status-active { background-color: #28a745; }
 .status-badge.status-inactive { background-color: #6c757d; }
 
-/* 관리 버튼들을 묶는 컨테이너 스타일 */
-.action-buttons {
+/* [신규] 아이콘 버튼 스타일 */
+.action-buttons-desktop {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.75rem;
+}
+.action-icon-button {
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+    color: #868e96;
+}
+.action-icon-button:hover {
+    background-color: #f1f3f5;
+    color: var(--dark-color);
+}
+.action-icon-button.delete-button:hover {
+    background-color: #fff5f5;
+    color: #dc3545;
 }
 
-/* 삭제 버튼을 위한 위험(danger) 스타일 */
-.button.button--danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: #fff;
-}
-.button.button--danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-}
-
+/* --- 반응형 --- */
 @media (max-width: 768px) {
-
-    /* 모바일에서는 콘텐츠 좌우 여백을 줄이기 위해 max-width를 해제 */
-    .content-view {
-        max-width: none;
-        margin: 0;
-    }
-
-    .table-container {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #ddd;
-    }
-
+    .content-view { max-width: none; margin: 0; }
+    .table-container { border-radius: 0; box-shadow: none; border: 1px solid #ddd; }
     table thead { display: none; }
-    table tr { display: block; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 1rem; }
-    table td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.75rem 0; border-bottom: 1px solid #eee; }
+    table tr { display: block; border-bottom: 1px solid #ddd; border-radius: 0; margin-bottom: 0; padding: 0; }
+    table tr:last-child { border-bottom: none; }
+    table td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.75rem 1rem; border-bottom: 1px solid #eee; }
     table td:last-child { border-bottom: none; }
     table td::before { content: attr(data-label); font-weight: 600; text-align: left; padding-right: 1rem; }
-    table td[data-label="관리"] .action-buttons { width: 100%; justify-content: flex-end; }
+    
+    /* 모바일에서는 아이콘 버튼들을 가운데 정렬합니다. */
+    table td[data-label="관리"] .action-buttons-desktop {
+        width: 100%;
+        justify-content: flex-end;
+    }
 }

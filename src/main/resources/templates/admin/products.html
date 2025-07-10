@@ -9,7 +9,9 @@
     <header class="main-header" layout:fragment="pageHeader">
         <div class="page-header">
             <h1>상품 모델 목록</h1>
-            <a th:href="@{/admin/products/new}" class="button button--primary">새 모델 등록</a>
+            <a th:href="@{/admin/products/new}" class="button button--primary">
+                <i class="fas fa-plus"></i> 새 모델 등록
+            </a>
         </div>
     </header>
 
@@ -19,11 +21,11 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>모델명</th>
-                        <th>일일/월별 요금</th>
-                        <th>보유/대여가능</th>
-                        <th>상태</th>
-                        <th>관리</th>
+                        <th class="is-left">모델명</th>
+                        <th class="is-center">일일/월별 요금</th>
+                        <th class="is-center">보유/대여가능</th>
+                        <th class="is-center">상태</th>
+                        <th class="is-center">관리</th>
                     </tr>
                     </thead>
                     <tbody id="product-list-body"></tbody>
@@ -32,15 +34,17 @@
         </div>
 
         <template id="product-row-template">
-            <tr>
+            <tr data-model-id="">
                 <td class="product-name" data-label="모델명"></td>
-                <td class="product-rate" data-label="요금"></td>
-                <td class="product-quantity" data-label="보유/대여가능"></td>
-                <td data-label="상태"><span class="status-badge"></span></td>
-                <td>
-                    <a href="#" class="button button--secondary button--sm inventory-button">재고 보기</a>
-                    <a href="#" class="button button--secondary button--sm edit-button">모델 수정</a>
-                    <button type="button" class="button button--danger button--sm delete-button">삭제</button>
+                <td class="product-rate is-center" data-label="요금"></td>
+                <td class="product-quantity is-center" data-label="보유/대여가능"></td>
+                <td class="is-center" data-label="상태"><span class="status-badge"></span></td>
+                <td class="is-center" data-label="관리">
+                    <div class="action-buttons-desktop">
+                        <a href="#" class="action-icon-button inventory-button" title="재고 보기"><i class="fas fa-boxes-stacked"></i></a>
+                        <a href="#" class="action-icon-button edit-button" title="모델 수정"><i class="fas fa-pen"></i></a>
+                        <button type="button" class="action-icon-button delete-button" title="삭제"><i class="fas fa-trash"></i></button>
+                    </div>
                 </td>
             </tr>
         </template>
