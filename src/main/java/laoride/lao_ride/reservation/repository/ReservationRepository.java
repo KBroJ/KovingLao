@@ -62,4 +62,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND :date BETWEEN r.startDate AND r.endDate")
     long countByProductModelAndDate(@Param("model") ProductModel model, @Param("date") LocalDate date);
 
+    /**
+     * 특정 상품 모델에 대한 예약이 하나라도 존재하는지 확인합니다.
+     * Reservation 엔티티의 inventoryItem 필드를 거쳐, 그 안의 productModel을 조회합니다.
+     */
+    boolean existsByInventoryItem_ProductModel(ProductModel productModel);
+
 }

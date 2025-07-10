@@ -1,4 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    const tableBody = document.getElementById('product-list-body');
+    if (!tableBody) return;
+
+    // 삭제 버튼 클릭 이벤트 처리 (이벤트 위임 사용)
+    tableBody.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('delete-button')) {
+            if (!confirm('정말 이 상품 모델을 삭제하시겠습니까?\n연결된 모든 재고 정보가 함께 삭제됩니다.')) {
+                return;
+            }
+
+            const row = event.target.closest('tr');
+            const modelId = row.dataset.modelId;
+
+            try {
+                const response = await fetch(`/api/admin/products/${modelId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        [document.querySelector('meta[name="_csrf_header"]').getAttribute('content')]: document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                    }
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || '삭제에 실패했습니다.');
+                }
+                alert(result.message);
+                row.remove(); // 화면에서 해당 행 즉시 삭제
+            } catch (error) {
+                console.error('삭제 처리 중 오류:', error);
+                alert(`오류: ${error.message}`);
+            }
+        }
+    });
+
     loadProducts();
 });
 
@@ -19,6 +54,9 @@ async function loadProducts() {
 
         products.forEach(model => {
             const row = document.importNode(template.content, true);
+            const tr = row.querySelector('tr');
+
+            tr.dataset.modelId = model.id; // [추가] 행에 model-id를 데이터로 저장
 
             row.querySelector('.product-name').textContent = model.name;
             row.querySelector('.product-rate').textContent = `$${model.dailyRate} / $${model.monthlyRate}`;
@@ -28,7 +66,6 @@ async function loadProducts() {
             statusBadge.textContent = model.active ? '판매중' : '판매중지';
             statusBadge.classList.add(model.active ? 'status-active' : 'status-inactive');
 
-            // 날짜/시간 데이터에서 날짜 부분만 잘라서 표시
             row.querySelector('.inventory-button').href = `/admin/products/${model.id}/inventory`;
             row.querySelector('.edit-button').href = `/admin/products/${model.id}/edit`;
 

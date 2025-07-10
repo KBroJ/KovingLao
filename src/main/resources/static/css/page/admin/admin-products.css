@@ -1,4 +1,4 @@
-/* 페이지 헤더 스타일 */
+
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -11,7 +11,6 @@
     margin: 0;
 }
 
-/* --- 테이블 공통 스타일 --- */
 .table-container {
     overflow-x: auto;
 }
@@ -45,14 +44,6 @@ tbody tr:hover {
     color: var(--secondary-color);
 }
 
-.product-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* 상태 배지 스타일 */
 .status-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
@@ -62,47 +53,32 @@ tbody tr:hover {
     text-transform: uppercase;
 }
 
-.status-badge.status-active { background-color: #28a745; } /* 초록색 */
-.status-badge.status-inactive { background-color: #6c757d; } /* 회색 */
-.status-badge.status-archived { background-color: #dc3545; } /* 빨간색 */
+.status-badge.status-active { background-color: #28a745; }
+.status-badge.status-inactive { background-color: #6c757d; }
 
+/* 관리 버튼들을 묶는 컨테이너 스타일 */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
 
-/* 화면 너비가 768px 이하일 때 테이블 스타일 변경 */
+/* 삭제 버튼을 위한 위험(danger) 스타일 */
+.button.button--danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+.button.button--danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
 @media (max-width: 768px) {
-    table thead {
-        display: none; /* 데스크탑용 aothem 머리글 숨김 */
-    }
-
-    table tr {
-        display: block;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        padding: 1rem;
-    }
-
-    table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-align: right; /* 값은 오른쪽 정렬 */
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #eee;
-    }
-    table td:last-child {
-        border-bottom: none;
-    }
-
-    /* data-label의 텍스트를 가상요소로 왼쪽에 제목처럼 추가 */
-    table td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        text-align: left;
-        padding-right: 1rem;
-    }
-
-    .product-image { /* 상품 이미지 크기 조정 */
-        width: 40px;
-        height: 40px;
-    }
+    table thead { display: none; }
+    table tr { display: block; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 1rem; }
+    table td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.75rem 0; border-bottom: 1px solid #eee; }
+    table td:last-child { border-bottom: none; }
+    table td::before { content: attr(data-label); font-weight: 600; text-align: left; padding-right: 1rem; }
+    table td[data-label="관리"] .action-buttons { width: 100%; justify-content: flex-end; }
 }

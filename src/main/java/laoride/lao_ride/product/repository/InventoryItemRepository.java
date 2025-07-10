@@ -30,4 +30,9 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
     // 상태가 AVAILABLE인 모든 재고를 조회 (예약이 하나도 없을 경우 사용)
     List<InventoryItem> findByStatus(InventoryItemStatus status);
 
+    /**
+     * 특정 상품 모델에 속한 모든 재고 아이템을 조회합니다.
+     */
+    List<InventoryItem> findByProductModel(ProductModel productModel);
+
 }

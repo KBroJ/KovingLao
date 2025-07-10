@@ -300,8 +300,6 @@ public class ProductService {
         // 5. 삭제 대상 이미지들을 DB에서 삭제합니다.
         contentImageRepository.deleteAll(imagesToDelete);
 
-        // TODO: 실제 서버의 파일도 함께 삭제하는 로직을 FileStorageService에 추가하면 더 좋습니다.
-
         // 6. 남아있는 기존 이미지들의 순서를 업데이트 (for-each -> indexed for loop)
         for (int i = 0; i < finalImageUrls.size(); i++) {
 
@@ -341,6 +339,39 @@ public class ProductService {
 
 
         return modelToUpdate;
+    }
+
+    /**
+     * 상품 모델과 관련된 모든 데이터를 삭제합니다.
+     * @param modelId 삭제할 상품 모델의 ID
+     */
+    @Transactional
+    public void deleteProductModel(Long modelId) {
+        // 1. 삭제할 ProductModel 엔티티를 찾습니다.
+        ProductModel modelToDelete = productModelRepository.findById(modelId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 모델을 찾을 수 없습니다: " + modelId));
+
+        // 2. 이 모델에 대한 예약이 하나라도 존재하면 삭제를 막습니다.
+        if (reservationRepository.existsByInventoryItem_ProductModel(modelToDelete)) {
+            throw new IllegalStateException("이 상품 모델에 대한 예약이 존재하여 삭제할 수 없습니다.");
+        }
+
+        // 3. 연결된 이미지 그룹과 이미지 파일들을 삭제합니다.
+        contentGroupRepository.findByGroupKey("MODEL_" + modelId + "_IMAGES").ifPresent(group -> {
+            List<ContentImage> images = contentImageRepository.findByContentGroupOrderByDisplayOrderAsc(group);
+            for (ContentImage image : images) {
+                fileStorageService.deleteFile(image.getImageUrl()); // 실제 파일 삭제
+            }
+            contentImageRepository.deleteAll(images); // DB 기록 삭제
+            contentGroupRepository.delete(group); // 그룹 삭제
+        });
+
+        // 4. 연결된 모든 재고(InventoryItem)를 삭제합니다.
+        List<InventoryItem> itemsToDelete = inventoryItemRepository.findByProductModel(modelToDelete);
+        inventoryItemRepository.deleteAll(itemsToDelete);
+
+        // 5. 마지막으로 ProductModel을 삭제합니다.
+        productModelRepository.delete(modelToDelete);
     }
 
 }

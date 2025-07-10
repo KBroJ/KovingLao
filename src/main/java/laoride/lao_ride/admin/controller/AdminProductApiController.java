@@ -69,4 +69,13 @@ public class AdminProductApiController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 상품 모델을 삭제하는 API
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteProduct(@PathVariable("id") Long id) {
+        productService.deleteProductModel(id);
+        return ResponseEntity.ok(Map.of("message", "상품 모델이 성공적으로 삭제되었습니다."));
+    }
+
 }
