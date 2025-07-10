@@ -14,19 +14,21 @@
     </header>
 
     <th:block layout:fragment="pageContent">
-        <div class="table-container">
-            <table>
-                <thead>
-                <tr>
-                    <th>모델명</th>
-                    <th>일일/월별 요금</th>
-                    <th>보유/대여가능</th>
-                    <th>상태</th>
-                    <th>관리</th>
-                </tr>
-                </thead>
-                <tbody id="product-list-body"></tbody>
-            </table>
+        <div class="content-view">
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>모델명</th>
+                        <th>일일/월별 요금</th>
+                        <th>보유/대여가능</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody id="product-list-body"></tbody>
+                </table>
+            </div>
         </div>
 
         <template id="product-row-template">

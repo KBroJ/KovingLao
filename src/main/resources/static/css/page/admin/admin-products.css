@@ -11,8 +11,17 @@
     margin: 0;
 }
 
+/* 페이지 전체 콘텐츠의 최대 너비 및 중앙 정렬을 제어 */
+.content-view {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
 .table-container {
-    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden; /* 둥근 모서리 밖으로 테이블이 튀어나가지 않도록 */
 }
 
 table {
@@ -22,16 +31,22 @@ table {
 }
 
 th, td {
-    padding: 1rem;
+    padding: 1rem 1.5rem; /* 좌우 여백 추가 */
     text-align: left;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f1f3f5; /* 더 옅은 색으로 변경 */
     vertical-align: middle;
 }
 
+tbody tr:last-child td {
+    border-bottom: none; /* 마지막 행의 하단 테두리 제거 */
+}
+
+/* 테이블 헤더 스타일 개선 */
 thead th {
     background-color: #f8f9fa;
     font-weight: 600;
-    color: var(--secondary-color);
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
 }
 
 tbody tr:hover {
@@ -40,8 +55,15 @@ tbody tr:hover {
 
 .no-data {
     text-align: center;
-    padding: 3rem;
+    padding: 4rem;
     color: var(--secondary-color);
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .status-badge {
@@ -75,6 +97,19 @@ tbody tr:hover {
 }
 
 @media (max-width: 768px) {
+
+    /* 모바일에서는 콘텐츠 좌우 여백을 줄이기 위해 max-width를 해제 */
+    .content-view {
+        max-width: none;
+        margin: 0;
+    }
+
+    .table-container {
+        border-radius: 0;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
     table thead { display: none; }
     table tr { display: block; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 1rem; }
     table td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 0.75rem 0; border-bottom: 1px solid #eee; }
