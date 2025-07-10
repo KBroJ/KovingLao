@@ -103,8 +103,8 @@
     display: flex;
     justify-content: center;
     padding-bottom: 10px;
-    width: 80%;
-    max-width: 320px;
+    /*width: 80%;*/
+    /*max-width: 320px;*/
 }
 .bike__card {
     border: 1px solid #ddd;
@@ -119,6 +119,7 @@
 }
 .bike__card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 .bike__card .bike__img {
     width: 100%;

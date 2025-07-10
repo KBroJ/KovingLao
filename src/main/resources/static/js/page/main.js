@@ -35,10 +35,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. 상품 목록 슬라이더 초기화
     const bikeSwiper = new Swiper('.bike-swiper', {
-        slidesPerView: 'auto',  // 여러 개를 보여주기 위해 auto로 설정
-        centeredSlides: true,   // 슬라이드가 1개일 때도 가운데 정렬
+//        slidesPerView: 'auto',  // 모바일 기본값
+//        centeredSlides: true,   // 슬라이드가 1개일 때도 가운데 정렬
         spaceBetween: 20,
-        loop: false, // 동적 데이터 로딩 시에는 loop false 권장
+        loop: false,                // 동적 데이터 로딩 시에는 loop false 권장
+        breakpoints: {              // 반응형 설정을 위한 Breakpoints
+            // 화면 너비 320px 이상일 때 (모바일)
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 20
+            },
+            // 화면 너비 640px 이상일 때 (태블릿)
+            640: {
+                slidesPerView: 2,
+                spaceBetween: 20
+            },
+            // 화면 너비 1024px 이상일 때 (데스크탑)
+            1024: {
+                slidesPerView: 3,
+                spaceBetween: 30
+            }
+        },
         pagination: {
             el: '.bike-swiper-pagination', // 고유 클래스 지정
             clickable: true,
@@ -46,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         navigation: {
             nextEl: '.bike-swiper-button-next', // 고유 클래스 지정
             prevEl: '.bike-swiper-button-prev', // 고유 클래스 지정
-        },
+        }
     });
 
 
@@ -114,6 +131,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('서버에서 응답을 받지 못했습니다.');
             }
             const availableModels = await response.json();
+            console.table(availableModels);
+
             updateBikeList(availableModels);
 
             // 성공 시 에러 메시지 숨기기
@@ -131,8 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 예약가능 목록 Swiper 슬라이드 동적 업데이트 함수
     function updateBikeList(models) {
-
-        console.table(models);
 
         bikeSwiper.removeAllSlides();
 
@@ -160,12 +177,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `);
 
-            console.log("slidesHtml : " + slidesHtml);
-
+//            console.log("slidesHtml : " + slidesHtml);
             bikeSwiper.appendSlide(slidesHtml);
-
+//            console.log('실제 Wrapper 내부 HTML:', bikeSwiper.wrapperEl.innerHTML);
         }
         bikeSwiper.update();
     }
