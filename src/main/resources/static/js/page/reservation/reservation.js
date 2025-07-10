@@ -130,11 +130,12 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(`/api/products/available?startDate=${startDate}&endDate=${endDate}`);
             const models = await response.json();
+            console.table(models);
 
             modelListContainer.innerHTML = '';
             if (models.length > 0) {
                 models.forEach(model => {
-                    const cardHtml = `<div class="model-card" data-product-id="${model.id}" data-model-name="${model.name}"><img src="${model.imageUrl}" alt="${model.name}" class="model-img"><div class="model-info"><h4>${model.name}</h4><p>${model.availableCount}대 가능</p></div></div>`;
+                    const cardHtml = `<div class="model-card" data-product-id="${model.id}" data-model-name="${model.name}"><img src="${model.thumbnailUrl}" alt="${model.name}" class="model-img"><div class="model-info"><h4>${model.name}</h4><p>${model.availableCount}대 가능</p></div></div>`;
                     modelListContainer.insertAdjacentHTML('beforeend', cardHtml);
                 });
                 if (initialModelName) {
