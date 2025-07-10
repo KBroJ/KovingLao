@@ -14,9 +14,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration // 이 클래스가 Spring의 설정 파일임을 선언
 public class WebConfig implements WebMvcConfigurer {
 
-    // application.yml에 설정한 파일 업로드 루트 경로를 주입받습니다.
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    // application.yml에 설정한 경로를 주입받습니다.
+    @Value("${file.resource-handler}")
+    private String resourceHandler;     // ../kovinglao-uploads
+
+    @Value("${file.resource-location}")
+    private String resourceLocation;    // file:../kovinglao-uploads/
 
     /**
      * 특정 URL 경로 요청을 실제 파일 시스템의 경로와 매핑해주는 메서드입니다.
@@ -27,14 +30,12 @@ public class WebConfig implements WebMvcConfigurer {
         /*
             "file:" 접두사는 실제 파일 시스템의 경로를 의미합니다.
             마지막에 "/"를 붙여주는 것이 중요합니다.
-            System.getProperty("user.dir") : 현재 디렉토리
+            System.getProperty("user.dir") : 현재 프로젝트 루트 디렉토리(ex. C:\Devel\KovingLao)
          */
-        String resourcePath = "file:///" + System.getProperty("user.dir") + "/" + uploadDir + "/";
+//        String resourcePath = "file:///" + System.getProperty("user.dir") + "/" + uploadDir + "/";
 
-        // 웹 브라우저에서 /uploads/** 로 시작하는 모든 요청을
-        // 위에서 설정한 실제 파일 시스템 경로(resourcePath)에서 찾아 처리하도록 설정합니다.
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(resourcePath);
+        registry.addResourceHandler(resourceHandler)    // 웹 브라우저가 파일에 접근할 때 사용할 요청 URL 경로
+                .addResourceLocations(resourceLocation);            // 위 resource-handler 경로를 어느 물리적 위치에 매핑할지 지정
     }
 
 }

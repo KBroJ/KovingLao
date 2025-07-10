@@ -177,6 +177,7 @@ public class ProductService {
                         "product", // 도메인은 "product"
                         newModel.getId().toString() // 도메인 ID는 방금 생성된 모델의 ID
                 );
+                log.info("ProductService|createProductModel|storedFilePath|이미지 저장 경로 : {}", storedFilePath);
 
                 if (storedFilePath != null) {
                     // 업로드 순서(i)를 그대로 displayOrder로 사용
@@ -289,8 +290,9 @@ public class ProductService {
             // 기존 이미지 URL이 최종 이미지 목록에 없다면 삭제 대상에 추가
             if (!finalImageUrls.contains(existingImage.getImageUrl())) {
                 imagesToDelete.add(existingImage);
-                // 실제 파일도 삭제 (FileStorageService에 삭제 로직 추가 필요)
-                // fileStorageService.deleteFile(existingImage.getImageUrl());
+
+                // 실제 파일도 삭제
+                 fileStorageService.deleteFile(existingImage.getImageUrl());
             }
 
         }

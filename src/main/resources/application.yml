@@ -32,8 +32,14 @@ spring:
 
 # =============== 이미지 업로드 경로 설정 ===============
 file:
-#    upload-dir: ./uploads/images # 프로젝트 루트 폴더 아래에 생성됩니다.
-    upload-dir: ../uploads/images # 프로젝트 루트 폴더 상위 경로 아래에 생성됩니다.
+    # 1. 실제 파일이 저장될 물리적인 폴더 경로(../ : 프로젝트 루트 폴더의 상위 경로)
+    upload-path: ../kovinglao-uploads
+
+    # 2. 웹 브라우저가 파일에 접근할 때 사용할 URL 경로 패턴
+    resource-handler: /media/**
+
+    # 3. 위 resource-handler 경로를 어느 물리적 위치에 매핑할지 지정
+    resource-location: file:../kovinglao-uploads/
 
 # =============== 로그 설정 ===============
 logging:
@@ -45,7 +51,6 @@ logging:
         org.hibernate.orm.jdbc.bind: TRACE
 
 # =============== 서버 인코딩 설정 ===============
-# 제미나이가 강력 추천함
 server:
     servlet:
         encoding:
