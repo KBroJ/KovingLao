@@ -6,15 +6,15 @@ import lombok.Getter;
 @Getter
 public class ProductGroupDto {
 
-    private final Long id; // [추가] 상품 ID
+    private final Long id;
     private final String name;
-    private final String imageUrl;
+    private final String thumbnailUrl;
     private final long availableCount;
 
-    public ProductGroupDto(Long id, String name, String imageUrl, long availableCount) {
-        this.id = id; // [추가]
+    public ProductGroupDto(Long id, String name, String thumbnailUrl, long availableCount) {
+        this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.thumbnailUrl = thumbnailUrl;
         this.availableCount = availableCount;
     }
 

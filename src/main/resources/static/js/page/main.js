@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. 상품 목록 슬라이더 초기화
     const bikeSwiper = new Swiper('.bike-swiper', {
-        slidesPerView: 'auto',    // 여러 개를 보여주기 위해 auto로 설정
-        centeredSlides: true,
+        slidesPerView: 'auto',  // 여러 개를 보여주기 위해 auto로 설정
+        centeredSlides: true,   // 슬라이드가 1개일 때도 가운데 정렬
         spaceBetween: 20,
         loop: false, // 동적 데이터 로딩 시에는 loop false 권장
         pagination: {
@@ -132,6 +132,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 예약가능 목록 Swiper 슬라이드 동적 업데이트 함수
     function updateBikeList(models) {
 
+        console.table(models);
+
         bikeSwiper.removeAllSlides();
 
         if (models.length === 0) {
@@ -148,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const slidesHtml = models.map(model => `
                 <div class="swiper-slide">
                     <div class="bike__card">
-                        <img src="${model.imageUrl}" alt="${model.name}" class="bike__img">
+                        <img src="${model.thumbnailUrl}" alt="${model.name}" class="bike__img">
                         <div class="bike__card-content">
                             <h3 class="bike__name">${model.name}</h3>
                             <p class="bike__status available">
@@ -159,6 +161,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `).join('');
+
+            console.log("slidesHtml : " + slidesHtml);
 
             bikeSwiper.appendSlide(slidesHtml);
 
