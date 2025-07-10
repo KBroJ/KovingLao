@@ -19,7 +19,7 @@ public class FileStorageService {
 
     // application.yml에 파일 업로드 경로를 설정합니다.
     @Value("${file.upload-dir}")
-    private String uploadDir;
+    private String uploadDir; // ../uploads/images : 프로젝트 루트 폴더 상위 경로 아래에 생성됩니다.
 
     /**
      * 파일을 도메인별/날짜별 폴더에 저장하고, 의미있는 파일명을 생성하여 웹 경로를 반환합니다.
@@ -43,6 +43,8 @@ public class FileStorageService {
             // 1. 도메인과 ID를 기반으로 폴더 경로 생성 (예: ./uploads/product/5)
             // System.getProperty("user.dir")는 프로젝트의 루트 폴더 경로를 가져옵니다. (예: C:\Devel\KovingLao)
             Path uploadPath = Paths.get(System.getProperty("user.dir"), uploadDir, domain, domainId);
+            log.info("FileStorageService|storeFile|uploadDir : {}", uploadDir);
+            log.info("FileStorageService|storeFile|uploadPath : {}", uploadPath);
 
             // 2. 실제 저장 경로가 존재하지 않으면 생성
             if (!Files.exists(uploadPath)) {
@@ -60,7 +62,7 @@ public class FileStorageService {
             file.transferTo(filePath.toFile());
 
             // 5. 웹에서 접근 가능한 최종 경로 반환
-            // 예: /uploads/product/2025/07/09/1-xxxxxxxx-xxxx.jpg
+            // 예: /uploads/product/1/1xxxxxxxx-xxxx.jpg
             return "/uploads/" + domain + "/" + domainId + "/" + storedFileName;
 
         } catch (IOException ex) {

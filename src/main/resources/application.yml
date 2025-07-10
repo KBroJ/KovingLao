@@ -32,7 +32,8 @@ spring:
 
 # =============== 이미지 업로드 경로 설정 ===============
 file:
-    upload-dir: ./uploads/images # 프로젝트 루트 폴더 아래에 생성됩니다.
+#    upload-dir: ./uploads/images # 프로젝트 루트 폴더 아래에 생성됩니다.
+    upload-dir: ../uploads/images # 프로젝트 루트 폴더 상위 경로 아래에 생성됩니다.
 
 # =============== 로그 설정 ===============
 logging:
