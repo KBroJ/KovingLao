@@ -2,7 +2,7 @@ package laoride.lao_ride.admin.controller;
 
 import laoride.lao_ride.product.domain.ProductModel;
 import laoride.lao_ride.product.dto.AdminProductListDto;
-import laoride.lao_ride.product.dto.ProductModelFormDto;
+import laoride.lao_ride.admin.dto.ProductModelFormDto;
 import laoride.lao_ride.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/products")

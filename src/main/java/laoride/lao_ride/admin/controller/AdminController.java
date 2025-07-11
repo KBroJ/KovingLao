@@ -1,12 +1,9 @@
 package laoride.lao_ride.admin.controller;
 
-import laoride.lao_ride.admin.dto.AdminDashboardDto;
 import laoride.lao_ride.product.domain.ProductModel;
-import laoride.lao_ride.product.dto.ProductModelFormDto;
+import laoride.lao_ride.admin.dto.ProductModelFormDto;
 import laoride.lao_ride.product.repository.InventoryItemRepository;
 import laoride.lao_ride.product.service.ProductService;
-import laoride.lao_ride.reservation.domain.Reservation;
-import laoride.lao_ride.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

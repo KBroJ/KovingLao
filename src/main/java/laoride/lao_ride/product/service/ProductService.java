@@ -1,5 +1,6 @@
 package laoride.lao_ride.product.service;
 
+import laoride.lao_ride.admin.dto.ProductModelFormDto;
 import laoride.lao_ride.content.domain.ContentGroup;
 import laoride.lao_ride.content.domain.ContentImage;
 import laoride.lao_ride.content.repository.ContentGroupRepository;
