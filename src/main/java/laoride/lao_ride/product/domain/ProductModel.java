@@ -39,10 +39,6 @@ public class ProductModel extends BaseTimeEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal deposit; // 보증금
 
-    // --- 향후 확장을 위한 필드 ---
-    private Integer maxRange; // 최대 운행 거리 (km)
-    private String genderType; // 'MALE', 'FEMALE', 'UNISEX'
-
     @Lob
     @Column(columnDefinition = "TEXT", name = "included_items")
     private String includedItems;
@@ -61,6 +57,10 @@ public class ProductModel extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean isActive; // 모델 판매 여부
+
+    // --- 향후 확장을 위한 필드 ---
+    private Integer maxRange; // 최대 운행 거리 (km)
+    private String genderType; // 'MALE', 'FEMALE', 'UNISEX'
 
 
     @Builder
