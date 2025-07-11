@@ -1,4 +1,4 @@
-package laoride.lao_ride.product.dto;
+package laoride.lao_ride.admin.dto;
 
 import lombok.Getter;
 import lombok.Setter;
